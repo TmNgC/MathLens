@@ -7,17 +7,17 @@
   <meta name="description" content="Nền tảng trực quan hóa Toán học và Giải tích Vật lý." />
   <style>
     :root {
-      --purple-deep: #30184d;
-      --purple: #6f4a8e;
-      --purple-mid: #927eb2;
-      --purple-light: #dac1e3;
-      --lavender: #f3edf7;
-      --cream: #fbf9fc;
-      --ink: #21152b;
-      --muted: #6f6575;
-      --white: #ffffff;
+      --purple-deep: 30184d;
+      --purple: 6f4a8e;
+      --purple-mid: 927eb2;
+      --purple-light: dac1e3;
+      --lavender: f3edf7;
+      --cream: fbf9fc;
+      --ink: 21152b;
+      --muted: 6f6575;
+      --white: ffffff;
       --border: rgba(48, 24, 77, 0.12);
-      --accent: #ff4a7a; /* Màu nhấn mới để tạo điểm nổi bật */
+      --accent: ff4a7a #; /* Màu nhấn mới để tạo điểm nổi bật */
     }
 
     * { box-sizing: border-box; }
