@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Visualize Function - MathLens</title>
+  
+  <!-- JSXGraph CSS -->
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraph.css" />
+  <!-- KaTeX CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+
+  <style>
+    :root {
+      --bg: #fbf9fc;
+      --sidebar: #ffffff;
+      --ink: #21152b;
+      --purple: #6f4a8e;
+      --purple-deep: #30184d;
+      --purple-light: #dac1e3;
+      --border: rgba(48, 24, 77, 0.12);
+      --accent: #ff4a7a;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: Inter, system-ui, sans-serif; }
+    
+    body { display: flex; height: 100vh; width: 100vw; overflow: hidden; background: var(--bg); color: var(--ink); }
+
+    /* SIDEBAR (Bảng điều khiển Toán học) */
+    .sidebar {
+      width: 420px;
+      background: var(--sidebar);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      box-shadow: 2px 0 15px rgba(0,0,0,0.03);
+      z-index: 10;
+    }
+
+    .header { padding: 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between;}
+    .header h1 { font-size: 1.1rem; color: var(--purple-deep); font-weight: 800; }
+    .back-btn { text-decoration: none; color: var(--purple); font-size: 0.9rem; font-weight: 600;}
+    .back-btn:hover { color: var(--accent); }
+
+    .input-section { padding: 20px; border-bottom: 1px solid var(--border); background: var(--bg); }
+    .input-label { font-size: 0.8rem; font-weight: 700; color: var(--purple); text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.05em; display: block; }
+    
+    input[type="text"] {
+      width: 100%; padding: 14px 16px; font-size: 1.1rem;
+      border: 2px solid var(--border); border-radius: 12px;
+      outline: none; transition: border 0.2s; background: white; font-family: monospace;
+    }
+    input[type="text"]:focus { border-color: var(--purple); box-shadow: 0 0 0 4px var(--purple-light); }
+
+    /* Nơi render LaTeX */
+    .latex-output {
+      margin-top: 15px; padding: 15px;
+      background: rgba(111, 74, 142, 0.05); border-radius: 12px;
+      font-size: 1.3rem; min-height: 60px;
+      display: flex; align-items: center; justify-content: center; overflow-x: auto;
+    }
+
+    /* KHO TÍNH CHẤT & CÔNG CỤ (Khác biệt so với GeoGebra) */
+    .properties-section { padding: 20px; overflow-y: auto; flex-grow: 1; }
+    
+    .prop-card {
+      border: 1px solid var(--border); border-radius: 12px;
+      margin-bottom: 12px; padding: 15px; background: white;
+    }
+    .prop-header { display: flex; justify-content: space-between; font-weight: 700; font-size: 0.9rem; color: var(--purple-deep); margin-bottom: 8px;}
+    .prop-value { font-size: 0.9rem; color: var(--muted); }
+    
+    .tools-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
+    .tool-btn {
+      background: var(--bg); border: 1px solid var(--border); padding: 10px; border-radius: 8px;
+      text-align: left; font-size: 0.85rem; color: var(--ink); cursor: pointer; transition: 0.2s;
+    }
+    .tool-btn:hover, .tool-btn.active { background: var(--purple-light); border-color: var(--purple); color: var(--purple-deep); font-weight: 600; }
+
+    /* BẢNG JSXGRAPH */
+    .graph-container { flex-grow: 1; position: relative; }
+    .jxgbox { width: 100%; height: 100%; background-color: #ffffff; border: none; }
+    
+  </style>
+</head>
+<body>
+
+  <!-- BẢNG ĐIỀU KHIỂN BÊN TRÁI -->
+  <aside class="sidebar">
+    <div class="header">
+      <h1>MathLens Analytics</h1>
+      <a href="index.html" class="back-btn">← Quay lại</a>
+    </div>
+
+    <div class="input-section">
+      <label class="input-label">Nhập hàm số f(x)</label>
+      <input type="text" id="math-input" placeholder="Ví dụ: x^3 - 3*x + 1" value="x^2 - 4">
+      
+      <!-- Khung hiển thị toán học KaTeX -->
+      <div class="latex-output" id="latex-display"></div>
+    </div>
+
+    <div class="properties-section">
+      <span class="input-label">Thuộc tính Giải tích tự động</span>
+      
+      <div class="prop-card">
+        <div class="prop-header"><span>Tập xác định</span></div>
+        <div class="prop-value" id="domain">D = ℝ</div>
+      </div>
+      
+      <div class="prop-card">
+        <div class="prop-header"><span>Giao điểm với trục hoành (Nghiệm)</span></div>
+        <div class="prop-value" id="roots">Đang tính toán...</div>
+      </div>
+
+      <div class="prop-card">
+        <div class="prop-header"><span>Cực trị (Min/Max cục bộ)</span></div>
+        <div class="prop-value" id="extrema">Đang tính toán...</div>
+      </div>
+
+      <span class="input-label" style="margin-top: 20px;">Công cụ tương tác (Toolbox)</span>
+      <div class="tools-grid">
+        <button class="tool-btn active">Tiếp tuyến (Tangent)</button>
+        <button class="tool-btn">Đạo hàm f'(x)</button>
+        <button class="tool-btn">Điểm uốn (Inflection)</button>
+        <button class="tool-btn">Tích phân & Diện tích</button>
+        <button class="tool-btn">Đường thẳng</button>
+        <button class="tool-btn">Vector pháp tuyến</button>
+        <button class="tool-btn">Conics (Parabol/Elip)</button>
+        <button class="tool-btn">Xu hướng biến thiên</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- VÙNG VẼ ĐỒ THỊ BÊN PHẢI -->
+  <main class="graph-container">
+    <div id="box" class="jxgbox"></div>
+  </main>
+
+  <!-- THƯ VIỆN KẾT NỐI -->
+  <script src="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraphcore.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+  <!-- Dùng Math.js để evaluate string của người dùng thành JS math logic an toàn -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.8.0/math.js"></script>
+
+  <script>
+    // 1. Khởi tạo Bảng vẽ JSXGraph (Giao diện lưới xám hiện đại, đẹp hơn GeoGebra mặc định)
+    JXG.Options.board.minimizeReflow = 'none';
+    const board = JXG.JSXGraph.initBoard('box', {
+      boundingbox: [-10, 10, 10, -10], 
+      axis: true,
+      grid: true,
+      showCopyright: false,
+      showNavigation: true,
+      defaultAxes: {
+        x: { strokeColor: '#a192b0', strokeWidth: 1.5 },
+        y: { strokeColor: '#a192b0', strokeWidth: 1.5 }
+      }
+    });
+
+    let currentGraph = null;
+    let tangentLine = null;
+    let glidingPoint = null;
+
+    const inputEl = document.getElementById('math-input');
+    const latexDisplay = document.getElementById('latex-display');
+    const rootsDisplay = document.getElementById('roots');
+
+    // Hàm cập nhật đồ thị và các thông số
+    function updateGraph() {
+      const expr = inputEl.value.trim() || '0';
+      
+      try {
+        // Xoá đồ thị cũ nếu có
+        if (currentGraph) board.removeObject(currentGraph);
+        if (tangentLine) board.removeObject(tangentLine);
+        if (glidingPoint) board.removeObject(glidingPoint);
+
+        // Compile logic Toán học bằng Math.js
+        const compiledNode = math.compile(expr);
+        
+        // Vẽ lại đồ thị
+        currentGraph = board.create('functiongraph', [
+          function(x) { return compiledNode.evaluate({ x: x }); }
+        ], { 
+          strokeColor: '#ff4a7a', // Màu Accent đẹp mắt
+          strokeWidth: 3, 
+          highlight: true 
+        });
+
+        // THÊM: Tính năng vượt trội - Point trượt và tiếp tuyến tương tác
+        glidingPoint = board.create('glider', [2, 0, currentGraph], {
+          name: 'P', size: 5, color: '#30184d'
+        });
+        tangentLine = board.create('tangent', [glidingPoint], {
+          strokeColor: '#6f4a8e', strokeWidth: 2, dash: 2
+        });
+
+        // 3. Chuyển Text sang dạng LaTeX và hiển thị bằng KaTeX
+        // Math.js có sẵn parse().toTex() cực kì tiện dụng cho dấu mũ ^ hay gạch dưới _
+        const tex = math.parse(expr).toTex();
+        katex.render(`f(x) = ${tex}`, latexDisplay, {
+          throwOnError: false,
+          displayMode: true
+        });
+
+        // (Ví dụ Logic Fake để hiển thị cho UI: Tính đạo hàm bằng math.js để đoán Min/Max, 
+        // Trong hệ thống thật bạn cần Newton-Raphson method hoặc mượn Algebrite để giải phương trình)
+        rootsDisplay.innerText = "Chức năng tìm nghiệm (Giao điểm Oxy) tự động...";
+        
+      } catch (error) {
+        // Xử lý lỗi im lặng khi user đang gõ dở dang
+        katex.render(`...`, latexDisplay, { throwOnError: false });
+      }
+    }
+
+    // Lắng nghe thay đổi khi gõ
+    inputEl.addEventListener('input', updateGraph);
+    
+    // Gọi hàm lần đầu khi load trang
+    updateGraph();
+  </script>
+</body>
+</html>
