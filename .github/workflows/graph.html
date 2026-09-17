@@ -80,7 +80,31 @@
     /* BẢNG JSXGRAPH */
     .graph-container { flex-grow: 1; position: relative; }
     .jxgbox { width: 100%; height: 100%; background-color: #ffffff; border: none; }
-    
+
+    /* --- GIAO DIỆN CHỈNH SỬA ĐIỂM (POINT) --- */
+#points-container {
+  display: flex; flex-direction: column; gap: 8px; margin-top: 10px;
+}
+.point-item {
+  background: white; border: 1px solid var(--border); border-radius: 8px; padding: 10px;
+  font-size: 0.85rem; box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+.point-header { 
+  display: flex; justify-content: space-between; font-weight: 700; color: var(--purple-deep); margin-bottom: 8px;
+}
+.point-controls { 
+  display: flex; gap: 8px; align-items: center; 
+}
+.point-controls label { color: var(--muted); font-weight: 600; }
+.point-controls input {
+  width: 55px; padding: 4px; border: 1px solid var(--border); border-radius: 4px; 
+  font-family: monospace; text-align: center; outline: none; transition: 0.2s;
+}
+.point-controls input:focus { border-color: var(--purple); }
+.point-controls select {
+  flex-grow: 1; padding: 5px; border: 1px solid var(--border); border-radius: 4px; 
+  background: var(--bg); color: var(--ink); outline: none; cursor: pointer;
+}
   </style>
 </head>
 <body>
@@ -129,6 +153,16 @@
         <button class="tool-btn">Conics (Parabol/Elip)</button>
         <button class="tool-btn">Xu hướng biến thiên</button>
       </div>
+
+      <!-- PHẦN HÌNH HỌC & ĐIỂM -->
+      <span class="section-title" style="margin-top: 20px;">Hình học & Tọa độ</span>
+      <div class="tools-grid">
+        <button class="tool-btn" id="btn-add-point">Chấm điểm (Point)</button>
+        <button class="tool-btn" id="btn-add-line">Đường thẳng (Line)</button>
+      </div>
+
+      <!-- Nơi chứa danh sách các điểm được tạo để tuỳ chỉnh toạ độ/hình dạng -->
+      <div id="points-container"></div>
     </div>
   </aside>
 
@@ -216,7 +250,161 @@
 
     // Lắng nghe thay đổi khi gõ
     inputEl.addEventListener('input', updateGraph);
-    
+
+    // --- 5. HỆ THỐNG HÌNH HỌC (ĐIỂM TỰ DO & ĐƯỜNG THẲNG) ---
+    let pointsData = [];
+    let pointCharCode = 65; // Đặt tên từ A, B, C...
+    let geoModes = { point: false, line: false };
+    let selectedPointsForLine = [];
+
+    // Bật/tắt chế độ chấm điểm
+    document.getElementById('btn-add-point').addEventListener('click', function() {
+      this.classList.toggle('active');
+      geoModes.point = this.classList.contains('active');
+      if (geoModes.point) {
+        document.getElementById('btn-add-line').classList.remove('active');
+        geoModes.line = false;
+        showInfo("Chấm điểm", "Click vào bất kì đâu trên mặt phẳng toạ độ để tạo điểm.");
+      }
+    });
+
+    // Bật/tắt chế độ nối đường thẳng
+    document.getElementById('btn-add-line').addEventListener('click', function() {
+      this.classList.toggle('active');
+      geoModes.line = this.classList.contains('active');
+      selectedPointsForLine = [];
+      if (geoModes.line) {
+        document.getElementById('btn-add-point').classList.remove('active');
+        geoModes.point = false;
+        showInfo("Đường thẳng", "Hãy click vào 2 điểm có sẵn trên đồ thị để nối đường thẳng.");
+      }
+    });
+
+    // Bắt sự kiện click lên mặt phẳng (Board)
+    board.on('down', function(e) {
+      if (!geoModes.point) return;
+      
+      // Lấy toạ độ toán học (x, y) từ vị trí trỏ chuột
+      let can = board.c1rst;
+      let pos = board.getMousePosition(e, can);
+      let coords = new JXG.Coords(JXG.COORDS_BY_SCREEN, pos, board);
+      
+      createNewFreePoint(coords.usrCoords[1], coords.usrCoords[2]);
+    });
+
+    // Hàm tạo điểm và render UI
+    function createNewFreePoint(x, y) {
+      let ptName = String.fromCharCode(pointCharCode++);
+      
+      // Tạo point bằng JSXGraph
+      let pt = board.create('point', [x, y], {
+        name: ptName, size: 4, face: 'circle', color: '#ff4a7a', 
+        label: { offset: [10, 10], fontWeight: 'bold' }
+      });
+      
+      pointsData.push({ name: ptName, ref: pt });
+      
+      // Cập nhật lại UI tọa độ khi người dùng dùng chuột kéo điểm trên board
+      pt.on('drag', function() {
+        document.getElementById(`pt-x-${ptName}`).value = this.X().toFixed(2);
+        document.getElementById(`pt-y-${ptName}`).value = this.Y().toFixed(2);
+      });
+
+      // Bắt sự kiện click vào chính điểm này (Dùng cho chức năng Line hoặc Xem tọa độ)
+      pt.on('down', function() {
+        if (geoModes.line) {
+          handleLineCreation(this);
+        } else if (!geoModes.point) {
+          showInfo(`Điểm ${this.name}`, `Tọa độ: (${this.X().toFixed(2)}, ${this.Y().toFixed(2)})`);
+        }
+      });
+
+      renderPointsUI();
+    }
+
+    // Render danh sách các điểm ra Sidebar để tuỳ chỉnh số liệu & hình dạng
+    function renderPointsUI() {
+      const container = document.getElementById('points-container');
+      container.innerHTML = '';
+      
+      pointsData.forEach(p => {
+        let div = document.createElement('div');
+        div.className = 'point-item';
+        div.innerHTML = `
+          <div class="point-header">Điểm ${p.name}</div>
+          <div class="point-controls">
+            <label>X:</label>
+            <input type="number" id="pt-x-${p.name}" step="0.1" value="${p.ref.X().toFixed(2)}" onchange="updatePointManually('${p.name}')">
+            <label>Y:</label>
+            <input type="number" id="pt-y-${p.name}" step="0.1" value="${p.ref.Y().toFixed(2)}" onchange="updatePointManually('${p.name}')">
+          </div>
+          <div class="point-controls" style="margin-top: 6px;">
+            <label>Hình:</label>
+            <select onchange="updatePointShape('${p.name}', this.value)">
+              <option value="circle">Hình tròn (Mặc định)</option>
+              <option value="cross">Dấu X (Cross)</option>
+              <option value="square">Hình vuông (Square)</option>
+              <option value="diamond">Hình thoi (Diamond)</option>
+              <option value="triangleUp">Tam giác (Triangle)</option>
+            </select>
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    // Các hàm được gọi từ HTML UI (Sidebar) để update ngược vào biểu đồ
+    window.updatePointManually = function(name) {
+      let p = pointsData.find(d => d.name === name);
+      if (p) {
+        let newX = parseFloat(document.getElementById(`pt-x-${name}`).value);
+        let newY = parseFloat(document.getElementById(`pt-y-${name}`).value);
+        p.ref.moveTo([newX, newY]); // Di chuyển chính xác đến toạ độ mới
+        board.update();
+      }
+    };
+
+    window.updatePointShape = function(name, shapeType) {
+      let p = pointsData.find(d => d.name === name);
+      if (p) {
+        p.ref.setAttribute({face: shapeType}); // Đổi hình dạng (tính năng của JSXGraph)
+        board.update();
+      }
+    };
+
+    // Hàm xử lý khi đang bật mode Nối đường thẳng và click vào điểm
+    function handleLineCreation(clickedPoint) {
+      if (selectedPointsForLine.includes(clickedPoint)) return; // Tránh click 2 lần cùng 1 điểm
+      
+      selectedPointsForLine.push(clickedPoint);
+      showInfo("Tạo đường thẳng", `Đã chọn điểm ${clickedPoint.name}. Hãy chọn điểm thứ 2.`);
+      
+      if (selectedPointsForLine.length === 2) {
+        let p1 = selectedPointsForLine[0];
+        let p2 = selectedPointsForLine[1];
+        
+        // Vẽ đường thẳng đi qua 2 điểm
+        board.create('line', [p1, p2], {
+          strokeColor: '#4a90e2', strokeWidth: 2
+        });
+        
+        // Trích xuất phương trình y = ax + b
+        let dx = p2.X() - p1.X();
+        let dy = p2.Y() - p1.Y();
+        
+        if (Math.abs(dx) < 1e-6) {
+          showInfo(`Đường thẳng qua ${p1.name}${p2.name}`, `x = ${p1.X().toFixed(2)} (Song song trục tung)`);
+        } else {
+          let a = dy / dx;
+          let b = p1.Y() - a * p1.X();
+          let sign = b >= 0 ? '+' : '-';
+          showInfo(`Đường thẳng qua ${p1.name}${p2.name}`, `y = ${a.toFixed(2)}x ${sign} ${Math.abs(b).toFixed(2)}`);
+        }
+        
+        // Reset để chuẩn bị nối đường thẳng khác
+        selectedPointsForLine = []; 
+      }
+    }
     // Gọi hàm lần đầu khi load trang
     updateGraph();
   </script>
