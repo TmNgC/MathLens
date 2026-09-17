@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bạn có thể thấy được hình hài của Toán học - MathLens</title>
+  <meta name="description" content="Nền tảng trực quan hóa Toán học và Giải tích Vật lý." />
+  <style>
+    :root {
+      --purple-deep: #30184d;
+      --purple: #6f4a8e;
+      --purple-mid: #927eb2;
+      --purple-light: #dac1e3;
+      --lavender: #f3edf7;
+      --cream: #fbf9fc;
+      --ink: #21152b;
+      --muted: #6f6575;
+      --white: #ffffff;
+      --border: rgba(48, 24, 77, 0.12);
+      --accent: #ff4a7a; /* Màu nhấn mới để tạo điểm nổi bật */
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0; color: var(--ink); background: var(--cream);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.6;
+    }
+
+    nav {
+      position: sticky; top: 0; z-index: 10;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 18px 7vw; background: rgba(251, 249, 252, 0.86);
+      backdrop-filter: blur(14px); border-bottom: 1px solid var(--border);
+    }
+    .brand { color: var(--purple-deep); text-decoration: none; font-weight: 800; font-size: 1.2rem; }
+    .nav-links { display: flex; gap: 8px; align-items: center; }
+    .nav-links a { color: var(--muted); text-decoration: none; padding: 8px 14px; border-radius: 999px; font-size: 0.92rem; transition: 0.2s ease; }
+    .nav-links a:hover, .nav-links a.active { color: var(--purple-deep); background: var(--purple-light); }
+    .btn-visualize { background: var(--purple-deep) !important; color: white !important; font-weight: 600; box-shadow: 0 4px 12px rgba(48,24,77,0.2); }
+
+    .hero {
+      min-height: 82vh; display: grid; place-items: center; padding: 90px 7vw 100px; position: relative; overflow: hidden;
+      background: radial-gradient(circle at 80% 20%, rgba(218,193,227,.75), transparent 28%),
+                  radial-gradient(circle at 10% 80%, rgba(146,126,178,.18), transparent 30%);
+    }
+    .hero-content { max-width: 1050px; width: 100%; position: relative; z-index: 1; }
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 8px; color: var(--purple-deep);
+      background: rgba(218,193,227,.6); border: 1px solid rgba(48,24,77,.08); border-radius: 999px; padding: 7px 13px; font-size: .82rem; font-weight: 700; margin-bottom: 25px;
+    }
+    .eyebrow span { width: 7px; height: 7px; border-radius: 50%; background: var(--purple); }
+    
+    h1 { margin: 0; max-width: 900px; color: var(--purple-deep); font-size: clamp(2.8rem, 7vw, 6.5rem); line-height: 1.05; letter-spacing: -0.04em; font-weight: 850; }
+    h1 .highlight { color: var(--accent); }
+
+    .mission { margin: 30px 0 0; max-width: 760px; font-size: clamp(1.2rem, 2vw, 1.65rem); line-height: 1.45; color: #493b54; font-weight: 500; }
+    .mission strong { color: var(--purple-deep); }
+    .intro { margin-top: 55px; max-width: 700px; color: var(--muted); font-size: 1rem; }
+
+    .section { padding: 95px 7vw; border-top: 1px solid var(--border); }
+    .section-inner { max-width: 1050px; margin: auto; }
+    .section-label { color: var(--purple); font-size: .78rem; text-transform: uppercase; letter-spacing: .12em; font-weight: 800; margin-bottom: 10px; }
+    h2 { margin: 0; font-size: clamp(2rem, 4vw, 3.3rem); letter-spacing: -.045em; color: var(--purple-deep); line-height: 1.05; }
+    .section-description { max-width: 680px; margin: 18px 0 42px; color: var(--muted); }
+
+    .feature-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
+    .feature {
+      padding: 28px; min-height: 190px; border: 1px solid var(--border); border-radius: 24px; background: var(--white);
+      transition: transform .2s ease, box-shadow .2s ease, border-color .2s;
+      text-decoration: none; color: inherit; display: block;
+    }
+    .feature:hover { transform: translateY(-4px); box-shadow: 0 18px 45px rgba(48,24,77,.08); border-color: var(--purple-mid); }
+    .feature-number { color: var(--purple-mid); font-weight: 800; font-size: .85rem; }
+    .feature h3 { margin: 18px 0 8px; font-size: 1.25rem; color: var(--purple-deep); display: flex; justify-content: space-between;}
+    .feature h3::after { content: "→"; opacity: 0; transition: opacity 0.2s, transform 0.2s; transform: translateX(-10px); }
+    .feature:hover h3::after { opacity: 1; transform: translateX(0); }
+    .feature p { margin: 0; color: var(--muted); font-size: .94rem; }
+
+    footer { padding: 30px 7vw; color: var(--muted); font-size: .82rem; border-top: 1px solid var(--border); text-align: center; }
+
+    @media (max-width: 700px) {
+      .feature-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a class="brand" href="#home">MathLens</a>
+    <div class="nav-links">
+      <a class="active" href="#home">Home</a>
+      <a href="#calculus">Giải tích</a>
+      <a href="#physics">Vật lý</a>
+      <a class="btn-visualize" href="graph.html">Phân tích Hàm số ↗</a>
+    </div>
+  </nav>
+
+  <main id="home">
+    <section class="hero">
+      <div class="hero-content">
+        <div class="eyebrow"><span></span> Không gian Tương tác & Trực quan</div>
+
+        <h1>Bạn có thể thấy được<br><span class="highlight">Hình hài</span> của Toán học</h1>
+
+        <p class="mission">
+          <strong>Nhìn thấy Toán học. Tương tác với Toán học. Hiểu bản chất của Toán học.</strong>
+        </p>
+
+        <p class="intro">
+          Một không gian học tập trực quan, nơi những khái niệm Toán học tưởng chừng
+          trừu tượng được chuyển thành hình ảnh, chuyển động và trải nghiệm tương tác.
+          Vượt xa khỏi việc tính toán vô hồn, MathLens biến các công thức thành trực giác thực sự.
+        </p>
+      </div>
+    </section>
+
+    <!-- SECTION GIẢI TÍCH -->
+    <section class="section" id="calculus">
+      <div class="section-inner">
+        <div class="section-label">01 · Giải tích Toán học</div>
+        <h2>Biến những ký hiệu<br>thành điều có thể chạm vào.</h2>
+        <p class="section-description">Khám phá cách vạn vật biến thiên thông qua nền tảng mô phỏng hàm số đa chức năng.</p>
+
+        <div class="feature-grid">
+          <a href="graph.html" class="feature">
+            <div class="feature-number">01</div>
+            <h3>Giới hạn (Limits)</h3>
+            <p>Quan sát một đại lượng hội tụ hay phân kỳ khi x tiến tới vô cùng hoặc một điểm, hiểu bản chất của tiệm cận.</p>
+          </a>
+          <a href="graph.html" class="feature">
+            <div class="feature-number">02</div>
+            <h3>Đạo hàm (Derivatives)</h3>
+            <p>Độ dốc, tiếp tuyến, cực trị và điểm uốn. Chuyển động biến thiên ngay trên hệ trục tọa độ.</p>
+          </a>
+          <a href="graph.html" class="feature">
+            <div class="feature-number">03</div>
+            <h3>Tích phân (Integrals)</h3>
+            <p>Mô phỏng tổng Riemann, diện tích dưới đường cong, thể tích khối tròn xoay và liên hệ cơ bản với Đạo hàm.</p>
+          </a>
+          <a href="graph.html" class="feature">
+            <div class="feature-number">04</div>
+            <h3>Dãy & Chuỗi (Series)</h3>
+            <p>Mô phỏng chuỗi Taylor, Maclaurin, sự hội tụ của chuỗi số cấp số cộng và cấp số nhân.</p>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION VẬT LÝ -->
+    <section class="section" id="physics">
+      <div class="section-inner">
+        <div class="section-label">02 · Giải tích Vật lý</div>
+        <h2>Khi Toán học<br>mô tả chuyển động của thế giới.</h2>
+        <p class="section-description">Toán học không chỉ nằm trên giấy. Hãy xem đạo hàm và tích phân điều khiển các định luật tự nhiên như thế nào.</p>
+        
+        <div class="feature-grid">
+          <a href="graph.html" class="feature">
+            <div class="feature-number">01</div>
+            <h3>Cơ học (Kinematics & Dynamics)</h3>
+            <p>Liên hệ giữa Vị trí, Vận tốc (Đạo hàm bậc 1) và Gia tốc (Đạo hàm bậc 2). Quỹ đạo ném xiên, con lắc và bảo toàn động lượng.</p>
+          </a>
+          <a href="graph.html" class="feature">
+            <div class="feature-number">02</div>
+            <h3>Điện từ học (Electromagnetism)</h3>
+            <p>Mô phỏng đường sức từ, thông lượng điện trường (Tích phân mặt), từ trường xoáy và sự lan truyền của sóng điện từ.</p>
+          </a>
+          <a href="graph.html" class="feature">
+            <div class="feature-number">03</div>
+            <h3>Nhiệt lực học (Thermodynamics)</h3>
+            <p>Quá trình giãn nở khí lý tưởng, tích phân công (Work) qua đồ thị P-V</p>
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    MathLens · Bạn có thể thấy được hình hài của Toán học
+  </footer>
+</body>
+</html>
