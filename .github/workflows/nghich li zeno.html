@@ -1,0 +1,229 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zeno's Paradox — MathLens</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #05060a; color: #f3f5f7; font-family: Inter, sans-serif; overflow: hidden; }
+  canvas { display: block; width: 100vw; height: 100vh; }
+  
+  .hud { position: fixed; left: 5vw; top: 7vh; pointer-events: none; }
+  .eyebrow { font-size: 12px; letter-spacing: 0.28em; text-transform: uppercase; color: #7f8794; margin-bottom: 15px; }
+  .formula { font-family: Georgia, serif; font-size: clamp(28px, 4vw, 50px); font-weight: 400; }
+  
+  .stats { margin-top: 20px; font-family: monospace; font-size: 18px; color: #aeb6c2; line-height: 1.8; }
+  .stats b { color: #fff; font-size: 22px;}
+  .stats .highlight { color: #2ed573; text-shadow: 0 0 10px rgba(46,213,115,0.4); }
+  .stats .infinity-badge { color: #f59e0b; font-weight: bold; margin-left: 8px; font-size: 14px; }
+  
+  .caption { position: fixed; left: 5vw; bottom: 7vh; max-width: 500px; color: #7f8794; font-size: 14.5px; line-height: 1.6; }
+  .caption b { color: #dce2e9; }
+
+  .btn-replay {
+    position: fixed; right: 5vw; bottom: 7vh;
+    background: #1e293b; color: #38bdf8; border: 1px solid #334155;
+    padding: 10px 20px; border-radius: 8px; cursor: pointer;
+    font-weight: 600; display: none; transition: all 0.2s;
+  }
+  .btn-replay:hover { background: #334155; color: #fff; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+
+<div class="hud">
+  <div class="eyebrow">Nguồn gốc giới hạn · Nghịch lý Zeno</div>
+  <div class="formula">
+    S = 1/2 + 1/4 + 1/8 + ... = 1
+  </div>
+  <div class="stats">
+    Bước lấp thứ (n): <b id="step-val">0</b><span id="speed-tag" class="infinity-badge"></span><br>
+    Tổng diện tích S: <b class="highlight" id="sum-val">0.000000000</b><br>
+    Khoảng trống còn lại: <b id="rem-val">1.000000000</b>
+  </div>
+</div>
+
+<div class="caption">
+  <b>Nghịch lý phân đôi:</b> Để lấp đầy hình vuông, ta lấp 1/2 diện tích, rồi 1/2 phần còn lại, lặp lại vô hạn lần. Dù bước $n$ tăng ra vô cực, khoảng trống $2^{-n}$ thu nhỏ về $0$ và tổng diện tích $S_n$ đạt giới hạn chính xác là <b>1</b>.
+</div>
+
+<button class="btn-replay" id="btn-replay" onclick="resetAnimation()">Phát lại Animation</button>
+
+<script>
+const canvas = document.getElementById("c");
+const ctx = canvas.getContext("2d");
+let W, H, size, startX, startY;
+
+function resize() { 
+  W = innerWidth; H = innerHeight; 
+  canvas.width = W; canvas.height = H; 
+  size = Math.min(W, H) * 0.65;
+  startX = (W - size) / 2 + (W > 900 ? 120 : 0);
+  startY = (H - size) / 2;
+}
+addEventListener("resize", resize); 
+resize();
+
+let currentStep = 1;
+let currentProgress = 0;
+let blocks = []; 
+let accelSpeed = 1; 
+let isInfinity = false;
+let pulseAngle = 0;
+
+// Thuật toán chuẩn xác xác định vị trí khối thứ n & phần còn lại
+function getBlockLayout(step) {
+  let x = startX, y = startY, w = size, h = size;
+  for (let i = 1; i < step; i++) {
+    if (i % 2 !== 0) {
+      x += w / 2;
+      w /= 2;
+    } else {
+      y += h / 2;
+      h /= 2;
+    }
+  }
+  
+  // Trả về khối cần lấp ở bước này và phần còn lại
+  if (step % 2 !== 0) {
+    return {
+      block: { x, y, w: w / 2, h },
+      remaining: { x: x + w / 2, y, w: w / 2, h }
+    };
+  } else {
+    return {
+      block: { x, y, w, h: h / 2 },
+      remaining: { x, y: y + h / 2, w, h: h / 2 }
+    };
+  }
+}
+
+function updateHUD(n) {
+  const stepEl = document.getElementById("step-val");
+  const sumEl = document.getElementById("sum-val");
+  const remEl = document.getElementById("rem-val");
+  const speedTag = document.getElementById("speed-tag");
+
+  if (isInfinity) {
+    stepEl.textContent = "∞";
+    speedTag.textContent = "[Đạt giới hạn vô cực]";
+    sumEl.textContent = "1.000000000 (lim S_n = 1)";
+    remEl.textContent = "0.000000000 (lim R_n = 0)";
+    return;
+  }
+
+  if (n <= 20) {
+    let remVal = Math.pow(0.5, n - 1 + currentProgress);
+    let sumVal = 1 - remVal;
+    stepEl.textContent = n;
+    sumEl.textContent = sumVal.toFixed(9);
+    remEl.textContent = remVal.toFixed(9);
+    speedTag.textContent = "";
+  } else {
+    speedTag.textContent = "[Tăng tốc → ∞]";
+    stepEl.textContent = Math.floor(n).toLocaleString();
+    
+    // Xử lý hiển thị số học chính xác khi n quá lớn (tránh lỗi tràn số IEEE 754)
+    if (n < 40) {
+      let remVal = Math.pow(0.5, n);
+      sumEl.textContent = (1 - remVal).toFixed(9);
+      remEl.textContent = remVal.toFixed(9);
+    } else if (n < 1000) {
+      sumEl.textContent = "0." + "9".repeat(9) + "...";
+      remEl.textContent = `2⁻${Math.floor(n)} → 0`;
+    } else {
+      sumEl.textContent = "1 - 2⁻ⁿ ≈ 1.000000000";
+      remEl.textContent = `2⁻${Math.floor(n)} → 0`;
+    }
+  }
+}
+
+function draw() {
+  ctx.clearRect(0, 0, W, H);
+  
+  // 1. Viền khung vuông tổng (Diện tích S = 1)
+  ctx.strokeStyle = "#29303a"; 
+  ctx.lineWidth = 2;
+  ctx.strokeRect(startX, startY, size, size);
+
+  // 2. Vẽ các khối hữu hạn đã hoàn thành (tối đa 20 khối đầu tiên)
+  blocks.forEach((b, idx) => {
+    ctx.fillStyle = `hsl(${150 + idx * 12}, 70%, 50%)`;
+    ctx.shadowColor = ctx.fillStyle; 
+    ctx.shadowBlur = 10;
+    ctx.fillRect(b.x, b.y, b.w, b.h);
+  });
+  ctx.shadowBlur = 0;
+
+  let lastLayout = getBlockLayout(Math.min(currentStep, 20));
+
+  // 3. Xử lý trạng thái Animation
+  if (!isInfinity) {
+    if (currentStep <= 20) {
+      // Giai đoạn 1: Lấp mượt từng khối
+      let active = lastLayout.block;
+      ctx.fillStyle = `hsl(${150 + currentStep * 12}, 70%, 50%)`;
+      
+      let drawW = currentStep % 2 !== 0 ? active.w * currentProgress : active.w;
+      let drawH = currentStep % 2 === 0 ? active.h * currentProgress : active.h;
+
+      ctx.fillRect(active.x, active.y, drawW, drawH);
+
+      currentProgress += 0.04;
+      if (currentProgress >= 1) {
+        blocks.push(active);
+        currentStep++;
+        currentProgress = 0;
+      }
+    } else {
+      // Giai đoạn 2: Tăng tốc độ nhảy số n theo cấp số nhân
+      accelSpeed *= 1.08; 
+      currentStep += Math.floor(accelSpeed);
+
+      // Điểm sáng nhấp nháy tại góc còn lại cực nhỏ
+      let rem = lastLayout.remaining;
+      ctx.fillStyle = "#2ed573";
+      ctx.shadowColor = "#2ed573";
+      ctx.shadowBlur = 15;
+      ctx.fillRect(rem.x, rem.y, Math.max(rem.w, 2), Math.max(rem.h, 2));
+      ctx.shadowBlur = 0;
+
+      // Khi n đạt ngưỡng vô cùng lớn -> Chuyển sang trạng thái Vô Cực
+      if (currentStep >= 1e15) {
+        isInfinity = true;
+        document.getElementById("btn-replay").style.display = "block";
+      }
+    }
+  } else {
+    // Giai đoạn 3: Trạng thái Vô cùng (Pulse Glow Effect)
+    pulseAngle += 0.05;
+    let glow = 15 + Math.sin(pulseAngle) * 10;
+    
+    ctx.strokeStyle = "#2ed573";
+    ctx.lineWidth = 3;
+    ctx.shadowColor = "#2ed573";
+    ctx.shadowBlur = glow;
+    ctx.strokeRect(startX, startY, size, size);
+    ctx.shadowBlur = 0;
+  }
+
+  updateHUD(currentStep);
+  requestAnimationFrame(draw);
+}
+
+function resetAnimation() {
+  currentStep = 1;
+  currentProgress = 0;
+  blocks = [];
+  accelSpeed = 1;
+  isInfinity = false;
+  document.getElementById("btn-replay").style.display = "none";
+}
+
+draw();
+</script>
+</body>
+</html>
