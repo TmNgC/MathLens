@@ -3,410 +3,410 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Visualize Function - MathLens</title>
+  <title>MathLens - Visualizer</title>
   
-  <!-- JSXGraph CSS -->
+  <!-- Thư viện JSXGraph & KaTeX -->
   <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraph.css" />
-  <!-- KaTeX CSS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
 
   <style>
+    /* =========================================
+       1. THEME: TÍM ĐẬM CAO CẤP (DARK PURPLE)
+       ========================================= */
     :root {
-      --bg: #fbf9fc;
-      --sidebar: #ffffff;
-      --ink: #21152b;
-      --purple: #6f4a8e;
-      --purple-deep: #30184d;
-      --purple-light: #dac1e3;
-      --border: rgba(48, 24, 77, 0.12);
-      --accent: #ff4a7a;
+      --bg-app: #0b0614;         /* Nền tổng thể cực tối */
+      --bg-panel: #160d24;       /* Nền sidebar/panel */
+      --bg-card: #1f1433;        /* Nền các thẻ (card) */
+      --text-main: #e2e8f0;      /* Chữ trắng ngà */
+      --text-muted: #94a3b8;     /* Chữ xám */
+      --purple-accent: #8b5cf6;  /* Tím sáng (chủ đạo cho nút) */
+      --purple-glow: rgba(139, 92, 246, 0.4);
+      --border: #2d1f42;         /* Viền */
+      --danger: #ef4444;         /* Đỏ xoá */
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: Inter, system-ui, sans-serif; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
     
-    body { display: flex; height: 100vh; width: 100vw; overflow: hidden; background: var(--bg); color: var(--ink); }
+    body { 
+      display: flex; height: 100vh; width: 100vw; overflow: hidden; 
+      background: var(--bg-app); color: var(--text-main);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
 
-    /* SIDEBAR (Bảng điều khiển Toán học) */
+    /* =========================================
+       2. HOẠT HOẠ (ANIMATIONS) "LÀM MÀU"
+       ========================================= */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes pulseGlow {
+      0% { box-shadow: 0 0 0 0 var(--purple-glow); }
+      70% { box-shadow: 0 0 10px 4px rgba(139,92,246, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(139,92,246, 0); }
+    }
+
+    .anim-fade-in { animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
+    /* =========================================
+       3. SIDEBAR (BẢNG ĐIỀU KHIỂN BÊN TRÁI)
+       ========================================= */
     .sidebar {
-      width: 420px;
-      background: var(--sidebar);
-      border-right: 1px solid var(--border);
-      display: flex;
-      flex-direction: column;
-      box-shadow: 2px 0 15px rgba(0,0,0,0.03);
-      z-index: 10;
+      width: 400px; background: var(--bg-panel); border-right: 1px solid var(--border);
+      display: flex; flex-direction: column; z-index: 10;
+      box-shadow: 4px 0 20px rgba(0,0,0,0.5);
     }
 
-    .header { padding: 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between;}
-    .header h1 { font-size: 1.1rem; color: var(--purple-deep); font-weight: 800; }
-    .back-btn { text-decoration: none; color: var(--purple); font-size: 0.9rem; font-weight: 600;}
-    .back-btn:hover { color: var(--accent); }
+    .header {
+      padding: 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;
+    }
+    .header h1 { font-size: 1.1rem; font-weight: 700; letter-spacing: 0.5px; color: var(--text-main); }
+    .back-btn { color: var(--purple-accent); text-decoration: none; font-size: 0.85rem; font-weight: 600; transition: 0.2s;}
+    .back-btn:hover { text-shadow: 0 0 8px var(--purple-glow); }
 
-    .input-section { padding: 20px; border-bottom: 1px solid var(--border); background: var(--bg); }
-    .input-label { font-size: 0.8rem; font-weight: 700; color: var(--purple); text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.05em; display: block; }
+    /* Khu vực quản lý hàm số */
+    .func-list-container {
+      padding: 20px; flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 15px;
+    }
+
+    /* Style giống hình ChatGPT/GeoGebra bạn gửi */
+    .func-card {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px;
+      padding: 15px; display: flex; flex-direction: column; gap: 10px;
+      transition: all 0.3s ease; opacity: 0;
+    }
+    .func-card:hover { border-color: var(--purple-accent); box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+
+    .func-top-row { display: flex; align-items: center; gap: 12px; }
+    .color-dot { width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; }
     
-    input[type="text"] {
-      width: 100%; padding: 14px 16px; font-size: 1.1rem;
-      border: 2px solid var(--border); border-radius: 12px;
-      outline: none; transition: border 0.2s; background: white; font-family: monospace;
-    }
-    input[type="text"]:focus { border-color: var(--purple); box-shadow: 0 0 0 4px var(--purple-light); }
+    .func-input-wrapper { flex-grow: 1; display: flex; align-items: center; background: var(--bg-panel); border-radius: 8px; padding: 4px 10px; border: 1px solid var(--border); transition: 0.2s;}
+    .func-input-wrapper:focus-within { border-color: var(--purple-accent); }
+    .func-input-wrapper span { color: var(--text-muted); font-family: 'Times New Roman', serif; font-style: italic; margin-right: 5px; }
+    .func-input { width: 100%; background: transparent; border: none; color: var(--text-main); font-size: 1rem; outline: none; font-family: monospace; }
 
-    /* Nơi render LaTeX */
-    .latex-output {
-      margin-top: 15px; padding: 15px;
-      background: rgba(111, 74, 142, 0.05); border-radius: 12px;
-      font-size: 1.3rem; min-height: 60px;
-      display: flex; align-items: center; justify-content: center; overflow-x: auto;
-    }
+    /* Nút icon: Mắt (Hiển thị) và Thùng rác (Xoá) */
+    .icon-btn { background: transparent; border: none; color: var(--text-muted); cursor: pointer; font-size: 1rem; transition: 0.2s; padding: 5px; }
+    .icon-btn:hover { color: var(--text-main); }
+    .icon-btn.delete:hover { color: var(--danger); }
+    .icon-btn.hidden { opacity: 0.3; }
 
-    /* KHO TÍNH CHẤT & CÔNG CỤ (Khác biệt so với GeoGebra) */
-    .properties-section { padding: 20px; overflow-y: auto; flex-grow: 1; }
-    
-    .prop-card {
-      border: 1px solid var(--border); border-radius: 12px;
-      margin-bottom: 12px; padding: 15px; background: white;
-    }
-    .prop-header { display: flex; justify-content: space-between; font-weight: 700; font-size: 0.9rem; color: var(--purple-deep); margin-bottom: 8px;}
-    .prop-value { font-size: 0.9rem; color: var(--muted); }
-    
-    .tools-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
-    .tool-btn {
-      background: var(--bg); border: 1px solid var(--border); padding: 10px; border-radius: 8px;
-      text-align: left; font-size: 0.85rem; color: var(--ink); cursor: pointer; transition: 0.2s;
-    }
-    .tool-btn:hover, .tool-btn.active { background: var(--purple-light); border-color: var(--purple); color: var(--purple-deep); font-weight: 600; }
+    /* Vùng hiển thị LaTeX */
+    .latex-preview { min-height: 35px; display: flex; align-items: center; padding-left: 26px; color: #cbd5e1; }
 
-    /* BẢNG JSXGRAPH */
-    .graph-container { flex-grow: 1; position: relative; }
-    .jxgbox { width: 100%; height: 100%; background-color: #ffffff; border: none; }
+    .add-btn {
+      background: transparent; border: 1px dashed var(--border); color: var(--text-muted);
+      padding: 12px; border-radius: 12px; font-size: 0.95rem; cursor: pointer; transition: 0.2s;
+      display: flex; justify-content: center; align-items: center; gap: 8px;
+    }
+    .add-btn:hover { border-color: var(--purple-accent); color: var(--purple-accent); }
 
-    /* --- GIAO DIỆN CHỈNH SỬA ĐIỂM (POINT) --- */
-#points-container {
-  display: flex; flex-direction: column; gap: 8px; margin-top: 10px;
-}
-.point-item {
-  background: white; border: 1px solid var(--border); border-radius: 8px; padding: 10px;
-  font-size: 0.85rem; box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-}
-.point-header { 
-  display: flex; justify-content: space-between; font-weight: 700; color: var(--purple-deep); margin-bottom: 8px;
-}
-.point-controls { 
-  display: flex; gap: 8px; align-items: center; 
-}
-.point-controls label { color: var(--muted); font-weight: 600; }
-.point-controls input {
-  width: 55px; padding: 4px; border: 1px solid var(--border); border-radius: 4px; 
-  font-family: monospace; text-align: center; outline: none; transition: 0.2s;
-}
-.point-controls input:focus { border-color: var(--purple); }
-.point-controls select {
-  flex-grow: 1; padding: 5px; border: 1px solid var(--border); border-radius: 4px; 
-  background: var(--bg); color: var(--ink); outline: none; cursor: pointer;
-}
+    /* Khu vực Phân tích Toán học (Bảng biến thiên, Cực trị...) */
+    .math-analysis-panel {
+      padding: 20px; border-top: 1px solid var(--border); background: var(--bg-card);
+      min-height: 250px;
+    }
+    .panel-title { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: var(--purple-accent); margin-bottom: 15px; font-weight: 700; }
+    .analysis-content { font-size: 0.9rem; color: var(--text-muted); line-height: 1.5; }
+
+    /* =========================================
+       4. GRAPH CONTAINER (JSXGRAPH DARK MODE)
+       ========================================= */
+    .graph-container { flex-grow: 1; position: relative; background: var(--bg-app); }
+    .jxgbox { width: 100%; height: 100%; border: none; background: transparent !important; }
+
+    /* Custom scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg-panel); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--purple-accent); }
   </style>
 </head>
 <body>
 
-  <!-- BẢNG ĐIỀU KHIỂN BÊN TRÁI -->
+  <!-- BẢNG ĐIỀU KHIỂN -->
   <aside class="sidebar">
     <div class="header">
-      <h1>MathLens Analytics</h1>
-      <a href="index.html" class="back-btn">← Quay lại</a>
+      <h1>MathLens</h1>
+      <a href="#" class="back-btn">Trang chủ ↗</a>
     </div>
 
-    <div class="input-section">
-      <label class="input-label">Nhập hàm số f(x)</label>
-      <input type="text" id="math-input" placeholder="Ví dụ: x^3 - 3*x + 1" value="x^2 - 4">
-      
-      <!-- Khung hiển thị toán học KaTeX -->
-      <div class="latex-output" id="latex-display"></div>
+    <!-- Danh sách Hàm số -->
+    <div class="func-list-container" id="func-list">
+      <!-- Các hàm số sẽ được JS render vào đây -->
+    </div>
+    
+    <div style="padding: 0 20px 20px;">
+      <button class="add-btn" onclick="UI.addFunction()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+        Thêm hàm số
+      </button>
     </div>
 
-    <div class="properties-section">
-      <span class="input-label">Thuộc tính Giải tích tự động</span>
-      
-      <div class="prop-card">
-        <div class="prop-header"><span>Tập xác định</span></div>
-        <div class="prop-value" id="domain">D = ℝ</div>
+    <!-- KHU VỰC KẾT QUẢ GIẢI TÍCH (Chờ xử lý từ MathCore) -->
+    <div class="math-analysis-panel">
+      <div class="panel-title">Phân tích Toán học</div>
+      <div id="analysis-output" class="analysis-content">
+        <!-- Text mặc định -->
+        Hãy nhập một hàm số. Hệ thống sẽ phân tích sự biến thiên, tìm nghiệm và các điểm cực trị tại đây...
       </div>
-      
-      <div class="prop-card">
-        <div class="prop-header"><span>Giao điểm với trục hoành (Nghiệm)</span></div>
-        <div class="prop-value" id="roots">Đang tính toán...</div>
-      </div>
-
-      <div class="prop-card">
-        <div class="prop-header"><span>Cực trị (Min/Max cục bộ)</span></div>
-        <div class="prop-value" id="extrema">Đang tính toán...</div>
-      </div>
-
-      <span class="input-label" style="margin-top: 20px;">Công cụ tương tác (Toolbox)</span>
-      <div class="tools-grid">
-        <button class="tool-btn active">Tiếp tuyến (Tangent)</button>
-        <button class="tool-btn">Đạo hàm f'(x)</button>
-        <button class="tool-btn">Điểm uốn (Inflection)</button>
-        <button class="tool-btn">Tích phân & Diện tích</button>
-        <button class="tool-btn">Đường thẳng</button>
-        <button class="tool-btn">Vector pháp tuyến</button>
-        <button class="tool-btn">Conics (Parabol/Elip)</button>
-        <button class="tool-btn">Xu hướng biến thiên</button>
-      </div>
-
-      <!-- PHẦN HÌNH HỌC & ĐIỂM -->
-      <span class="section-title" style="margin-top: 20px;">Hình học & Tọa độ</span>
-      <div class="tools-grid">
-        <button class="tool-btn" id="btn-add-point">Chấm điểm (Point)</button>
-        <button class="tool-btn" id="btn-add-line">Đường thẳng (Line)</button>
-      </div>
-
-      <!-- Nơi chứa danh sách các điểm được tạo để tuỳ chỉnh toạ độ/hình dạng -->
-      <div id="points-container"></div>
     </div>
   </aside>
 
-  <!-- VÙNG VẼ ĐỒ THỊ BÊN PHẢI -->
+  <!-- ĐỒ THỊ -->
   <main class="graph-container">
     <div id="box" class="jxgbox"></div>
   </main>
 
-  <!-- THƯ VIỆN KẾT NỐI -->
+  <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraphcore.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
-  <!-- Dùng Math.js để evaluate string của người dùng thành JS math logic an toàn -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.8.0/math.js"></script>
 
   <script>
-    // 1. Khởi tạo Bảng vẽ JSXGraph (Giao diện lưới xám hiện đại, đẹp hơn GeoGebra mặc định)
+    /* ========================================================
+       PHẦN 1: KHỞI TẠO ĐỒ THỊ (DARK MODE)
+       ======================================================== */
     JXG.Options.board.minimizeReflow = 'none';
+    
+    // Ghi đè CSS của JSXGraph để phù hợp Dark Theme
+    JXG.Options.text.useMathJax = false; 
+    
     const board = JXG.JSXGraph.initBoard('box', {
       boundingbox: [-10, 10, 10, -10], 
-      axis: true,
+      axis: false, // Ta tự vẽ trục để chỉnh màu đẹp hơn
       grid: true,
-      showCopyright: false,
+      showCopyright: false, 
       showNavigation: true,
-      defaultAxes: {
-        x: { strokeColor: '#a192b0', strokeWidth: 1.5 },
-        y: { strokeColor: '#a192b0', strokeWidth: 1.5 }
-      }
+      keepaspectratio: true
     });
 
-    let currentGraph = null;
-    let tangentLine = null;
-    let glidingPoint = null;
-
-    const inputEl = document.getElementById('math-input');
-    const latexDisplay = document.getElementById('latex-display');
-    const rootsDisplay = document.getElementById('roots');
-
-    // Hàm cập nhật đồ thị và các thông số
-    function updateGraph() {
-      const expr = inputEl.value.trim() || '0';
-      
-      try {
-        // Xoá đồ thị cũ nếu có
-        if (currentGraph) board.removeObject(currentGraph);
-        if (tangentLine) board.removeObject(tangentLine);
-        if (glidingPoint) board.removeObject(glidingPoint);
-
-        // Compile logic Toán học bằng Math.js
-        const compiledNode = math.compile(expr);
-        
-        // Vẽ lại đồ thị
-        currentGraph = board.create('functiongraph', [
-          function(x) { return compiledNode.evaluate({ x: x }); }
-        ], { 
-          strokeColor: '#ff4a7a', // Màu Accent đẹp mắt
-          strokeWidth: 3, 
-          highlight: true 
-        });
-
-        // THÊM: Tính năng vượt trội - Point trượt và tiếp tuyến tương tác
-        glidingPoint = board.create('glider', [2, 0, currentGraph], {
-          name: 'P', size: 5, color: '#30184d'
-        });
-        tangentLine = board.create('tangent', [glidingPoint], {
-          strokeColor: '#6f4a8e', strokeWidth: 2, dash: 2
-        });
-
-        // 3. Chuyển Text sang dạng LaTeX và hiển thị bằng KaTeX
-        // Math.js có sẵn parse().toTex() cực kì tiện dụng cho dấu mũ ^ hay gạch dưới _
-        const tex = math.parse(expr).toTex();
-        katex.render(`f(x) = ${tex}`, latexDisplay, {
-          throwOnError: false,
-          displayMode: true
-        });
-
-        // (Ví dụ Logic Fake để hiển thị cho UI: Tính đạo hàm bằng math.js để đoán Min/Max, 
-        // Trong hệ thống thật bạn cần Newton-Raphson method hoặc mượn Algebrite để giải phương trình)
-        rootsDisplay.innerText = "Chức năng tìm nghiệm (Giao điểm Oxy) tự động...";
-        
-      } catch (error) {
-        // Xử lý lỗi im lặng khi user đang gõ dở dang
-        katex.render(`...`, latexDisplay, { throwOnError: false });
-      }
-    }
-
-    // Lắng nghe thay đổi khi gõ
-    inputEl.addEventListener('input', updateGraph);
-
-    // --- 5. HỆ THỐNG HÌNH HỌC (ĐIỂM TỰ DO & ĐƯỜNG THẲNG) ---
-    let pointsData = [];
-    let pointCharCode = 65; // Đặt tên từ A, B, C...
-    let geoModes = { point: false, line: false };
-    let selectedPointsForLine = [];
-
-    // Bật/tắt chế độ chấm điểm
-    document.getElementById('btn-add-point').addEventListener('click', function() {
-      this.classList.toggle('active');
-      geoModes.point = this.classList.contains('active');
-      if (geoModes.point) {
-        document.getElementById('btn-add-line').classList.remove('active');
-        geoModes.line = false;
-        showInfo("Chấm điểm", "Click vào bất kì đâu trên mặt phẳng toạ độ để tạo điểm.");
-      }
+    // Tuỳ chỉnh màu trục & lưới thành Dark Mode
+    board.create('axis', [[0, 0], [1, 0]], {
+      ticks: { strokeColor: '#475569', label: { strokeColor: '#94a3b8' } },
+      strokeColor: '#64748b', strokeWidth: 1.5
+    });
+    board.create('axis', [[0, 0], [0, 1]], {
+      ticks: { strokeColor: '#475569', label: { strokeColor: '#94a3b8' } },
+      strokeColor: '#64748b', strokeWidth: 1.5
     });
 
-    // Bật/tắt chế độ nối đường thẳng
-    document.getElementById('btn-add-line').addEventListener('click', function() {
-      this.classList.toggle('active');
-      geoModes.line = this.classList.contains('active');
-      selectedPointsForLine = [];
-      if (geoModes.line) {
-        document.getElementById('btn-add-point').classList.remove('active');
-        geoModes.point = false;
-        showInfo("Đường thẳng", "Hãy click vào 2 điểm có sẵn trên đồ thị để nối đường thẳng.");
-      }
-    });
+    /* ========================================================
+       PHẦN 2: KIẾN TRÚC TOÁN HỌC (CHỜ BẠN VIẾT SAU - **)
+       Đây là nơi tập trung toàn bộ "Bộ não" của hệ thống
+       ======================================================== */
+    const MathCore = {
+      // 1. Phân tích miền xác định (Domain)
+      getDomain: function(expr) {
+        // ** YÊU CẦU LẬP TRÌNH SAU **
+        return "\\mathbb{R}"; // Mặc định trả về R
+      },
 
-    // Bắt sự kiện click lên mặt phẳng (Board)
-    board.on('down', function(e) {
-      if (!geoModes.point) return;
-      
-      // Lấy toạ độ toán học (x, y) từ vị trí trỏ chuột
-      let can = board.c1rst;
-      let pos = board.getMousePosition(e, can);
-      let coords = new JXG.Coords(JXG.COORDS_BY_SCREEN, pos, board);
-      
-      createNewFreePoint(coords.usrCoords[1], coords.usrCoords[2]);
-    });
-
-    // Hàm tạo điểm và render UI
-    function createNewFreePoint(x, y) {
-      let ptName = String.fromCharCode(pointCharCode++);
-      
-      // Tạo point bằng JSXGraph
-      let pt = board.create('point', [x, y], {
-        name: ptName, size: 4, face: 'circle', color: '#ff4a7a', 
-        label: { offset: [10, 10], fontWeight: 'bold' }
-      });
-      
-      pointsData.push({ name: ptName, ref: pt });
-      
-      // Cập nhật lại UI tọa độ khi người dùng dùng chuột kéo điểm trên board
-      pt.on('drag', function() {
-        document.getElementById(`pt-x-${ptName}`).value = this.X().toFixed(2);
-        document.getElementById(`pt-y-${ptName}`).value = this.Y().toFixed(2);
-      });
-
-      // Bắt sự kiện click vào chính điểm này (Dùng cho chức năng Line hoặc Xem tọa độ)
-      pt.on('down', function() {
-        if (geoModes.line) {
-          handleLineCreation(this);
-        } else if (!geoModes.point) {
-          showInfo(`Điểm ${this.name}`, `Tọa độ: (${this.X().toFixed(2)}, ${this.Y().toFixed(2)})`);
+      // 2. Tính đạo hàm (Derivative)
+      getDerivative: function(expr) {
+        try {
+          return math.derivative(expr, 'x').toString();
+        } catch (e) {
+          return null; // Lỗi cú pháp
         }
-      });
+      },
 
-      renderPointsUI();
-    }
+      // 3. Tìm Nghiệm (Roots / Giao Ox)
+      getRoots: function(expr) {
+        // ** YÊU CẦU LẬP TRÌNH SAU **
+        // Trả về mảng các tọa độ X. Ví dụ: [-1, 2]
+        return [];
+      },
 
-    // Render danh sách các điểm ra Sidebar để tuỳ chỉnh số liệu & hình dạng
-    function renderPointsUI() {
-      const container = document.getElementById('points-container');
-      container.innerHTML = '';
-      
-      pointsData.forEach(p => {
-        let div = document.createElement('div');
-        div.className = 'point-item';
-        div.innerHTML = `
-          <div class="point-header">Điểm ${p.name}</div>
-          <div class="point-controls">
-            <label>X:</label>
-            <input type="number" id="pt-x-${p.name}" step="0.1" value="${p.ref.X().toFixed(2)}" onchange="updatePointManually('${p.name}')">
-            <label>Y:</label>
-            <input type="number" id="pt-y-${p.name}" step="0.1" value="${p.ref.Y().toFixed(2)}" onchange="updatePointManually('${p.name}')">
-          </div>
-          <div class="point-controls" style="margin-top: 6px;">
-            <label>Hình:</label>
-            <select onchange="updatePointShape('${p.name}', this.value)">
-              <option value="circle">Hình tròn (Mặc định)</option>
-              <option value="cross">Dấu X (Cross)</option>
-              <option value="square">Hình vuông (Square)</option>
-              <option value="diamond">Hình thoi (Diamond)</option>
-              <option value="triangleUp">Tam giác (Triangle)</option>
-            </select>
-          </div>
-        `;
-        container.appendChild(div);
-      });
-    }
+      // 4. Tìm Điểm Cực trị (Extrema)
+      getExtrema: function(expr) {
+        // ** YÊU CẦU LẬP TRÌNH SAU **
+        // Gợi ý: Tìm nghiệm của getDerivative(expr) == 0
+        return [];
+      },
 
-    // Các hàm được gọi từ HTML UI (Sidebar) để update ngược vào biểu đồ
-    window.updatePointManually = function(name) {
-      let p = pointsData.find(d => d.name === name);
-      if (p) {
-        let newX = parseFloat(document.getElementById(`pt-x-${name}`).value);
-        let newY = parseFloat(document.getElementById(`pt-y-${name}`).value);
-        p.ref.moveTo([newX, newY]); // Di chuyển chính xác đến toạ độ mới
-        board.update();
+      // 5. Xét Dấu / Bảng biến thiên (Variation Table)
+      getVariationText: function(expr) {
+        // ** YÊU CẦU LẬP TRÌNH SAU **
+        // Nơi xuất ra mã LaTeX cho bảng biến thiên (như hình bạn gửi)
+        return `Phân tích biến thiên đang được xây dựng...`;
       }
     };
 
-    window.updatePointShape = function(name, shapeType) {
-      let p = pointsData.find(d => d.name === name);
-      if (p) {
-        p.ref.setAttribute({face: shapeType}); // Đổi hình dạng (tính năng của JSXGraph)
-        board.update();
+
+    /* ========================================================
+       PHẦN 3: QUẢN LÝ DỮ LIỆU & RENDER GIAO DIỆN (UI)
+       ======================================================== */
+    const COLORS = ['#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#d946ef']; // Xanh, Đỏ, Lục, Cam, Tím
+    let functionsState = [];
+    let nextFuncId = 1;
+
+    const UI = {
+      listEl: document.getElementById('func-list'),
+      analysisEl: document.getElementById('analysis-output'),
+
+      // Thêm hàm số mới
+      addFunction: function(initialExpr = '') {
+        if (functionsState.length >= 5) return; // Giới hạn 5 hàm
+        const newFunc = {
+          id: nextFuncId++,
+          expr: initialExpr,
+          color: COLORS[functionsState.length % COLORS.length],
+          isVisible: true,
+          graphObj: null
+        };
+        functionsState.push(newFunc);
+        this.renderList();
+        Engine.updateGraphs();
+      },
+
+      // Cập nhật giá trị biểu thức
+      updateExpr: function(id, value) {
+        const f = functionsState.find(x => x.id === id);
+        if (f) {
+          f.expr = value;
+          Engine.updateGraphs();
+          this.updateAnalysisPanel();
+        }
+      },
+
+      // Bật/Tắt hiển thị đồ thị (Nút Mắt)
+      toggleVisibility: function(id) {
+        const f = functionsState.find(x => x.id === id);
+        if (f) {
+          f.isVisible = !f.isVisible;
+          this.renderList();
+          Engine.updateGraphs();
+        }
+      },
+
+      // Xoá hàm số
+      deleteFunction: function(id) {
+        functionsState = functionsState.filter(x => x.id !== id);
+        this.renderList();
+        Engine.updateGraphs();
+        this.updateAnalysisPanel();
+      },
+
+      // Vẽ HTML danh sách
+      renderList: function() {
+        this.listEl.innerHTML = '';
+        functionsState.forEach((f, index) => {
+          const card = document.createElement('div');
+          card.className = 'func-card anim-fade-in';
+          card.style.animationDelay = `${index * 0.1}s`; // Hiệu ứng trượt lần lượt
+
+          // Mắt nhắm/mở
+          const eyeIcon = f.isVisible 
+            ? `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`
+            : `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>`;
+
+          card.innerHTML = `
+            <div class="func-top-row">
+              <div class="color-dot" style="background-color: ${f.color}; ${f.isVisible ? `box-shadow: 0 0 8px ${f.color};` : 'opacity: 0.2'}"></div>
+              <div class="func-input-wrapper">
+                <span>f(x)=</span>
+                <input type="text" class="func-input" value="${f.expr}" 
+                       placeholder="Ví dụ: sin(x) hoặc x^2" 
+                       oninput="UI.updateExpr(${f.id}, this.value)">
+              </div>
+              <button class="icon-btn ${!f.isVisible ? 'hidden' : ''}" onclick="UI.toggleVisibility(${f.id})">${eyeIcon}</button>
+              <button class="icon-btn delete" onclick="UI.deleteFunction(${f.id})">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+              </button>
+            </div>
+            <div class="latex-preview" id="latex-${f.id}"></div>
+          `;
+          this.listEl.appendChild(card);
+        });
+      },
+
+      // Cập nhật nội dung bảng Phân tích Toán học
+      updateAnalysisPanel: function() {
+        if (functionsState.length === 0) {
+          this.analysisEl.innerHTML = `Hãy nhập một hàm số...`;
+          return;
+        }
+
+        // Ưu tiên phân tích hàm số đầu tiên trong mảng
+        let mainFunc = functionsState[0];
+        if (!mainFunc.expr.trim()) return;
+
+        let deriv = MathCore.getDerivative(mainFunc.expr);
+        let latexStr = "";
+
+        if (deriv) {
+          try {
+            // Hiển thị f(x) và f'(x) bằng LaTeX
+            let texFx = math.parse(mainFunc.expr).toTex();
+            let texDeriv = math.parse(deriv).toTex();
+            
+            latexStr = `
+              <div style="margin-bottom: 10px;">Hàm số: <br><span id="tex-fx"></span></div>
+              <div style="margin-bottom: 10px;">Đạo hàm: <br><span id="tex-dfx"></span></div>
+              <div style="margin-top: 15px; padding-top: 10px; border-top: 1px dashed var(--border); color: #8b5cf6;">
+                ${MathCore.getVariationText(mainFunc.expr)}
+              </div>
+            `;
+            this.analysisEl.innerHTML = latexStr;
+
+            // Render KaTeX cho Bảng phân tích
+            katex.render(`y = ${texFx}`, document.getElementById('tex-fx'), { displayMode: true, throwOnError: false });
+            katex.render(`y' = ${texDeriv}`, document.getElementById('tex-dfx'), { displayMode: true, throwOnError: false });
+
+          } catch (e) {
+             this.analysisEl.innerHTML = `Lỗi biểu thức Toán học.`;
+          }
+        }
       }
     };
 
-    // Hàm xử lý khi đang bật mode Nối đường thẳng và click vào điểm
-    function handleLineCreation(clickedPoint) {
-      if (selectedPointsForLine.includes(clickedPoint)) return; // Tránh click 2 lần cùng 1 điểm
-      
-      selectedPointsForLine.push(clickedPoint);
-      showInfo("Tạo đường thẳng", `Đã chọn điểm ${clickedPoint.name}. Hãy chọn điểm thứ 2.`);
-      
-      if (selectedPointsForLine.length === 2) {
-        let p1 = selectedPointsForLine[0];
-        let p2 = selectedPointsForLine[1];
-        
-        // Vẽ đường thẳng đi qua 2 điểm
-        board.create('line', [p1, p2], {
-          strokeColor: '#4a90e2', strokeWidth: 2
+
+    /* ========================================================
+       PHẦN 4: ENGINE XỬ LÝ ĐỒ THỊ
+       ======================================================== */
+    const Engine = {
+      updateGraphs: function() {
+        // Xoá tất cả đường cũ
+        functionsState.forEach(f => {
+          if (f.graphObj) { board.removeObject(f.graphObj); f.graphObj = null; }
         });
-        
-        // Trích xuất phương trình y = ax + b
-        let dx = p2.X() - p1.X();
-        let dy = p2.Y() - p1.Y();
-        
-        if (Math.abs(dx) < 1e-6) {
-          showInfo(`Đường thẳng qua ${p1.name}${p2.name}`, `x = ${p1.X().toFixed(2)} (Song song trục tung)`);
-        } else {
-          let a = dy / dx;
-          let b = p1.Y() - a * p1.X();
-          let sign = b >= 0 ? '+' : '-';
-          showInfo(`Đường thẳng qua ${p1.name}${p2.name}`, `y = ${a.toFixed(2)}x ${sign} ${Math.abs(b).toFixed(2)}`);
-        }
-        
-        // Reset để chuẩn bị nối đường thẳng khác
-        selectedPointsForLine = []; 
+
+        // Vẽ lại dựa vào state
+        functionsState.forEach(f => {
+          if (!f.expr.trim()) return;
+
+          // Render LaTeX ngay dưới ô nhập
+          try {
+            let tex = math.parse(f.expr).toTex();
+            katex.render(`f(x) = ${tex}`, document.getElementById(`latex-${f.id}`), { throwOnError: false });
+          } catch(e) {
+            document.getElementById(`latex-${f.id}`).innerText = "...";
+          }
+
+          // Vẽ đồ thị nếu đang bật (isVisible = true)
+          if (f.isVisible) {
+            try {
+              let compiled = math.compile(f.expr);
+              f.graphObj = board.create('functiongraph', [
+                (x) => compiled.evaluate({x: x})
+              ], { 
+                strokeColor: f.color, 
+                strokeWidth: 3,
+                highlight: true,
+                shadow: true // Tạo hiệu ứng phát sáng nhẹ
+              });
+            } catch(e) {} // Bỏ qua nếu lỗi cú pháp
+          }
+        });
       }
-    }
-    // Gọi hàm lần đầu khi load trang
-    updateGraph();
+    };
+
+    // KHỞI CHẠY HỆ THỐNG
+    UI.addFunction('sin(x)');
+    UI.addFunction('cos(x)');
+
   </script>
 </body>
 </html>
