@@ -193,48 +193,257 @@
     });
 
     /* ========================================================
-       PHẦN 2: KIẾN TRÚC TOÁN HỌC (CHỜ BẠN VIẾT SAU - **)
+       PHẦN 2: KIẾN TRÚC TOÁN HỌC 
        Đây là nơi tập trung toàn bộ "Bộ não" của hệ thống
        ======================================================== */
-    const MathCore = {
-      // 1. Phân tích miền xác định (Domain)
-      getDomain: function(expr) {
-        // ** YÊU CẦU LẬP TRÌNH SAU **
-        return "\\mathbb{R}"; // Mặc định trả về R
-      },
+    // 1. Tính đạo hàm số f'(x)
+function derive(f, x, h = 1e-5) {
+  return (f(x + h) - f(x - h)) / (2 * h);
+}
 
-      // 2. Tính đạo hàm (Derivative)
-      getDerivative: function(expr) {
-        try {
-          return math.derivative(expr, 'x').toString();
-        } catch (e) {
-          return null; // Lỗi cú pháp
-        }
-      },
+// 2. Thuật toán phân tích biến thiên
+function analyzeFunction(f, xMin = -10, xMax = 10, step = 0.02) {
+  // Chuyển giá trị số thực x sang dạng chuỗi bội số của PI (ví dụ: Math.PI/2 -> "π/2")
+function formatPi(val, eps = 1e-3) {
+  if (Math.abs(val) < eps) return "0";
 
-      // 3. Tìm Nghiệm (Roots / Giao Ox)
-      getRoots: function(expr) {
-        // ** YÊU CẦU LẬP TRÌNH SAU **
-        // Trả về mảng các tọa độ X. Ví dụ: [-1, 2]
-        return [];
-      },
+  const valInPi = val / Math.PI;
+  // Các mẫu số lượng giác phổ biến: 1, 2, 3, 4, 6
+  const denominators = [1, 2, 3, 4, 6];
 
-      // 4. Tìm Điểm Cực trị (Extrema)
-      getExtrema: function(expr) {
-        // ** YÊU CẦU LẬP TRÌNH SAU **
-        // Gợi ý: Tìm nghiệm của getDerivative(expr) == 0
-        return [];
-      },
+  for (let d of denominators) {
+    let n = Math.round(valInPi * d);
+    if (Math.abs(valInPi - n / d) < eps) {
+      // Rút gọn phân số n/d
+      const gcd = (a, b) => (b === 0 ? a : gcd(b, a % b));
+      const g = Math.abs(gcd(n, d));
+      n /= g;
+      d /= g;
 
-      // 5. Xét Dấu / Bảng biến thiên (Variation Table)
-      getVariationText: function(expr) {
-        // ** YÊU CẦU LẬP TRÌNH SAU **
-        // Nơi xuất ra mã LaTeX cho bảng biến thiên (như hình bạn gửi)
-        return `Phân tích biến thiên đang được xây dựng...`;
+      let prefix = "";
+      if (n === -1) prefix = "-";
+      else if (n !== 1) prefix = n.toString();
+
+      let piStr = prefix + "π";
+      return d === 1 ? piStr : `${piStr}/${d}`;
+    }
+  }
+
+  // Nếu không trùng với mẫu số đẹp, trả về số thập phân 2 chữ số
+  return val.toFixed(2);
+}
+  // Thuật toán chia đôi tìm nghiệm chính xác của h(x) = 0
+function bisection(h, a, b, tol = 1e-6, maxIter = 100) {
+  let fa = h(a), fb = h(b);
+  if (fa * fb > 0) return (a + b) / 2;
+
+  for (let i = 0; i < maxIter; i++) {
+    let mid = (a + b) / 2;
+    if (Math.abs(b - a) < tol) return mid;
+    let fmid = h(mid);
+    if (fmid === 0) return mid;
+
+    if (fa * fmid < 0) {
+      b = mid;
+      fb = fmid;
+    } else {
+      a = mid;
+      fa = fmid;
+    }
+  }
+  return (a + b) / 2;
+}
+
+// Hàm chính tìm giao điểm giữa f(x) và g(x)
+function findIntersections(f, g, xMin = -10, xMax = 10, step = 0.05) {
+  const h = (x) => f(x) - g(x);
+  const intersections = [];
+
+  let prevX = xMin;
+  let prevH = h(xMin);
+
+  for (let x = xMin + step; x <= xMax; x += step) {
+    const currH = h(x);
+
+    // Phát hiện đổi dấu -> Có nghiệm trong khoảng (prevX, x)
+    if (prevH * currH <= 0 && isFinite(prevH) && isFinite(currH)) {
+      const rootX = bisection(h, prevX, x);
+      const rootY = f(rootX);
+
+      intersections.push({
+        x: rootX,
+        y: rootY,
+        // Chuyển sang dạng ký hiệu đẹp để hiển thị lên UI
+        label: `(${formatPi(rootX)}, ${formatPi(rootY)})`
+      });
+    }
+
+    prevX = x;
+    prevH = currH;
+  }
+
+  return intersections;
+}
+
+  function getTangentLine(f, x0) {
+  const step = 1e-5;
+  const y0 = f(x0);
+  
+  // Tính đạo hàm k = f'(x0) bằng sai phân
+  const k = (f(x0 + step) - f(x0 - step)) / (2 * step);
+
+  // Phương trình dạng y = kx + m
+  const m = y0 - k * x0;
+
+  // Phương trình tổng quát: Ax + By + C = 0 -> k*x - 1*y + m = 0
+  const A = k;
+  const B = -1;
+  const C = m;
+
+  return {
+    point: { x: x0, y: y0, label: `(${formatPi(x0)}, ${formatPi(y0)})` },
+    slope: k, // Hệ số góc
+    // Véc-tơ pháp tuyến của đường tiếp tuyến
+    normalVector: { x: A, y: B },
+    // Véc-tơ chỉ phương
+    directionVector: { x: -B, y: A }, 
+    // Các dạng chuỗi phương trình
+    explicitEquation: `y = ${k.toFixed(2)}x ${m >= 0 ? '+' : ''}${m.toFixed(2)}`,
+    generalEquation: `${A.toFixed(2)}x - y ${C >= 0 ? '+' : ''}${C.toFixed(2)} = 0`
+  };
+}
+  const extrema = [];            // Cực trị: [{ type: 'max'|'min', x, y }]
+  const intervals = [];          // Khoảng đơn điệu: [{ start, end, type: 'inc'|'dec' }]
+  const verticalAsymptotes = []; // Tiệm cận đứng: [x1, x2, ...]
+  
+  let currentTrend = null; // 'inc' (đồng biến) hoặc 'dec' (nghịch biến)
+  let intervalStart = xMin;
+  
+  let prevX = xMin;
+  let prevDy = derive(f, xMin);
+
+  for (let x = xMin; x <= xMax; x += step) {
+    const y = f(x);
+
+    // --- A. Kiểm tra Tiệm cận đứng ---
+    if (!isFinite(y) || Math.abs(y) > 1e4) {
+      // Đánh dấu điểm bất định / tiệm cận đứng
+      const asymptX = Number(x.toFixed(2));
+      if (!verticalAsymptotes.includes(asymptX)) {
+        verticalAsymptotes.push(asymptX);
       }
-    };
+      
+      // Chốt khoảng đơn điệu hiện tại trước khi ngắt đoạn
+      if (currentTrend) {
+        intervals.push({ start: Number(intervalStart.toFixed(2)), end: Number(prevX.toFixed(2)), type: currentTrend });
+        currentTrend = null;
+      }
+      continue;
+    }
 
+    const dy = derive(f, x);
+    const trend = dy > 0 ? 'inc' : (dy < 0 ? 'dec' : null);
 
+    // --- B. Phát hiện Cực trị & Chuyển đổi khoảng đơn điệu ---
+    if (prevDy !== null && Math.sign(prevDy) !== Math.sign(dy) && Math.abs(dy) < 5) {
+      // Xác định điểm cực trị chính xác hơn bằng cách lấy trung bình
+      const xExtremum = Number(((prevX + x) / 2).toFixed(2));
+      const yExtremum = Number(f(xExtremum).toFixed(2));
+
+      if (prevDy > 0 && dy < 0) {
+        extrema.push({ type: 'Cực đại', x: xExtremum, y: yExtremum });
+      } else if (prevDy < 0 && dy > 0) {
+        extrema.push({ type: 'Cực tiểu', x: xExtremum, y: yExtremum });
+      }
+    }
+
+    // --- C. Cập nhật khoảng Đồng biến / Nghịch biến ---
+    if (trend && trend !== currentTrend) {
+      if (currentTrend) {
+        intervals.push({ start: Number(intervalStart.toFixed(2)), end: Number(x.toFixed(2)), type: currentTrend });
+      }
+      currentTrend = trend;
+      intervalStart = x;
+    }
+
+    prevX = x;
+    prevDy = dy;
+  }
+
+  // Đóng khoảng đơn điệu cuối cùng
+  if (currentTrend) {
+    intervals.push({ start: Number(intervalStart.toFixed(2)), end: xMax, type: currentTrend });
+  }
+
+  // --- D. Kiểm tra Tiệm cận ngang (x -> +- Infinity) ---
+  const horizontalAsymptotes = [];
+  const xFar = 1e6;
+  
+  const yPos = f(xFar);
+  const yPosNext = f(xFar + 100);
+  if (isFinite(yPos) && Math.abs(yPos - yPosNext) < 1e-3) {
+    horizontalAsymptotes.push({ direction: 'x → +∞', y: Number(yPos.toFixed(2)) });
+  }
+
+  const yNeg = f(-xFar);
+  const yNegNext = f(-xFar - 100);
+  if (isFinite(yNeg) && Math.abs(yNeg - yNegNext) < 1e-3) {
+    horizontalAsymptotes.push({ direction: 'x → -∞', y: Number(yNeg.toFixed(2)) });
+  }
+
+  return {
+    extrema,
+    intervals,
+    verticalAsymptotes,
+    horizontalAsymptotes
+  };
+}
+
+    // 5. Xét Dấu / Bảng biến thiên (Variation Table)
+      getVariationText: function(expr) {
+        try {
+          // A. Sử dụng "khuyến khích khai báo" mà bạn nhắc đến
+          const compiled = math.compile(expr);
+          const f = (xVal) => compiled.evaluate({ x: xVal });
+
+          // B. Đưa hàm f vào thuật toán của bạn để lấy kết quả
+          const result = analyzeFunction(f, -10, 10, 0.05);
+
+          // C. Bọc kết quả JSON thành chuỗi HTML/LaTeX để in ra màn hình
+          let outputHtml = `<div style="font-size: 0.9rem; line-height: 1.6;">`;
+          
+          // 1. In Khoảng đơn điệu
+          if (result.intervals.length > 0) {
+            outputHtml += `<strong style="color: #cbd5e1;">Khoảng đơn điệu:</strong><br>`;
+            result.intervals.forEach(i => {
+              let text = i.type === 'inc' ? 'Đồng biến ↗' : 'Nghịch biến ↘';
+              outputHtml += `&bull; ${text} trên khoảng (${i.start} ; ${i.end})<br>`;
+            });
+          }
+
+          // 2. In Cực trị
+          if (result.extrema.length > 0) {
+            outputHtml += `<br><strong style="color: #cbd5e1;">Cực trị cục bộ:</strong><br>`;
+            result.extrema.forEach(e => {
+              outputHtml += `&bull; ${e.type} tại $x = ${e.x}$ ($y = ${e.y}$)<br>`;
+            });
+          }
+
+          // 3. In Tiệm cận đứng
+          if (result.verticalAsymptotes.length > 0) {
+             outputHtml += `<br><strong style="color: #cbd5e1;">Tiệm cận đứng:</strong><br>`;
+             result.verticalAsymptotes.forEach(x => {
+                outputHtml += `&bull; Đường thẳng $x = ${x}$<br>`;
+             });
+          }
+
+          outputHtml += `</div>`;
+          return outputHtml;
+
+        } catch(e) {
+          return "Đang chờ biểu thức hợp lệ...";
+        }
+      }
     /* ========================================================
        PHẦN 3: QUẢN LÝ DỮ LIỆU & RENDER GIAO DIỆN (UI)
        ======================================================== */
@@ -323,89 +532,146 @@
       },
 
       // Cập nhật nội dung bảng Phân tích Toán học
+      // Cập nhật nội dung bảng Phân tích Toán học
       updateAnalysisPanel: function() {
         if (functionsState.length === 0) {
           this.analysisEl.innerHTML = `Hãy nhập một hàm số...`;
           return;
         }
 
-        // Ưu tiên phân tích hàm số đầu tiên trong mảng
         let mainFunc = functionsState[0];
         if (!mainFunc.expr.trim()) return;
 
-        let deriv = MathCore.getDerivative(mainFunc.expr);
-        let latexStr = "";
+        let outputHtml = "";
 
-        if (deriv) {
-          try {
-            // Hiển thị f(x) và f'(x) bằng LaTeX
-            let texFx = math.parse(mainFunc.expr).toTex();
+        try {
+          // --- 1. BIỂU DIỄN HÀM SỐ 1 VÀ BIẾN THIÊN ---
+          let texFx = math.parse(mainFunc.expr).toTex();
+          outputHtml += `<div style="margin-bottom: 10px;">Hàm số 1: <br><span id="tex-fx"></span></div>`;
+          
+          let deriv = MathCore.getDerivative(mainFunc.expr);
+          if (deriv) {
             let texDeriv = math.parse(deriv).toTex();
-            
-            latexStr = `
-              <div style="margin-bottom: 10px;">Hàm số: <br><span id="tex-fx"></span></div>
-              <div style="margin-bottom: 10px;">Đạo hàm: <br><span id="tex-dfx"></span></div>
-              <div style="margin-top: 15px; padding-top: 10px; border-top: 1px dashed var(--border); color: #8b5cf6;">
-                ${MathCore.getVariationText(mainFunc.expr)}
-              </div>
-            `;
-            this.analysisEl.innerHTML = latexStr;
-
-            // Render KaTeX cho Bảng phân tích
-            katex.render(`y = ${texFx}`, document.getElementById('tex-fx'), { displayMode: true, throwOnError: false });
-            katex.render(`y' = ${texDeriv}`, document.getElementById('tex-dfx'), { displayMode: true, throwOnError: false });
-
-          } catch (e) {
-             this.analysisEl.innerHTML = `Lỗi biểu thức Toán học.`;
+            outputHtml += `<div style="margin-bottom: 10px;">Đạo hàm: <br><span id="tex-dfx"></span></div>`;
+            outputHtml += `<div style="margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); color: #8b5cf6;">
+                             ${MathCore.getVariationText(mainFunc.expr)}
+                           </div>`;
           }
+
+          // --- 2. THÔNG TIN TIẾP TUYẾN TẠI X = 0 (Demo) ---
+          const compiledMain = math.compile(mainFunc.expr);
+          const fMain = (xVal) => compiledMain.evaluate({ x: xVal });
+          const tangent = getTangentLine(fMain, 0); // Tính tiếp tuyến tại x0 = 0
+          
+          outputHtml += `<div style="margin-top: 15px; padding-top: 10px; border-top: 1px dashed var(--border);">
+                           <strong style="color: #10b981;">Tiếp tuyến tại Giao điểm Oy (x=0):</strong><br>
+                           <span style="color: var(--text-muted); font-size: 0.9rem;">
+                           • Điểm tiếp xúc: ${tangent.point.label}<br>
+                           • PT Tiếp tuyến: $${tangent.explicitEquation}$<br>
+                           • Vector pháp tuyến: $\\vec{n} = (${tangent.normalVector.x.toFixed(1)}; ${tangent.normalVector.y.toFixed(1)})$
+                           </span>
+                         </div>`;
+
+          // --- 3. PHÂN TÍCH TƯƠNG GIAO (NẾU CÓ >= 2 HÀM) ---
+          if (functionsState.length >= 2 && functionsState[1].expr.trim()) {
+             let secFunc = functionsState[1];
+             const compiledSec = math.compile(secFunc.expr);
+             const gSec = (xVal) => compiledSec.evaluate({ x: xVal });
+             
+             const intersections = findIntersections(fMain, gSec);
+             
+             outputHtml += `<div style="margin-top: 15px; padding-top: 10px; border-top: 1px solid var(--purple-accent);">
+                              <strong style="color: #f59e0b;">Sự tương giao với hàm 2:</strong><br>`;
+             
+             if(intersections.length > 0) {
+               intersections.forEach((pt, idx) => {
+                  outputHtml += `<span style="color: var(--text-muted); font-size: 0.9rem;">&bull; Giao điểm ${idx + 1}: Tọa độ $${pt.label}$</span><br>`;
+               });
+             } else {
+               outputHtml += `<span style="color: var(--text-muted); font-size: 0.9rem;">Không có giao điểm trong vùng nhìn thấy.</span>`;
+             }
+             outputHtml += `</div>`;
+          }
+
+          this.analysisEl.innerHTML = outputHtml;
+          
+          // Quét toàn bộ thẻ div để render lại các dấu $...$ được chèn vào HTML
+          renderMathInElement(this.analysisEl, {
+            delimiters: [ {left: "$", right: "$", display: false} ]
+          });
+
+        } catch (e) {
+           this.analysisEl.innerHTML = `Lỗi biểu thức Toán học.`;
         }
       }
-    };
 
 
     /* ========================================================
        PHẦN 4: ENGINE XỬ LÝ ĐỒ THỊ
        ======================================================== */
+    /* ========================================================
+       PHẦN 4: ENGINE XỬ LÝ ĐỒ THỊ
+       ======================================================== */
+    let tempPoints = []; // Mảng chứa các điểm giao cắt để xoá đi vẽ lại
+
     const Engine = {
       updateGraphs: function() {
-        // Xoá tất cả đường cũ
+        // Xoá tất cả đồ thị và điểm giao cũ
         functionsState.forEach(f => {
           if (f.graphObj) { board.removeObject(f.graphObj); f.graphObj = null; }
         });
+        tempPoints.forEach(pt => board.removeObject(pt));
+        tempPoints = [];
 
-        // Vẽ lại dựa vào state
+        // 1. Vẽ các hàm số
         functionsState.forEach(f => {
           if (!f.expr.trim()) return;
-
-          // Render LaTeX ngay dưới ô nhập
           try {
             let tex = math.parse(f.expr).toTex();
             katex.render(`f(x) = ${tex}`, document.getElementById(`latex-${f.id}`), { throwOnError: false });
-          } catch(e) {
-            document.getElementById(`latex-${f.id}`).innerText = "...";
-          }
+          } catch(e) {}
 
-          // Vẽ đồ thị nếu đang bật (isVisible = true)
           if (f.isVisible) {
             try {
               let compiled = math.compile(f.expr);
               f.graphObj = board.create('functiongraph', [
                 (x) => compiled.evaluate({x: x})
               ], { 
-                strokeColor: f.color, 
-                strokeWidth: 3,
-                highlight: true,
-                shadow: true // Tạo hiệu ứng phát sáng nhẹ
+                strokeColor: f.color, strokeWidth: 3, highlight: true, shadow: true 
               });
-            } catch(e) {} // Bỏ qua nếu lỗi cú pháp
+            } catch(e) {}
           }
         });
+
+        // 2. Chấm điểm tương giao nếu có >= 2 hàm
+        if (functionsState.length >= 2 && functionsState[0].isVisible && functionsState[1].isVisible) {
+          try {
+             let c1 = math.compile(functionsState[0].expr);
+             let c2 = math.compile(functionsState[1].expr);
+             let fMain = (x) => c1.evaluate({x});
+             let gSec = (x) => c2.evaluate({x});
+             
+             let intersections = findIntersections(fMain, gSec);
+             
+             intersections.forEach(pt => {
+                // Tạo điểm bằng JSXGraph
+                let jxgPt = board.create('point', [pt.x, pt.y], {
+                  name: pt.label,
+                  size: 4, 
+                  face: 'circle',
+                  fillColor: '#f59e0b', // Màu cam nổi bật trên nền tối
+                  strokeColor: '#ffffff',
+                  strokeWidth: 2,
+                  label: { offset: [10, 15], strokeColor: '#e2e8f0', fontSize: 13 }
+                });
+                tempPoints.push(jxgPt);
+             });
+          } catch (e) {
+             // Im lặng nếu hàm chưa gõ xong
+          }
+        }
       }
     };
-
-    // KHỞI CHẠY HỆ THỐNG
-    UI.addFunction('sin(x)');
-    UI.addFunction('cos(x)');
 
   </script>
 </body>
