@@ -1,940 +1,1259 @@
 <!DOCTYPE html>
 <html lang="vi" class="dark">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MathLens — Trực Quan Hoá Đạo Hàm & Tốc Độ Biến Thiên</title>
-  
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          colors: {
-            brand: {
-              50: '#f0f9ff',
-              500: '#0ea5e9',
-              600: '#0284c7',
-              900: '#0c4a6e',
-            },
-            darkbg: '#070a12',
-            cardbg: '#0f172a',
-          },
-          fontFamily: {
-            sans: ['Inter', 'sans-serif'],
-            mono: ['JetBrains Mono', 'monospace'],
-            serif: ['Georgia', 'serif'],
-          }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trực Quan Hóa Đạo Hàm & Tính Đơn Điệu (Derivative Visualizer)</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Math.js CDN for expression parsing -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.8.0/math.js"></script>
+    <!-- FontAwesome CDN for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        brand: {
+                            bg: '#090d16',
+                            card: '#111827',
+                            border: '#1f293d',
+                            accent: '#6366f1',
+                            green: '#10b981',
+                            red: '#f43f5e',
+                            gold: '#f59e0b',
+                            cyan: '#06b6d4',
+                            purple: '#a855f7'
+                        }
+                    }
+                }
+            }
         }
-      }
-    }
-  </script>
+    </script>
 
-  <!-- Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #090d16;
+            color: #f3f4f6;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
 
-  <style>
-    body {
-      background-color: #070a12;
-      color: #f8fafc;
-      font-family: 'Inter', sans-serif;
-    }
-    
-    .glass-panel {
-      background: rgba(15, 23, 42, 0.75);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-    }
+        /* Glassmorphism styling */
+        .glass-panel {
+            background: rgba(17, 24, 39, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
 
-    .glass-panel-sm {
-      background: rgba(11, 15, 25, 0.88);
-      backdrop-filter: blur(8px);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-    }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.5);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
 
-    input[type=range] {
-      accent-color: #38bdf8;
-    }
+        /* Custom Scrollbars */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #090d16;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1f293d;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #374151;
+        }
 
-    .glow-cyan {
-      box-shadow: 0 0 20px rgba(56, 189, 248, 0.35);
-    }
+        /* Canvas cursor states */
+        canvas {
+            touch-action: none;
+        }
 
-    ::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
-    }
-    ::-webkit-scrollbar-track {
-      background: #070a12;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: #334155;
-      border-radius: 3px;
-    }
-  </style>
+        /* Glowing animation effects */
+        .glow-green {
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.35);
+        }
+        .glow-red {
+            box-shadow: 0 0 20px rgba(244, 63, 94, 0.35);
+        }
+        .glow-gold {
+            box-shadow: 0 0 20px rgba(245, 158, 11, 0.35);
+        }
+        .glow-accent {
+            box-shadow: 0 0 25px rgba(99, 102, 241, 0.4);
+        }
+
+        /* Pulse badge */
+        @keyframes pulse-ring {
+            0% { transform: scale(0.95); opacity: 0.8; }
+            50% { transform: scale(1.05); opacity: 1; }
+            100% { transform: scale(0.95); opacity: 0.8; }
+        }
+        .animate-pulse-ring {
+            animation: pulse-ring 2.5s infinite ease-in-out;
+        }
+    </style>
 </head>
-<body class="min-h-screen flex flex-col justify-between selection:bg-sky-500 selection:text-white">
+<body class="min-h-screen flex flex-col bg-[#090d16] text-gray-100 antialiased selection:bg-indigo-500 selection:text-white">
 
-  <!-- Header Navigation -->
-  <header class="border-b border-slate-800 bg-slate-950/80 sticky top-0 z-50 backdrop-blur-md">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-sky-500 via-indigo-500 to-purple-600 flex items-center justify-center font-bold text-lg text-white shadow-lg shadow-sky-500/20">
-          f'
+    <!-- Header -->
+    <header class="border-b border-gray-800/80 bg-[#0d1322]/80 backdrop-blur-md sticky top-0 z-50 px-4 py-3">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-3">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center shadow-lg shadow-indigo-500/30">
+                    <i class="fa-solid font-mono text-lg font-bold text-white">f'</i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold bg-gradient-to-r from-white via-indigo-200 to-purple-300 bg-clip-text text-transparent">
+                        Trực Quan Hóa Đạo Hàm & Tính Đơn Điệu
+                    </h1>
+                    <p class="text-xs text-gray-400">Từ Cát Tuyến $\rightarrow$ Tiếp Tuyến & Ý Nghĩa Định Lý $f'(x) > 0$, $f'(x) < 0$</p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2 flex-wrap text-xs">
+                <span class="px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 flex items-center gap-1.5 font-medium">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                    Đồng biến: $f'(x) > 0$
+                </span>
+                <span class="px-2.5 py-1 rounded-full bg-rose-500/10 border border-rose-500/30 text-rose-400 flex items-center gap-1.5 font-medium">
+                    <span class="w-2 h-2 rounded-full bg-rose-400 animate-pulse"></span>
+                    Nghịch biến: $f'(x) < 0$
+                </span>
+                <span class="px-2.5 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 flex items-center gap-1.5 font-medium">
+                    <span class="w-2 h-2 rounded-full bg-amber-400"></span>
+                    Cực trị: $f'(x) = 0$
+                </span>
+            </div>
         </div>
-        <div>
-          <h1 class="text-lg font-bold text-white tracking-tight flex items-center gap-2">
-            MathLens <span class="text-xs px-2 py-0.5 rounded-full bg-sky-500/10 text-sky-400 border border-sky-500/20 font-mono">Derivatives Visualizer</span>
-          </h1>
-          <p class="text-xs text-slate-400 hidden sm:block">Trực Quan Hoá Đạo Hàm & Tốc Độ Biến Thiên Thời Gian Thực</p>
-        </div>
-      </div>
-
-      <div class="flex items-center gap-2">
-        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-          Dynamic Engine Active
-        </span>
-      </div>
-    </div>
-  </header>
-
-  <!-- Main Workspace -->
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-grow w-full space-y-6">
-
-    <!-- Mode Selector Tabs -->
-    <section class="space-y-2">
-      <div class="flex flex-wrap gap-2 p-1 bg-slate-900/80 rounded-xl border border-slate-800">
-        <button id="tab-mode1" onclick="switchMode(1)" class="tab-btn flex-1 min-w-[180px] py-2.5 px-4 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-2 bg-sky-600 text-white shadow-md">
-          <span>📐 1. Cát Tuyến → Tiếp Tuyến</span>
-        </button>
-        <button id="tab-mode2" onclick="switchMode(2)" class="tab-btn flex-1 min-w-[180px] py-2.5 px-4 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-2 text-slate-400 hover:text-white hover:bg-slate-800/50">
-          <span>🔬 2. Kính Hiển Vi Cục Bộ</span>
-        </button>
-        <button id="tab-mode3" onclick="switchMode(3)" class="tab-btn flex-1 min-w-[180px] py-2.5 px-4 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-2 text-slate-400 hover:text-white hover:bg-slate-800/50">
-          <span>📈 3. Sinh Đồ Thị f'(x)</span>
-        </button>
-        <button id="tab-mode4" onclick="switchMode(4)" class="tab-btn flex-1 min-w-[180px] py-2.5 px-4 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-2 text-slate-400 hover:text-white hover:bg-slate-800/50">
-          <span>🏎️ 4. Vận Tốc Tức Thời</span>
-        </button>
-      </div>
-    </section>
-
-    <!-- Function Presets Bar -->
-    <section id="preset-container" class="space-y-2">
-      <div class="flex items-center justify-between">
-        <label class="text-xs font-semibold uppercase tracking-wider text-slate-400">Chọn Hàm Số f(x):</label>
-        <span id="preset-formula-desc" class="text-xs font-mono text-sky-400">f(x) = x² ⇒ f'(x) = 2x</span>
-      </div>
-
-      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <button id="preset-poly2" onclick="selectPreset('poly2')" class="preset-btn p-3 rounded-xl border transition-all text-left glass-panel border-sky-500/50 bg-sky-500/10">
-          <div class="text-xs font-mono text-sky-400 font-semibold">Parabol</div>
-          <div class="text-sm font-semibold text-white mt-0.5">f(x) = x²</div>
-        </button>
-
-        <button id="preset-sin" onclick="selectPreset('sin')" class="preset-btn p-3 rounded-xl border border-slate-800 hover:border-slate-700 bg-slate-900/50 transition-all text-left">
-          <div class="text-xs font-mono text-purple-400 font-semibold">Lượng Giác</div>
-          <div class="text-sm font-semibold text-white mt-0.5">f(x) = sin(x)</div>
-        </button>
-
-        <button id="preset-poly3a" onclick="selectPreset('poly3a')" class="preset-btn p-3 rounded-xl border border-slate-800 hover:border-slate-700 bg-slate-900/50 transition-all text-left">
-          <div class="text-xs font-mono text-emerald-400 font-semibold">Bậc 3 Có Cực Trị</div>
-          <div class="text-sm font-semibold text-white mt-0.5">f(x) = x³ - 3x</div>
-        </button>
-
-        <button id="preset-poly3b" onclick="selectPreset('poly3b')" class="preset-btn p-3 rounded-xl border border-slate-800 hover:border-slate-700 bg-slate-900/50 transition-all text-left">
-          <div class="text-xs font-mono text-amber-400 font-semibold">Đa Thức Uốn</div>
-          <div class="text-sm font-semibold text-white mt-0.5">f(x) = x³/3 - x</div>
-        </button>
-      </div>
-    </section>
-
-    <!-- Visualizer Stage -->
-    <section class="relative rounded-2xl border border-slate-800 bg-slate-950 overflow-hidden shadow-2xl">
-      
-      <!-- Real-time HUD Glass Card -->
-      <div id="hud-card" class="absolute top-4 left-4 z-10 glass-panel-sm p-4 rounded-xl border border-slate-800 max-w-xs pointer-events-none space-y-2">
-        <div class="flex items-center justify-between border-b border-slate-800/80 pb-2">
-          <span id="hud-title" class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Thông Số Đạo Hàm</span>
-          <span id="hud-status" class="text-[11px] font-mono font-medium text-sky-400">Live</span>
-        </div>
-
-        <div class="grid grid-cols-2 gap-x-4 gap-y-2 font-mono text-xs">
-          <div>
-            <div class="text-[10px] text-slate-500">Vị trí x₀</div>
-            <div id="hud-val-x0" class="text-sm font-bold text-slate-200 mt-0.5">1.00</div>
-          </div>
-
-          <div>
-            <div class="text-[10px] text-slate-500">Giá trị f(x₀)</div>
-            <div id="hud-val-fx0" class="text-sm font-bold text-slate-200 mt-0.5">1.00</div>
-          </div>
-
-          <div>
-            <div id="hud-label-metric1" class="text-[10px] text-slate-500">Bước Δx</div>
-            <div id="hud-val-metric1" class="text-sm font-bold text-sky-400 mt-0.5">0.50</div>
-          </div>
-
-          <div>
-            <div id="hud-label-metric2" class="text-[10px] text-slate-500">Hệ số góc m</div>
-            <div id="hud-val-metric2" class="text-sm font-bold text-emerald-400 mt-0.5">2.50</div>
-          </div>
-        </div>
-
-        <div class="pt-2 text-[11px] text-slate-400 border-t border-slate-800/80 flex items-center justify-between">
-          <span id="hud-label-exact">Đạo hàm chính xác f'(x₀):</span>
-          <span id="hud-val-exact" class="font-mono font-bold text-amber-400">2.000</span>
-        </div>
-      </div>
-
-      <!-- Canvas Element -->
-      <canvas id="mathCanvas" class="w-full h-[520px] cursor-crosshair block"></canvas>
-
-      <!-- Bottom Controls Bar -->
-      <div class="p-4 bg-slate-900/90 border-t border-slate-800 flex flex-wrap items-center justify-between gap-4">
-        
-        <!-- Slider 1: Position x0 -->
-        <div id="ctrl-group-x0" class="flex items-center gap-3 min-w-[220px] flex-1 max-w-xs">
-          <label for="sliderX0" class="text-xs font-medium text-slate-300 shrink-0">
-            Vị trí x₀: <span id="dispX0" class="font-mono text-sky-400 font-bold">1.00</span>
-          </label>
-          <input type="range" id="sliderX0" min="-2.5" max="2.5" step="0.01" value="1.00" class="w-full h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer">
-        </div>
-
-        <!-- Slider 2: Dynamic (Delta X / Zoom / Speed) -->
-        <div id="ctrl-group-dynamic" class="flex items-center gap-3 min-w-[220px] flex-1 max-w-xs">
-          <label for="sliderDynamic" id="labelSliderDynamic" class="text-xs font-medium text-slate-300 shrink-0">
-            Bước Δx: <span id="dispDynamic" class="font-mono text-purple-400 font-bold">0.80</span>
-          </label>
-          <input type="range" id="sliderDynamic" min="0.001" max="2.0" step="0.001" value="0.80" class="w-full h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer">
-        </div>
-
-        <!-- Action Buttons -->
-        <div class="flex items-center gap-2">
-          <button id="btnPlayPause" onclick="togglePlay()" class="px-4 py-2 rounded-lg bg-sky-600 hover:bg-sky-500 text-white font-medium text-xs flex items-center gap-2 transition-all shadow-lg shadow-sky-600/20">
-            <svg id="iconPause" class="w-4 h-4 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-            <svg id="iconPlay" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-            <span id="btnPlayText">Chạy Tự Động</span>
-          </button>
-
-          <button onclick="resetControls()" class="px-3.5 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium text-xs flex items-center gap-1.5 transition-all border border-slate-700">
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-            Đặt Lại
-          </button>
-        </div>
-
-      </div>
-    </section>
-
-    <!-- Educational Explanations Grid -->
-    <section class="grid grid-cols-1 md:grid-cols-3 gap-6">
-      
-      <div class="glass-panel p-6 rounded-2xl border border-slate-800 space-y-3">
-        <div class="w-8 h-8 rounded-lg bg-sky-500/10 text-sky-400 border border-sky-500/20 flex items-center justify-center font-bold">
-          📐
-        </div>
-        <h3 class="text-base font-semibold text-white">Ý Nghĩa Hình Học Của Đạo Hàm</h3>
-        <p class="text-xs text-slate-400 leading-relaxed">
-          Đạo hàm $f'(x_0)$ chính là <b>hệ số góc (slope)</b> của đường tiếp tuyến với đồ thị $y = f(x)$ tại điểm $x_0$. Khi cát tuyến đi qua 2 điểm $(x_0, f(x_0))$ và $(x_0+\Delta x, f(x_0+\Delta x))$ tiến về $\Delta x \to 0$, nó biến thành đường tiếp tuyến duy nhất chạm sát đồ thị.
-        </p>
-      </div>
-
-      <div class="glass-panel p-6 rounded-2xl border border-slate-800 space-y-3">
-        <div class="w-8 h-8 rounded-lg bg-purple-500/10 text-purple-400 border border-purple-500/20 flex items-center justify-center font-bold">
-          🔬
-        </div>
-        <h3 class="text-base font-semibold text-white">Xấp Xỉ Tuyến Tính (Local Linearity)</h3>
-        <p class="text-xs text-slate-400 leading-relaxed">
-          Mọi hàm số có đạo hàm (differentiable) khi được <b>phóng to cực độ</b> tại một điểm đều trông hoàn toàn phẳng và thẳng tắp. Điều này giải thích vì sao đạo hàm là công cụ hoàn hảo để xấp xỉ biến thiên phức tạp bằng một đường thẳng đơn giản: $f(x_0 + \Delta x) \approx f(x_0) + f'(x_0)\Delta x$.
-        </p>
-      </div>
-
-      <div class="glass-panel p-6 rounded-2xl border border-slate-800 space-y-3">
-        <div class="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center font-bold">
-          ⚡
-        </div>
-        <h3 class="text-base font-semibold text-white">Ý Nghĩa Vật Lý: Vận Tốc Tức Thời</h3>
-        <p class="text-xs text-slate-400 leading-relaxed">
-          Vận tốc trung bình trong khoảng thời gian $\Delta t$ là $v_{tb} = \frac{\Delta s}{\Delta t}$. Nhưng khi $\Delta t \to 0$, tỉ số này cho ta <b>vận tốc tức thời $v(t) = s'(t)$</b> — tốc độ đúng tại thời điểm đó hiển thị trên kim đồng hồ xe.
-        </p>
-      </div>
-
-    </section>
-
-  </main>
-
-  <footer class="border-t border-slate-800/80 py-4 bg-slate-950 text-center text-xs text-slate-500">
-    MathLens Derivatives Engine &copy; 2026 — Mô phỏng Giải Tích Toán Học Trực Quan
-  </footer>
-
-  <script>
-    // Canvas & Context setup
-    const canvas = document.getElementById('mathCanvas');
-    const ctx = canvas.getContext('2d');
-
-    // Preset Functions
-    const PRESETS = {
-      poly2: {
-        name: "Parabol",
-        desc: "f(x) = x² ⇒ f'(x) = 2x",
-        f: (x) => x * x,
-        fPrime: (x) => 2 * x,
-        s: (t) => 0.5 * t * t, // Position for mode 4
-        sPrime: (t) => t
-      },
-      sin: {
-        name: "Lượng Giác",
-        desc: "f(x) = sin(x) ⇒ f'(x) = cos(x)",
-        f: (x) => Math.sin(x),
-        fPrime: (x) => Math.cos(x),
-        s: (t) => Math.sin(t) + 1.5,
-        sPrime: (t) => Math.cos(t)
-      },
-      poly3a: {
-        name: "Bậc 3 Có Cực Trị",
-        desc: "f(x) = x³ - 3x ⇒ f'(x) = 3x² - 3",
-        f: (x) => x * x * x - 3 * x,
-        fPrime: (x) => 3 * x * x - 3,
-        s: (t) => 0.2 * t * t * t - t + 2,
-        sPrime: (t) => 0.6 * t * t - 1
-      },
-      poly3b: {
-        name: "Đa Thức Uốn",
-        desc: "f(x) = x³/3 - x ⇒ f'(x) = x² - 1",
-        f: (x) => (x * x * x) / 3 - x,
-        fPrime: (x) => x * x - 1,
-        s: (t) => (t * t * t) / 6 + 0.5,
-        sPrime: (t) => (t * t) / 2
-      }
-    };
-
-    // Application State Variables
-    let currentMode = 1;
-    let currentPresetKey = 'poly2';
-    let x0 = 1.0;
-    let dynamicVal = 0.8; // Δx (Mode 1), Zoom (Mode 2), Speed (Mode 3/4)
-    let isPlaying = false;
-    let animTime = 0;
-    let isMouseDragging = false;
-
-    function getPreset() {
-      return PRESETS[currentPresetKey];
-    }
-
-    // High DPI Canvas Scaling
-    function setupCanvasDPI() {
-      const dpr = window.devicePixelRatio || 1;
-      const rect = canvas.getBoundingClientRect();
-      canvas.width = rect.width * dpr;
-      canvas.height = rect.height * dpr;
-      ctx.scale(dpr, dpr);
-    }
-    window.addEventListener('resize', setupCanvasDPI);
-    setupCanvasDPI();
-
-    // DOM Controls Handlers
-    const sliderX0 = document.getElementById('sliderX0');
-    const sliderDynamic = document.getElementById('sliderDynamic');
-    const dispX0 = document.getElementById('dispX0');
-    const dispDynamic = document.getElementById('dispDynamic');
-
-    sliderX0.addEventListener('input', (e) => {
-      x0 = parseFloat(e.target.value);
-      dispX0.innerText = x0.toFixed(2);
-    });
-
-    sliderDynamic.addEventListener('input', (e) => {
-      dynamicVal = parseFloat(e.target.value);
-      updateDynamicDisplay();
-    });
-
-    function updateDynamicDisplay() {
-      if (currentMode === 1) {
-        dispDynamic.innerText = dynamicVal.toFixed(3);
-      } else if (currentMode === 2) {
-        dispDynamic.innerText = Math.round(dynamicVal) + 'x';
-      } else {
-        dispDynamic.innerText = dynamicVal.toFixed(2) + 'x';
-      }
-    }
-
-    function switchMode(mode) {
-      currentMode = mode;
-      
-      // Update Tab Styles
-      for (let i = 1; i <= 4; i++) {
-        const tab = document.getElementById(`tab-mode${i}`);
-        if (i === mode) {
-          tab.className = "tab-btn flex-1 min-w-[180px] py-2.5 px-4 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-2 bg-sky-600 text-white shadow-md";
-        } else {
-          tab.className = "tab-btn flex-1 min-w-[180px] py-2.5 px-4 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-2 text-slate-400 hover:text-white hover:bg-slate-800/50";
-        }
-      }
-
-      // Configure Slider 2 Label & Range based on active mode
-      const labelDynamic = document.getElementById('labelSliderDynamic');
-      if (mode === 1) {
-        labelDynamic.innerHTML = `Bước Δx: <span id="dispDynamic" class="font-mono text-purple-400 font-bold">0.80</span>`;
-        sliderDynamic.min = "0.001";
-        sliderDynamic.max = "2.0";
-        sliderDynamic.step = "0.001";
-        dynamicVal = 0.8;
-      } else if (mode === 2) {
-        labelDynamic.innerHTML = `Độ Phóng Đại (Zoom): <span id="dispDynamic" class="font-mono text-purple-400 font-bold">1x</span>`;
-        sliderDynamic.min = "1";
-        sliderDynamic.max = "500";
-        sliderDynamic.step = "1";
-        dynamicVal = 1;
-      } else if (mode === 3 || mode === 4) {
-        labelDynamic.innerHTML = `Tốc Độ Mô Phỏng: <span id="dispDynamic" class="font-mono text-purple-400 font-bold">0.5x</span>`;
-        sliderDynamic.min = "0.1";
-        sliderDynamic.max = "2.0";
-        sliderDynamic.step = "0.05";
-        dynamicVal = 0.5;
-      }
-
-      sliderDynamic.value = dynamicVal;
-      updateDynamicDisplay();
-      
-      // Show/Hide Presets container if needed
-      document.getElementById('preset-container').style.display = (mode === 4) ? 'none' : 'block';
-    }
-
-    function selectPreset(key) {
-      currentPresetKey = key;
-      const preset = getPreset();
-      document.getElementById('preset-formula-desc').innerText = preset.desc;
-
-      document.querySelectorAll('.preset-btn').forEach(btn => {
-        btn.classList.remove('border-sky-500/50', 'bg-sky-500/10');
-        btn.classList.add('border-slate-800', 'bg-slate-900/50');
-      });
-
-      const activeBtn = document.getElementById(`preset-${key}`);
-      if (activeBtn) {
-        activeBtn.classList.remove('border-slate-800', 'bg-slate-900/50');
-        activeBtn.classList.add('border-sky-500/50', 'bg-sky-500/10');
-      }
-    }
-
-    function togglePlay() {
-      isPlaying = !isPlaying;
-      document.getElementById('btnPlayText').innerText = isPlaying ? "Tạm Dừng" : "Chạy Tự Động";
-      document.getElementById('iconPause').classList.toggle('hidden', !isPlaying);
-      document.getElementById('iconPlay').classList.toggle('hidden', isPlaying);
-    }
-
-    function resetControls() {
-      x0 = 1.0;
-      sliderX0.value = 1.0;
-      dispX0.innerText = "1.00";
-      
-      if (currentMode === 1) dynamicVal = 0.8;
-      else if (currentMode === 2) dynamicVal = 1;
-      else dynamicVal = 0.5;
-
-      sliderDynamic.value = dynamicVal;
-      updateDynamicDisplay();
-      animTime = 0;
-    }
-
-    // Interactive mouse drag on Canvas to move x0
-    canvas.addEventListener('mousedown', (e) => { isMouseDragging = true; handleCanvasPointer(e); });
-    canvas.addEventListener('mousemove', (e) => { if (isMouseDragging) handleCanvasPointer(e); });
-    window.addEventListener('mouseup', () => { isMouseDragging = false; });
-
-    function handleCanvasPointer(e) {
-      if (currentMode === 4) return;
-      const rect = canvas.getBoundingClientRect();
-      const clickX = e.clientX - rect.left;
-      const w = rect.width;
-      
-      // Map clickX to math domain [-3.5, 3.5]
-      const scaleX = 75; 
-      const centerX = w / 2;
-      let newX = (clickX - centerX) / scaleX;
-      newX = Math.max(-2.5, Math.min(2.5, newX));
-      x0 = newX;
-      sliderX0.value = x0;
-      dispX0.innerText = x0.toFixed(2);
-    }
-
-    function drawMode1(w, h, preset) {
-      const centerX = w / 2;
-      const centerY = h / 2 + 30;
-      const scale = 75;
-
-      const toScreenX = (x) => centerX + x * scale;
-      const toScreenY = (y) => centerY - y * scale;
-
-      // Coordinate Grid
-      drawGrid(w, h, centerX, centerY, scale);
-
-      const f = preset.f;
-      const fPrime = preset.fPrime;
-
-      // Draw Function Curve f(x)
-      ctx.strokeStyle = '#38bdf8';
-      ctx.lineWidth = 3;
-      ctx.beginPath();
-      for (let px = 0; px <= w; px += 2) {
-        let xVal = (px - centerX) / scale;
-        let yVal = f(xVal);
-        let py = toScreenY(yVal);
-        if (px === 0) ctx.moveTo(px, py);
-        else ctx.lineTo(px, py);
-      }
-      ctx.stroke();
-
-      // Points P(x0, f(x0)) and Q(x0 + dx, f(x0 + dx))
-      const dx = dynamicVal;
-      const x1 = x0 + dx;
-      const y0 = f(x0);
-      const y1 = f(x1);
-      const dy = y1 - y0;
-      const secantSlope = dy / dx;
-      const exactSlope = fPrime(x0);
-
-      const pPx = toScreenX(x0);
-      const pPy = toScreenY(y0);
-      const qPx = toScreenX(x1);
-      const qPy = toScreenY(y1);
-
-      // Draw Right Differential Triangle (dx, dy)
-      ctx.fillStyle = 'rgba(168, 85, 247, 0.15)';
-      ctx.strokeStyle = 'rgba(168, 85, 247, 0.6)';
-      ctx.lineWidth = 1.5;
-      ctx.setLineDash([4, 4]);
-
-      ctx.beginPath();
-      ctx.moveTo(pPx, pPy);
-      ctx.lineTo(qPx, pPy); // Horizontal leg dx
-      ctx.lineTo(qPx, qPy); // Vertical leg dy
-      ctx.closePath();
-      ctx.fill();
-      ctx.stroke();
-      ctx.setLineDash([]);
-
-      // Label Triangle Legs
-      ctx.fillStyle = '#c084fc';
-      ctx.font = 'bold 11px "JetBrains Mono", monospace';
-      ctx.fillText(`Δx = ${dx.toFixed(3)}`, (pPx + qPx) / 2 - 20, pPy + 16);
-      ctx.fillText(`Δy = ${dy.toFixed(3)}`, qPx + 8, (pPy + qPy) / 2);
-
-      // Draw Secant Line (Purple)
-      ctx.strokeStyle = '#c084fc';
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      let secLineY1 = y0 + secantSlope * (-4 - x0);
-      let secLineY2 = y0 + secantSlope * (4 - x0);
-      ctx.moveTo(toScreenX(-4), toScreenY(secLineY1));
-      ctx.lineTo(toScreenX(4), toScreenY(secLineY2));
-      ctx.stroke();
-
-      // Draw Exact Tangent Line (Glowing Emerald)
-      ctx.save();
-      ctx.strokeStyle = '#2ed573';
-      ctx.lineWidth = 2;
-      ctx.shadowColor = '#2ed573';
-      ctx.shadowBlur = 8;
-      ctx.beginPath();
-      let tanLineY1 = y0 + exactSlope * (-4 - x0);
-      let tanLineY2 = y0 + exactSlope * (4 - x0);
-      ctx.moveTo(toScreenX(-4), toScreenY(tanLineY1));
-      ctx.lineTo(toScreenX(4), toScreenY(tanLineY2));
-      ctx.stroke();
-      ctx.restore();
-
-      // Render Points P and Q
-      ctx.fillStyle = '#38bdf8';
-      ctx.beginPath(); ctx.arc(pPx, pPy, 6, 0, Math.PI * 2); ctx.fill();
-
-      ctx.fillStyle = '#c084fc';
-      ctx.beginPath(); ctx.arc(qPx, qPy, 5, 0, Math.PI * 2); ctx.fill();
-
-      // Update HUD
-      document.getElementById('hud-title').innerText = "Cát Tuyến → Tiếp Tuyến";
-      document.getElementById('hud-val-x0').innerText = x0.toFixed(2);
-      document.getElementById('hud-val-fx0').innerText = y0.toFixed(2);
-      document.getElementById('hud-label-metric1').innerText = "Bước Δx";
-      document.getElementById('hud-val-metric1').innerText = dx.toFixed(3);
-      document.getElementById('hud-label-metric2').innerText = "Hệ số góc Cát tuyến";
-      document.getElementById('hud-val-metric2').innerText = secantSlope.toFixed(3);
-      document.getElementById('hud-label-exact').innerText = "Tiếp tuyến chính xác f'(x₀):";
-      document.getElementById('hud-val-exact').innerText = exactSlope.toFixed(3);
-    }
-
-    function drawMode2(w, h, preset) {
-      const centerX = w / 2;
-      const centerY = h / 2;
-      const f = preset.f;
-      const fPrime = preset.fPrime;
-
-      const y0 = f(x0);
-      const exactSlope = fPrime(x0);
-      const zoom = dynamicVal; // Zoom factor
-
-      const scale = 70 * zoom;
-
-      const toScreenX = (x) => centerX + (x - x0) * scale;
-      const toScreenY = (y) => centerY - (y - y0) * scale;
-
-      // Dynamic Grid for Microscope Zoom
-      drawGridZoom(w, h, centerX, centerY, scale, x0, y0);
-
-      // Draw Function Curve f(x)
-      ctx.strokeStyle = '#38bdf8';
-      ctx.lineWidth = 3.5;
-      ctx.beginPath();
-      
-      const step = Math.max(1, Math.floor(2 / Math.sqrt(zoom)));
-      for (let px = -50; px <= w + 50; px += step) {
-        let xVal = x0 + (px - centerX) / scale;
-        let yVal = f(xVal);
-        let py = toScreenY(yVal);
-        if (px === -50) ctx.moveTo(px, py);
-        else ctx.lineTo(px, py);
-      }
-      ctx.stroke();
-
-      // Draw Tangent Line (Dashed Emerald)
-      ctx.strokeStyle = '#2ed573';
-      ctx.lineWidth = 2;
-      ctx.setLineDash([6, 6]);
-      ctx.beginPath();
-      ctx.moveTo(0, toScreenY(y0 + exactSlope * (-w / scale)));
-      ctx.lineTo(w, toScreenY(y0 + exactSlope * (w / scale)));
-      ctx.stroke();
-      ctx.setLineDash([]);
-
-      // Point P(x0, y0)
-      ctx.save();
-      ctx.fillStyle = '#f59e0b';
-      ctx.shadowColor = '#f59e0b';
-      ctx.shadowBlur = 12;
-      ctx.beginPath(); ctx.arc(centerX, centerY, 7, 0, Math.PI * 2); ctx.fill();
-      ctx.restore();
-
-      // Microscope Lens Circle Overlay Graphics
-      ctx.strokeStyle = 'rgba(56, 189, 248, 0.25)';
-      ctx.lineWidth = 8;
-      ctx.beginPath(); ctx.arc(centerX, centerY, Math.min(w, h) * 0.42, 0, Math.PI * 2); ctx.stroke();
-
-      // Update HUD
-      document.getElementById('hud-title').innerText = "Kính Hiển Vi Cục Bộ";
-      document.getElementById('hud-val-x0').innerText = x0.toFixed(3);
-      document.getElementById('hud-val-fx0').innerText = y0.toFixed(3);
-      document.getElementById('hud-label-metric1').innerText = "Độ Phóng Đại";
-      document.getElementById('hud-val-metric1').innerText = Math.round(zoom) + 'x';
-      document.getElementById('hud-label-metric2').innerText = "Độ Phẳng Đường Cong";
-      document.getElementById('hud-val-metric2').innerText = (100 - 100 / zoom).toFixed(1) + '%';
-      document.getElementById('hud-label-exact').innerText = "Hệ số góc L = f'(x₀):";
-      document.getElementById('hud-val-exact').innerText = exactSlope.toFixed(3);
-    }
-
-    function drawMode3(w, h, preset) {
-      const f = preset.f;
-      const fPrime = preset.fPrime;
-
-      const topH = h * 0.52;
-      const botH = h * 0.44;
-      const botTopY = h * 0.56;
-
-      const scaleX = 75;
-      const scaleY = 55;
-      const centerX = w / 2;
-
-      const topCenterY = topH / 2 + 10;
-      const botCenterY = botTopY + botH / 2;
-
-      // Divider line
-      ctx.strokeStyle = 'rgba(255,255,255,0.1)';
-      ctx.lineWidth = 1;
-      ctx.beginPath(); ctx.moveTo(0, botTopY - 8); ctx.lineTo(w, botTopY - 8); ctx.stroke();
-
-      // Sub-labels for Dual Graphs
-      ctx.fillStyle = '#38bdf8';
-      ctx.font = 'bold 12px "JetBrains Mono", monospace';
-      ctx.fillText(`[1] Đồ thị gốc f(x)`, 16, 24);
-      ctx.fillStyle = '#a855f7';
-      ctx.fillText(`[2] Đồ thị đạo hàm f'(x)`, 16, botTopY + 16);
-
-      // --- TOP GRAPH f(x) ---
-      drawGridSub(w, topH, centerX, topCenterY, scaleX, scaleY);
-
-      ctx.strokeStyle = '#38bdf8';
-      ctx.lineWidth = 2.5;
-      ctx.beginPath();
-      for (let px = 0; px <= w; px += 2) {
-        let xVal = (px - centerX) / scaleX;
-        let yVal = f(xVal);
-        let py = topCenterY - yVal * scaleY;
-        if (px === 0) ctx.moveTo(px, py);
-        else ctx.lineTo(px, py);
-      }
-      ctx.stroke();
-
-      // Tangent line on f(x)
-      const y0 = f(x0);
-      const fp0 = fPrime(x0);
-      const pPx = centerX + x0 * scaleX;
-      const pPy = topCenterY - y0 * scaleY;
-
-      // Color coding based on slope sign
-      let slopeColor = '#2ed573'; // Green > 0
-      if (Math.abs(fp0) < 0.08) slopeColor = '#f59e0b'; // Yellow ~ 0 (Extrema)
-      else if (fp0 < 0) slopeColor = '#ef4444'; // Red < 0
-
-      ctx.strokeStyle = slopeColor;
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.moveTo(pPx - 100, pPy + 100 * fp0 * (scaleY / scaleX));
-      ctx.lineTo(pPx + 100, pPy - 100 * fp0 * (scaleY / scaleX));
-      ctx.stroke();
-
-      ctx.fillStyle = slopeColor;
-      ctx.beginPath(); ctx.arc(pPx, pPy, 6, 0, Math.PI * 2); ctx.fill();
-
-      // --- BOTTOM GRAPH f'(x) ---
-      drawGridSub(w, botH, centerX, botCenterY, scaleX, scaleY, botTopY);
-
-      ctx.strokeStyle = '#a855f7';
-      ctx.lineWidth = 2.5;
-      ctx.beginPath();
-      for (let px = 0; px <= w; px += 2) {
-        let xVal = (px - centerX) / scaleX;
-        let yVal = fPrime(xVal);
-        let py = botCenterY - yVal * scaleY;
-        if (px === 0) ctx.moveTo(px, py);
-        else ctx.lineTo(px, py);
-      }
-      ctx.stroke();
-
-      // Vertical tracker line linking top and bottom
-      const botPx = pPx;
-      const botPy = botCenterY - fp0 * scaleY;
-
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.25)';
-      ctx.setLineDash([4, 4]);
-      ctx.beginPath();
-      ctx.moveTo(pPx, pPy);
-      ctx.lineTo(botPx, botPy);
-      ctx.stroke();
-      ctx.setLineDash([]);
-
-      // Point on f'(x)
-      ctx.fillStyle = slopeColor;
-      ctx.beginPath(); ctx.arc(botPx, botPy, 6, 0, Math.PI * 2); ctx.fill();
-
-      // Update HUD
-      document.getElementById('hud-title').innerText = "Sinh Đồ Thị f'(x)";
-      document.getElementById('hud-val-x0').innerText = x0.toFixed(2);
-      document.getElementById('hud-val-fx0').innerText = y0.toFixed(2);
-      document.getElementById('hud-label-metric1').innerText = "Độ Dốc Tangent";
-      document.getElementById('hud-val-metric1').innerText = fp0 > 0 ? "Dương (+)" : (fp0 < 0 ? "Âm (-)" : "Cực Trị (0)");
-      document.getElementById('hud-label-metric2').innerText = "Giá trị f'(x₀)";
-      document.getElementById('hud-val-metric2').innerText = fp0.toFixed(3);
-      document.getElementById('hud-label-exact').innerText = "Trạng thái đồ thị:";
-      document.getElementById('hud-val-exact').innerText = fp0 > 0 ? "f(x) Đang Tăng" : (fp0 < 0 ? "f(x) Đang Giảm" : "Điểm Cực Trị");
-    }
-
-    function drawMode4(w, h, preset) {
-      const s = preset.s;
-      const sPrime = preset.sPrime;
-
-      // Time parameter t
-      const timeVal = (animTime * dynamicVal) % 4.0;
-      const dt = 0.5; // Delta t interval
-      const t1 = timeVal;
-      const t2 = Math.min(4.0, t1 + dt);
-
-      const s1 = s(t1);
-      const s2 = s(t2);
-      const avgVel = (s2 - s1) / (t2 - t1);
-      const instVel = sPrime(t1);
-
-      // Draw Racetrack Highway
-      const trackY = h * 0.42;
-      ctx.fillStyle = '#0f172a';
-      ctx.fillRect(40, trackY - 20, w - 80, 60);
-      ctx.strokeStyle = '#334155';
-      ctx.lineWidth = 2;
-      ctx.strokeRect(40, trackY - 20, w - 80, 60);
-
-      // Track Markers
-      ctx.strokeStyle = 'rgba(255,255,255,0.15)';
-      ctx.setLineDash([10, 10]);
-      ctx.beginPath(); ctx.moveTo(50, trackY + 10); ctx.lineTo(w - 50, trackY + 10); ctx.stroke();
-      ctx.setLineDash([]);
-
-      const mapToTrackX = (pos) => 60 + (pos / 4.5) * (w - 120);
-
-      // Car Position
-      const carX = mapToTrackX(s1);
-
-      // Draw Animated Car
-      ctx.fillStyle = '#38bdf8';
-      ctx.shadowColor = '#38bdf8';
-      ctx.shadowBlur = 10;
-      ctx.beginPath();
-      ctx.roundRect(carX - 20, trackY - 12, 40, 22, 6);
-      ctx.fill();
-      ctx.shadowBlur = 0;
-
-      // Car Wheels
-      ctx.fillStyle = '#070a12';
-      ctx.beginPath();
-      ctx.arc(carX - 12, trackY + 10, 4, 0, Math.PI * 2);
-      ctx.arc(carX + 12, trackY + 10, 4, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Draw Speedometer Gauge Widgets below track
-      const gaugeY = h * 0.76;
-      const gauge1X = w * 0.3;
-      const gauge2X = w * 0.7;
-
-      drawSpeedometer(gauge1X, gaugeY, avgVel, "Vận Tốc Trung Bình (Δs/Δt)", "#c084fc");
-      drawSpeedometer(gauge2X, gaugeY, instVel, "Vận Tốc Tức Thời v(t) = s'(t)", "#2ed573");
-
-      // Update HUD
-      document.getElementById('hud-title').innerText = "Vận Tốc Tức Thời";
-      document.getElementById('hud-val-x0').innerText = timeVal.toFixed(2) + 's';
-      document.getElementById('hud-val-fx0').innerText = s1.toFixed(2) + 'm';
-      document.getElementById('hud-label-metric1').innerText = "Khoảng thời gian Δt";
-      document.getElementById('hud-val-metric1').innerText = dt.toFixed(2) + 's';
-      document.getElementById('hud-label-metric2').innerText = "Quãng đường Δs";
-      document.getElementById('hud-val-metric2').innerText = (s2 - s1).toFixed(2) + 'm';
-      document.getElementById('hud-label-exact').innerText = "Tỉ số Δs/Δt → v(t):";
-      document.getElementById('hud-val-exact').innerText = instVel.toFixed(2) + ' m/s';
-    }
-
-    // SPEEDOMETER GAUGE HELPER
-    function drawSpeedometer(cx, cy, val, title, color) {
-      const radius = 60;
-      ctx.strokeStyle = 'rgba(255,255,255,0.1)';
-      ctx.lineWidth = 8;
-      ctx.beginPath(); ctx.arc(cx, cy, radius, Math.PI * 0.8, Math.PI * 2.2); ctx.stroke();
-
-      // Speed Value Arc
-      const normVal = Math.max(0, Math.min(1, val / 4.0));
-      const angle = Math.PI * 0.8 + normVal * (Math.PI * 1.4);
-
-      ctx.strokeStyle = color;
-      ctx.lineWidth = 8;
-      ctx.beginPath(); ctx.arc(cx, cy, radius, Math.PI * 0.8, angle); ctx.stroke();
-
-      // Needle
-      ctx.strokeStyle = '#fff';
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.moveTo(cx, cy);
-      ctx.lineTo(cx + Math.cos(angle) * (radius - 10), cy + Math.sin(angle) * (radius - 10));
-      ctx.stroke();
-
-      // Label
-      ctx.fillStyle = '#f8fafc';
-      ctx.font = 'bold 15px "JetBrains Mono", monospace';
-      ctx.textAlign = 'center';
-      ctx.fillText(val.toFixed(2) + ' m/s', cx, cy + 24);
-      ctx.fillStyle = '#94a3b8';
-      ctx.font = '11px "Inter", sans-serif';
-      ctx.fillText(title, cx, cy + 42);
-      ctx.textAlign = 'left';
-    }
-
-    // CANVAS GRID HELPERS
-    function drawGrid(w, h, cx, cy, scale) {
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
-      ctx.lineWidth = 1;
-
-      for (let x = cx % scale; x < w; x += scale) {
-        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
-      }
-      for (let y = cy % scale; y < h; y += scale) {
-        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
-      }
-
-      // Main Axes
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
-      ctx.lineWidth = 1.5;
-      ctx.beginPath(); ctx.moveTo(0, cy); ctx.lineTo(w, cy); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(cx, 0); ctx.lineTo(cx, h); ctx.stroke();
-    }
-
-    function drawGridZoom(w, h, cx, cy, scale, x0, y0) {
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.06)';
-      ctx.lineWidth = 1;
-
-      let gridStep = scale;
-      while (gridStep > 120) gridStep /= 5;
-      while (gridStep < 25) gridStep *= 5;
-
-      for (let x = (cx % gridStep); x < w; x += gridStep) {
-        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
-      }
-      for (let y = (cy % gridStep); y < h; y += gridStep) {
-        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
-      }
-    }
-
-    function drawGridSub(w, h, cx, cy, scaleX, scaleY, offsetY = 0) {
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.04)';
-      ctx.lineWidth = 1;
-
-      for (let x = cx % scaleX; x < w; x += scaleX) {
-        ctx.beginPath(); ctx.moveTo(x, offsetY); ctx.lineTo(x, offsetY + h); ctx.stroke();
-      }
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
-      ctx.beginPath(); ctx.moveTo(0, cy); ctx.lineTo(w, cy); ctx.stroke();
-    }
-
-    let lastTime = performance.now();
-
-    function renderLoop(now) {
-      const dt = (now - lastTime) / 1000;
-      lastTime = now;
-
-      if (isPlaying) {
-        animTime += dt;
-        if (currentMode === 1) {
-          // Auto shrink Delta x to 0 and back
-          dynamicVal = 0.05 + 0.95 * (0.5 + 0.5 * Math.sin(animTime * 1.5));
-          sliderDynamic.value = dynamicVal;
-          updateDynamicDisplay();
-        } else if (currentMode === 3) {
-          // Sweep x0 across [-2, 2]
-          x0 = 2.0 * Math.sin(animTime * 0.8);
-          sliderX0.value = x0;
-          dispX0.innerText = x0.toFixed(2);
-        }
-      }
-
-      const rect = canvas.getBoundingClientRect();
-      const w = rect.width;
-      const h = rect.height;
-
-      ctx.clearRect(0, 0, w, h);
-
-      const preset = getPreset();
-
-      if (currentMode === 1) drawMode1(w, h, preset);
-      else if (currentMode === 2) drawMode2(w, h, preset);
-      else if (currentMode === 3) drawMode3(w, h, preset);
-      else if (currentMode === 4) drawMode4(w, h, preset);
-
-      requestAnimationFrame(renderLoop);
-    }
-
-    // Start Engine
-    selectPreset('poly2');
-    switchMode(1);
-    requestAnimationFrame(renderLoop);
-  </script>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-3 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+        <!-- Left Controls Sidebar (4 cols) -->
+        <section class="lg:col-span-4 flex flex-col gap-5">
+            
+            <!-- Math Input & Presets Box -->
+            <div class="glass-panel rounded-2xl p-4 md:p-5 flex flex-col gap-4">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-sm font-semibold uppercase tracking-wider text-indigo-300 flex items-center gap-2">
+                        <i class="fa-solid fa-square-root-variable text-indigo-400"></i> Hàm Số $f(x)$
+                    </h2>
+                    <span id="evalStatus" class="text-xs px-2 py-0.5 rounded bg-emerald-950/80 text-emerald-400 border border-emerald-800/50">Hợp lệ ✓</span>
+                </div>
+
+                <!-- Input group -->
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400 font-mono font-bold text-sm">
+                        f(x) =
+                    </span>
+                    <input type="text" id="functionInput" value="x^3 - 3*x" 
+                           class="w-full bg-gray-900/90 border border-indigo-500/40 rounded-xl pl-16 pr-10 py-2.5 text-white font-mono text-base focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all shadow-inner"
+                           placeholder="Nhập hàm số, ví dụ: x^3 - 3*x">
+                    <button id="clearInputBtn" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-gray-300 transition-colors">
+                        <i class="fa-solid fa-circle-xmark"></i>
+                    </button>
+                </div>
+                <p id="errorText" class="text-xs text-rose-400 hidden font-mono bg-rose-950/40 p-2 rounded border border-rose-800/40"></p>
+
+                <!-- Presets -->
+                <div>
+                    <label class="text-xs font-medium text-gray-400 mb-2 block">Hàm số mẫu phổ biến:</label>
+                    <div class="grid grid-cols-2 gap-1.5">
+                        <button class="preset-btn text-xs font-mono py-1.5 px-2.5 rounded-lg bg-gray-800/80 hover:bg-indigo-600/30 hover:border-indigo-500/50 border border-gray-700/60 text-gray-200 transition-all text-left truncate" data-func="x^3 - 3*x">
+                            f(x) = x³ - 3x
+                        </button>
+                        <button class="preset-btn text-xs font-mono py-1.5 px-2.5 rounded-lg bg-gray-800/80 hover:bg-indigo-600/30 hover:border-indigo-500/50 border border-gray-700/60 text-gray-200 transition-all text-left truncate" data-func="-x^2 + 4*x">
+                            f(x) = -x² + 4x
+                        </button>
+                        <button class="preset-btn text-xs font-mono py-1.5 px-2.5 rounded-lg bg-gray-800/80 hover:bg-indigo-600/30 hover:border-indigo-500/50 border border-gray-700/60 text-gray-200 transition-all text-left truncate" data-func="sin(2*x)">
+                            f(x) = sin(2x)
+                        </button>
+                        <button class="preset-btn text-xs font-mono py-1.5 px-2.5 rounded-lg bg-gray-800/80 hover:bg-indigo-600/30 hover:border-indigo-500/50 border border-gray-700/60 text-gray-200 transition-all text-left truncate" data-func="1 / (1 + x^2)">
+                            f(x) = 1/(1+x²)
+                        </button>
+                        <button class="preset-btn text-xs font-mono py-1.5 px-2.5 rounded-lg bg-gray-800/80 hover:bg-indigo-600/30 hover:border-indigo-500/50 border border-gray-700/60 text-gray-200 transition-all text-left truncate" data-func="x^4 - 2*x^2">
+                            f(x) = x⁴ - 2x²
+                        </button>
+                        <button class="preset-btn text-xs font-mono py-1.5 px-2.5 rounded-lg bg-gray-800/80 hover:bg-indigo-600/30 hover:border-indigo-500/50 border border-gray-700/60 text-gray-200 transition-all text-left truncate" data-func="0.5*x^3 - x^2 - x + 2">
+                            f(x) = 0.5x³-x²-x+2
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Interactive Parameters Card -->
+            <div class="glass-panel rounded-2xl p-4 md:p-5 flex flex-col gap-4">
+                <h2 class="text-sm font-semibold uppercase tracking-wider text-purple-300 flex items-center justify-between">
+                    <span class="flex items-center gap-2"><i class="fa-solid fa-sliders text-purple-400"></i> Điều Khiển Điểm & Cát Tuyến</span>
+                    <span class="text-xs text-gray-400 font-normal">Kéo điểm trên đồ thị</span>
+                </h2>
+
+                <!-- Point A Slider -->
+                <div class="space-y-1.5">
+                    <div class="flex justify-between text-xs">
+                        <span class="text-cyan-300 font-medium">Toạ độ Điểm A ($x_A$):</span>
+                        <span id="valXA" class="font-mono text-cyan-400 font-bold">0.80</span>
+                    </div>
+                    <input type="range" id="sliderXA" min="-3.5" max="3.5" step="0.05" value="0.8" 
+                           class="w-full accent-cyan-400 h-1.5 bg-gray-800 rounded-lg appearance-none cursor-pointer">
+                </div>
+
+                <!-- Distance h Slider -->
+                <div class="space-y-1.5">
+                    <div class="flex justify-between text-xs">
+                        <span class="text-purple-300 font-medium">Khoảng cách $h$ ($x_B = x_A + h$):</span>
+                        <span id="valH" class="font-mono text-purple-400 font-bold">1.20</span>
+                    </div>
+                    <input type="range" id="sliderH" min="-2.5" max="2.5" step="0.02" value="1.2" 
+                           class="w-full accent-purple-400 h-1.5 bg-gray-800 rounded-lg appearance-none cursor-pointer">
+                    <p class="text-[11px] text-gray-400">Điểm $B$ nằm tại $x_B = $ <span id="valXB" class="font-mono text-gray-200">2.00</span></p>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="grid grid-cols-1 gap-2 pt-1">
+                    <button id="btnAnimateH" class="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 text-white font-semibold text-xs shadow-lg shadow-indigo-500/25 transition-all flex items-center justify-center gap-2 group">
+                        <i class="fa-solid fa-wand-magic-sparkles group-hover:rotate-12 transition-transform"></i>
+                        <span>Biến đổi $h \rightarrow 0$ (Cát tuyến $\rightarrow$ Tiếp tuyến)</span>
+                    </button>
+
+                    <div class="grid grid-cols-2 gap-2">
+                        <button id="btnToggleHiker" class="py-2 px-3 rounded-xl bg-emerald-600/30 hover:bg-emerald-600/50 border border-emerald-500/40 text-emerald-300 font-medium text-xs transition-all flex items-center justify-center gap-1.5">
+                            <i id="hikerIcon" class="fa-solid fa-play"></i>
+                            <span id="hikerText">Chạy Hiker 🏃</span>
+                        </button>
+                        <button id="btnResetView" class="py-2 px-3 rounded-xl bg-gray-800 hover:bg-gray-700 text-gray-300 border border-gray-700 font-medium text-xs transition-all flex items-center justify-center gap-1.5">
+                            <i class="fa-solid fa-rotate-left"></i>
+                            <span>Đặt lại góc nhìn</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dynamic Math Metrics Card -->
+            <div class="glass-panel rounded-2xl p-4 md:p-5 flex flex-col gap-3">
+                <h2 class="text-sm font-semibold uppercase tracking-wider text-amber-300 flex items-center gap-2">
+                    <i class="fa-solid fa-calculator text-amber-400"></i> Thông Số Động & Hệ Số Góc
+                </h2>
+
+                <div class="space-y-2 text-xs font-mono">
+                    <div class="flex justify-between items-center p-2 rounded-lg bg-gray-900/60 border border-purple-500/20">
+                        <span class="text-gray-400">Độ dốc Cát tuyến ($\frac{\Delta y}{\Delta x}$):</span>
+                        <span id="metricSecantSlope" class="text-purple-300 font-bold text-sm">+0.840</span>
+                    </div>
+
+                    <div class="flex justify-between items-center p-2 rounded-lg bg-gray-900/60 border border-amber-500/20">
+                        <span class="text-gray-400">Đạo hàm $f'(x_A)$ (Tiếp tuyến):</span>
+                        <span id="metricTangentSlope" class="text-amber-300 font-bold text-sm">-1.080</span>
+                    </div>
+
+                    <div class="flex justify-between items-center p-2 rounded-lg bg-gray-900/60 border border-cyan-500/20">
+                        <span class="text-gray-400">Góc nghiêng tiếp tuyến $\theta$:</span>
+                        <span id="metricAngle" class="text-cyan-300 font-bold">-47.2°</span>
+                    </div>
+
+                    <!-- Monotonicity Dynamic Status Badge -->
+                    <div id="monotonicityBadge" class="p-3 rounded-xl border flex items-center justify-between transition-all bg-emerald-950/40 border-emerald-500/40 text-emerald-300">
+                        <div class="flex items-center gap-2.5">
+                            <span id="statusIcon" class="text-lg"><i class="fa-solid fa-arrow-trend-up"></i></span>
+                            <div>
+                                <div id="statusTitle" class="font-bold text-xs uppercase tracking-wide">ĐỒNG BIẾN (Increasing)</div>
+                                <div id="statusDesc" class="text-[11px] font-sans text-gray-300">f'(x) > 0 ➔ Đồ thị dốc lên từ trái sang phải</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- Right Main Canvas & Visualizer Viewport (8 cols) -->
+        <section class="lg:col-span-8 flex flex-col gap-4">
+            
+            <!-- Canvas Container -->
+            <div class="glass-panel rounded-2xl p-3 md:p-4 flex flex-col gap-3 relative overflow-hidden">
+                
+                <!-- Viewport Control Overlay Toolbar -->
+                <div class="flex flex-wrap items-center justify-between gap-2 px-1 text-xs text-gray-400">
+                    <div class="flex items-center gap-3">
+                        <span class="flex items-center gap-1.5 text-gray-300 font-medium">
+                            <span class="w-2.5 h-2.5 rounded-full bg-cyan-400"></span> Đồ thị $f(x)$
+                        </span>
+                        <span class="flex items-center gap-1.5 text-purple-300 font-medium">
+                            <span class="w-3 h-0.5 bg-purple-400"></span> Cát tuyến
+                        </span>
+                        <span class="flex items-center gap-1.5 text-amber-300 font-medium">
+                            <span class="w-3 h-0.5 bg-amber-400"></span> Tiếp tuyến
+                        </span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <label class="flex items-center gap-1.5 cursor-pointer hover:text-white transition-colors">
+                            <input type="checkbox" id="chkShowTriangle" checked class="rounded border-gray-700 bg-gray-900 text-indigo-500 focus:ring-indigo-500">
+                            <span>Tam giác $\Delta x, \Delta y$</span>
+                        </label>
+                        <label class="flex items-center gap-1.5 cursor-pointer hover:text-white transition-colors">
+                            <input type="checkbox" id="chkShowSecant" checked class="rounded border-gray-700 bg-gray-900 text-purple-500 focus:ring-indigo-500">
+                            <span>Đường Cát Tuyến</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Main Dual Canvas Element -->
+                <div class="relative w-full aspect-[4/3] md:aspect-[16/10] bg-[#070a12] rounded-xl border border-gray-800/80 overflow-hidden shadow-2xl">
+                    <canvas id="mainCanvas" class="w-full h-full block cursor-crosshair"></canvas>
+                    
+                    <!-- Floating Hint Label -->
+                    <div class="absolute bottom-3 right-3 pointer-events-none px-3 py-1.5 rounded-lg bg-gray-900/80 border border-gray-800 text-[11px] text-gray-400 backdrop-blur-sm">
+                        💡 Thao tác: Kéo chuột để di chuyển điểm A/B trên đồ thị | Cuộn chuột để zoom
+                    </div>
+                </div>
+            </div>
+
+            <!-- Educational Explanation Card: Monotonicity Theorem -->
+            <div class="glass-panel rounded-2xl p-4 md:p-5 border-l-4 border-l-indigo-500">
+                <h3 class="text-sm font-bold text-white flex items-center gap-2 mb-2">
+                    <i class="fa-solid fa-graduation-cap text-indigo-400"></i>
+                    Bản Chất Đạo Hàm & Định Lý Tính Đơn Điệu (Đồng Biến / Nghịch Biến)
+                </h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs text-gray-300 leading-relaxed">
+                    <div class="bg-gray-900/50 p-3 rounded-xl border border-gray-800">
+                        <p class="font-semibold text-purple-300 mb-1 flex items-center gap-1.5">
+                            <i class="fa-solid fa-compress text-purple-400"></i> 1. Từ Cát Tuyến sang Tiếp Tuyến:
+                        </p>
+                        <p>
+                            Hệ số góc cát tuyến là tỉ số biến thiên <span class="text-purple-300 font-mono font-bold">Δy/Δx = (f(x+h) - f(x))/h</span>. Khi cho <span class="text-purple-300 font-mono font-bold">h ➔ 0</span>, điểm B thu nhỏ dần về trùng điểm A, đường cát tuyến quay thành **tiếp tuyến**. Đạo hàm chính là độ dốc (hệ số góc) của tiếp tuyến tại điểm đó.
+                        </p>
+                    </div>
+
+                    <div class="bg-gray-900/50 p-3 rounded-xl border border-gray-800">
+                        <p class="font-semibold text-emerald-300 mb-1 flex items-center gap-1.5">
+                            <i class="fa-solid fa-mountain text-emerald-400"></i> 2. Định Lý Đồng Biến - Nghịch Biến:
+                        </p>
+                        <ul class="space-y-1">
+                            <li class="flex items-start gap-1.5">
+                                <span class="text-emerald-400 font-bold">↗ f'(x) &gt; 0:</span> Tiếp tuyến nghiêng dốc lên. Khi đi từ trái sang phải, đồ thị đi lên ➔ **Hàm số đồng biến**.
+                            </li>
+                            <li class="flex items-start gap-1.5">
+                                <span class="text-rose-400 font-bold">↘ f'(x) &lt; 0:</span> Tiếp tuyến nghiêng dốc xuống. Khi đi từ trái sang phải, đồ thị đi xuống ➔ **Hàm số nghịch biến**.
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <script>
+        // Core Visualizer Application Logic
+        (function() {
+            // State
+            const state = {
+                funcStr: "x^3 - 3*x",
+                compiledFunc: null,
+                xMin: -3.5,
+                xMax: 3.5,
+                yMin: -4.0,
+                yMax: 4.0,
+                xA: 0.8,
+                h: 1.2,
+                showSecant: true,
+                showTriangle: true,
+                isAnimatingH: false,
+                isHikerRunning: false,
+                hikerX: -3.5,
+                hikerSpeed: 0.015,
+                isDraggingA: false,
+                isDraggingB: false,
+                zoomFactor: 1.0
+            };
+
+            // Canvas & Context references
+            const canvas = document.getElementById('mainCanvas');
+            const ctx = canvas.getContext('2d');
+
+            // UI Elements
+            const functionInput = document.getElementById('functionInput');
+            const evalStatus = document.getElementById('evalStatus');
+            const errorText = document.getElementById('errorText');
+            const sliderXA = document.getElementById('sliderXA');
+            const sliderH = document.getElementById('sliderH');
+            const valXA = document.getElementById('valXA');
+            const valH = document.getElementById('valH');
+            const valXB = document.getElementById('valXB');
+            const metricSecantSlope = document.getElementById('metricSecantSlope');
+            const metricTangentSlope = document.getElementById('metricTangentSlope');
+            const metricAngle = document.getElementById('metricAngle');
+            const btnAnimateH = document.getElementById('btnAnimateH');
+            const btnToggleHiker = document.getElementById('btnToggleHiker');
+            const hikerIcon = document.getElementById('hikerIcon');
+            const hikerText = document.getElementById('hikerText');
+            const btnResetView = document.getElementById('btnResetView');
+            const chkShowTriangle = document.getElementById('chkShowTriangle');
+            const chkShowSecant = document.getElementById('chkShowSecant');
+            const monotonicityBadge = document.getElementById('monotonicityBadge');
+            const statusIcon = document.getElementById('statusIcon');
+            const statusTitle = document.getElementById('statusTitle');
+            const statusDesc = document.getElementById('statusDesc');
+
+            // Compile Math expression safely
+            function parseFunction(expr) {
+                try {
+                    // Replace user natural notation e.g. 3x -> 3*x
+                    let sanitized = expr.replace(/(\d+)([a-zA-Z])/g, '$1*$2');
+                    const compiled = math.compile(sanitized);
+                    // Test evaluation
+                    const testVal = compiled.evaluate({ x: 1 });
+                    if (typeof testVal !== 'number' || isNaN(testVal)) {
+                        throw new Error("Kết quả không phải số thực");
+                    }
+                    state.compiledFunc = compiled;
+                    state.funcStr = expr;
+                    evalStatus.textContent = "Hợp lệ ✓";
+                    evalStatus.className = "text-xs px-2 py-0.5 rounded bg-emerald-950/80 text-emerald-400 border border-emerald-800/50";
+                    errorText.classList.add('hidden');
+                    autoAdjustYScale();
+                    return true;
+                } catch (err) {
+                    evalStatus.textContent = "Lỗi cú pháp ✗";
+                    evalStatus.className = "text-xs px-2 py-0.5 rounded bg-rose-950/80 text-rose-400 border border-rose-800/50";
+                    errorText.textContent = "Cú pháp chưa đúng. Ví dụ hợp lệ: x^3 - 3*x, sin(2*x), 1/(1+x^2)";
+                    errorText.classList.remove('hidden');
+                    return false;
+                }
+            }
+
+            // Safely evaluate f(x)
+            function f(x) {
+                if (!state.compiledFunc) return 0;
+                try {
+                    const res = state.compiledFunc.evaluate({ x: x });
+                    if (isNaN(res) || !isFinite(res)) return null;
+                    return res;
+                } catch (e) {
+                    return null;
+                }
+            }
+
+            // Numerical Derivative f'(x)
+            function fPrime(x) {
+                const eps = 0.0001;
+                const y1 = f(x + eps);
+                const y2 = f(x - eps);
+                if (y1 === null || y2 === null) return 0;
+                return (y1 - y2) / (2 * eps);
+            }
+
+            // Auto-scale Y domain based on current X viewport
+            function autoAdjustYScale() {
+                let yMin = Infinity;
+                let yMax = -Infinity;
+                const steps = 100;
+                const dx = (state.xMax - state.xMin) / steps;
+
+                for (let i = 0; i <= steps; i++) {
+                    const x = state.xMin + i * dx;
+                    const y = f(x);
+                    if (y !== null && isFinite(y)) {
+                        if (y < yMin) yMin = y;
+                        if (y > yMax) yMax = y;
+                    }
+                }
+
+                if (yMin === Infinity || yMax === -Infinity || yMin === yMax) {
+                    state.yMin = -4;
+                    state.yMax = 4;
+                } else {
+                    const margin = Math.max((yMax - yMin) * 0.25, 1.5);
+                    state.yMin = yMin - margin;
+                    state.yMax = yMax + margin;
+                }
+            }
+
+            // Coordinate System Helpers
+            function getLayoutDimensions() {
+                const rect = canvas.getBoundingClientRect();
+                const dpr = window.devicePixelRatio || 1;
+                
+                if (canvas.width !== rect.width * dpr || canvas.height !== rect.height * dpr) {
+                    canvas.width = rect.width * dpr;
+                    canvas.height = rect.height * dpr;
+                }
+
+                const width = canvas.width;
+                const height = canvas.height;
+
+                // Split into two vertical viewports:
+                // Top Viewport: f(x) (72% height)
+                // Bottom Viewport: f'(x) (28% height)
+                const topHeight = height * 0.70;
+                const bottomHeight = height * 0.30;
+
+                return { width, height, topHeight, bottomHeight, dpr };
+            }
+
+            function toScreenX(x, width) {
+                return ((x - state.xMin) / (state.xMax - state.xMin)) * width;
+            }
+
+            function toMathX(px, width) {
+                return state.xMin + (px / width) * (state.xMax - state.xMin);
+            }
+
+            function toScreenYTop(y, topHeight) {
+                return topHeight - ((y - state.yMin) / (state.yMax - state.yMin)) * topHeight;
+            }
+
+            function toMathYTop(py, topHeight) {
+                return state.yMin + ((topHeight - py) / topHeight) * (state.yMax - state.yMin);
+            }
+
+            function toScreenYBottom(yPrime, bottomHeight, topHeight) {
+                // Derivative y-axis mapping: range [-8, 8]
+                const dMin = -6;
+                const dMax = 6;
+                const localY = ((yPrime - dMin) / (dMax - dMin)) * bottomHeight;
+                return (topHeight + bottomHeight) - localY;
+            }
+
+            // Canvas Render Function
+            function render() {
+                const { width, height, topHeight, bottomHeight, dpr } = getLayoutDimensions();
+
+                ctx.clearRect(0, 0, width, height);
+
+                // 1. Draw Top & Bottom Background & Grid Lines
+                drawGrid(width, height, topHeight, bottomHeight);
+
+                // 2. Draw Color-Coded Curve f(x) on Top Viewport
+                drawFunctionCurve(width, topHeight);
+
+                // 3. Draw Derivative Curve f'(x) on Bottom Viewport
+                drawDerivativeCurve(width, topHeight, bottomHeight);
+
+                // 4. Draw Secant & Tangent Lines + Points A & B
+                drawSecantAndTangent(width, topHeight);
+
+                // 5. Draw Hiker / Particle Visualizer
+                drawHiker(width, topHeight);
+
+                // 6. Draw Viewport Separator
+                drawViewportSeparator(width, topHeight);
+
+                // Update text metrics
+                updateMetricsUI();
+            }
+
+            function drawGrid(width, height, topHeight, bottomHeight) {
+                ctx.save();
+
+                // Fill Viewport backgrounds
+                ctx.fillStyle = '#070a12';
+                ctx.fillRect(0, 0, width, topHeight);
+
+                ctx.fillStyle = '#04060c';
+                ctx.fillRect(0, topHeight, width, bottomHeight);
+
+                // Grid lines styling
+                ctx.strokeStyle = '#1e293b';
+                ctx.lineWidth = 1;
+
+                // Vertical Grid Lines & X Labels
+                const xStep = calculateGridStep(state.xMax - state.xMin);
+                const xStart = Math.ceil(state.xMin / xStep) * xStep;
+
+                ctx.font = '11px "JetBrains Mono", monospace';
+                ctx.fillStyle = '#64748b';
+                ctx.textAlign = 'center';
+
+                for (let x = xStart; x <= state.xMax; x += xStep) {
+                    const sx = toScreenX(x, width);
+                    ctx.beginPath();
+                    ctx.moveTo(sx, 0);
+                    ctx.lineTo(sx, height);
+                    ctx.stroke();
+
+                    // X-axis Tick labels
+                    if (Math.abs(x) > 0.001) {
+                        ctx.fillText(x.toFixed(1), sx, topHeight - 8);
+                    }
+                }
+
+                // Horizontal Grid Lines Top Viewport (f(x))
+                const yStep = calculateGridStep(state.yMax - state.yMin);
+                const yStart = Math.ceil(state.yMin / yStep) * yStep;
+
+                for (let y = yStart; y <= state.yMax; y += yStep) {
+                    const sy = toScreenYTop(y, topHeight);
+                    ctx.beginPath();
+                    ctx.moveTo(0, sy);
+                    ctx.lineTo(width, sy);
+                    ctx.stroke();
+
+                    if (Math.abs(y) > 0.001) {
+                        ctx.textAlign = 'left';
+                        ctx.fillText(y.toFixed(1), 8, sy - 4);
+                    }
+                }
+
+                // Draw X and Y Main Axes for Top Viewport
+                const originX = toScreenX(0, width);
+                const originYTop = toScreenYTop(0, topHeight);
+
+                ctx.strokeStyle = '#475569';
+                ctx.lineWidth = 1.5;
+
+                // Top X Axis (y=0)
+                if (originYTop >= 0 && originYTop <= topHeight) {
+                    ctx.beginPath();
+                    ctx.moveTo(0, originYTop);
+                    ctx.lineTo(width, originYTop);
+                    ctx.stroke();
+                }
+
+                // Top Y Axis (x=0)
+                if (originX >= 0 && originX <= width) {
+                    ctx.beginPath();
+                    ctx.moveTo(originX, 0);
+                    ctx.lineTo(originX, topHeight);
+                    ctx.stroke();
+                }
+
+                // Bottom Viewport Zero Line (f'(x) = 0)
+                const originYBottom = toScreenYBottom(0, bottomHeight, topHeight);
+                ctx.strokeStyle = '#334155';
+                ctx.setLineDash([4, 4]);
+                ctx.beginPath();
+                ctx.moveTo(0, originYBottom);
+                ctx.lineTo(width, originYBottom);
+                ctx.stroke();
+                ctx.setLineDash([]);
+
+                ctx.restore();
+            }
+
+            function calculateGridStep(range) {
+                const target = range / 8;
+                const pow = Math.pow(10, Math.floor(Math.log10(target)));
+                const frac = target / pow;
+                if (frac < 1.5) return pow;
+                if (frac < 3.5) return 2 * pow;
+                if (frac < 7.5) return 5 * pow;
+                return 10 * pow;
+            }
+
+            function drawFunctionCurve(width, topHeight) {
+                const step = 2; // pixel resolution
+                const points = [];
+
+                for (let px = 0; px <= width; px += step) {
+                    const x = toMathX(px, width);
+                    const y = f(x);
+                    if (y !== null) {
+                        const sy = toScreenYTop(y, topHeight);
+                        const df = fPrime(x);
+                        points.push({ px, sy, x, y, df });
+                    } else {
+                        points.push(null);
+                    }
+                }
+
+                if (points.length < 2) return;
+
+                ctx.save();
+                ctx.lineWidth = 3.5;
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+
+                // Draw segments with glowing color based on derivative sign
+                for (let i = 0; i < points.length - 1; i++) {
+                    const p1 = points[i];
+                    const p2 = points[i + 1];
+                    if (!p1 || !p2) continue;
+
+                    const avgDf = (p1.df + p2.df) / 2;
+
+                    ctx.beginPath();
+                    ctx.moveTo(p1.px, p1.sy);
+                    ctx.lineTo(p2.px, p2.sy);
+
+                    // Color classification according to theorem
+                    if (avgDf > 0.08) {
+                        // Green: Đồng biến (Increasing)
+                        ctx.strokeStyle = '#10b981';
+                        ctx.shadowColor = '#10b981';
+                        ctx.shadowBlur = 8;
+                    } else if (avgDf < -0.08) {
+                        // Red: Nghịch biến (Decreasing)
+                        ctx.strokeStyle = '#f43f5e';
+                        ctx.shadowColor = '#f43f5e';
+                        ctx.shadowBlur = 8;
+                    } else {
+                        // Gold: Extreme / Critical Point f'(x) ≈ 0
+                        ctx.strokeStyle = '#f59e0b';
+                        ctx.shadowColor = '#f59e0b';
+                        ctx.shadowBlur = 12;
+                    }
+
+                    ctx.stroke();
+                }
+
+                ctx.restore();
+            }
+
+            function drawDerivativeCurve(width, topHeight, bottomHeight) {
+                const step = 2;
+                const points = [];
+                const zeroY = toScreenYBottom(0, bottomHeight, topHeight);
+
+                for (let px = 0; px <= width; px += step) {
+                    const x = toMathX(px, width);
+                    const df = fPrime(x);
+                    const sy = toScreenYBottom(df, bottomHeight, topHeight);
+                    points.push({ px, sy, df, x });
+                }
+
+                if (points.length < 2) return;
+
+                ctx.save();
+
+                // Shade region under f'(x) curve
+                for (let i = 0; i < points.length - 1; i++) {
+                    const p1 = points[i];
+                    const p2 = points[i + 1];
+
+                    ctx.beginPath();
+                    ctx.moveTo(p1.px, zeroY);
+                    ctx.lineTo(p1.px, p1.sy);
+                    ctx.lineTo(p2.px, p2.sy);
+                    ctx.lineTo(p2.px, zeroY);
+                    ctx.closePath();
+
+                    const avgDf = (p1.df + p2.df) / 2;
+                    if (avgDf > 0) {
+                        ctx.fillStyle = 'rgba(16, 185, 129, 0.15)';
+                    } else {
+                        ctx.fillStyle = 'rgba(244, 63, 94, 0.15)';
+                    }
+                    ctx.fill();
+                }
+
+                // Draw f'(x) line
+                ctx.lineWidth = 2;
+                ctx.strokeStyle = '#38bdf8';
+                ctx.shadowColor = '#38bdf8';
+                ctx.shadowBlur = 6;
+
+                ctx.beginPath();
+                ctx.moveTo(points[0].px, points[0].sy);
+                for (let i = 1; i < points.length; i++) {
+                    ctx.lineTo(points[i].px, points[i].sy);
+                }
+                ctx.stroke();
+
+                // Subgraph Title Badge
+                ctx.fillStyle = '#94a3b8';
+                ctx.font = '11px "Inter", sans-serif';
+                ctx.textAlign = 'left';
+                ctx.fillText("Đồ thị Đạo Hàm f'(x) [Xanh: f'>0 (Đồng biến) | Đỏ: f'<0 (Nghịch biến)]", 12, topHeight + 18);
+
+                ctx.restore();
+            }
+
+            function drawSecantAndTangent(width, topHeight) {
+                const xA = state.xA;
+                const yA = f(xA);
+                if (yA === null) return;
+
+                const xB = xA + state.h;
+                const yB = f(xB);
+
+                const sxA = toScreenX(xA, width);
+                const syA = toScreenYTop(yA, topHeight);
+
+                // 1. Draw Tangent Line at Point A (Gold / Glowing)
+                const slopeTangent = fPrime(xA);
+                ctx.save();
+                ctx.lineWidth = 2.5;
+                ctx.strokeStyle = '#f59e0b';
+                ctx.shadowColor = '#f59e0b';
+                ctx.shadowBlur = 10;
+
+                const xLeft = state.xMin;
+                const yLeft = yA + slopeTangent * (xLeft - xA);
+                const xRight = state.xMax;
+                const yRight = yA + slopeTangent * (xRight - xA);
+
+                ctx.beginPath();
+                ctx.moveTo(toScreenX(xLeft, width), toScreenYTop(yLeft, topHeight));
+                ctx.lineTo(toScreenX(xRight, width), toScreenYTop(yRight, topHeight));
+                ctx.stroke();
+                ctx.restore();
+
+                // 2. Draw Secant Line (Purple) if h is significant
+                if (state.showSecant && yB !== null && Math.abs(state.h) > 0.001) {
+                    const sxB = toScreenX(xB, width);
+                    const syB = toScreenYTop(yB, topHeight);
+                    const slopeSecant = (yB - yA) / state.h;
+
+                    ctx.save();
+                    ctx.lineWidth = 2;
+                    ctx.strokeStyle = '#a855f7';
+                    ctx.setLineDash([6, 4]);
+
+                    const ySecLeft = yA + slopeSecant * (xLeft - xA);
+                    const ySecRight = yA + slopeSecant * (xRight - xA);
+
+                    ctx.beginPath();
+                    ctx.moveTo(toScreenX(xLeft, width), toScreenYTop(ySecLeft, topHeight));
+                    ctx.lineTo(toScreenX(xRight, width), toScreenYTop(ySecRight, topHeight));
+                    ctx.stroke();
+                    ctx.restore();
+
+                    // Draw Secant Right Triangle (dx, dy)
+                    if (state.showTriangle) {
+                        ctx.save();
+                        ctx.lineWidth = 1.5;
+                        ctx.strokeStyle = 'rgba(168, 85, 247, 0.6)';
+                        ctx.fillStyle = 'rgba(168, 85, 247, 0.08)';
+
+                        // Corner vertex C (xB, yA)
+                        const syC = toScreenYTop(yA, topHeight);
+
+                        ctx.beginPath();
+                        ctx.moveTo(sxA, syA);
+                        ctx.lineTo(sxB, syC);
+                        ctx.lineTo(sxB, syB);
+                        ctx.closePath();
+                        ctx.fill();
+                        ctx.stroke();
+
+                        // Label Δx and Δy
+                        ctx.fillStyle = '#e9d5ff';
+                        ctx.font = 'bold 11px "JetBrains Mono", monospace';
+                        ctx.textAlign = 'center';
+
+                        // Δx label
+                        ctx.fillText(`Δx = ${state.h.toFixed(2)}`, (sxA + sxB) / 2, syC + (syB > syA ? -8 : 16));
+
+                        // Δy label
+                        ctx.textAlign = sxB > sxA ? 'left' : 'right';
+                        ctx.fillText(`Δy = ${(yB - yA).toFixed(2)}`, sxB + (sxB > sxA ? 8 : -8), (syA + syB) / 2);
+
+                        ctx.restore();
+                    }
+
+                    // Draw Point B
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.arc(sxB, syB, 7, 0, Math.PI * 2);
+                    ctx.fillStyle = '#c084fc';
+                    ctx.shadowColor = '#c084fc';
+                    ctx.shadowBlur = 12;
+                    ctx.fill();
+                    ctx.strokeStyle = '#ffffff';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+
+                    // Label Point B
+                    ctx.fillStyle = '#ffffff';
+                    ctx.font = 'bold 12px "Inter", sans-serif';
+                    ctx.fillText('B', sxB + 10, syB - 10);
+                    ctx.restore();
+                }
+
+                // 3. Draw Point A (Anchor)
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(sxA, syA, 8, 0, Math.PI * 2);
+                ctx.fillStyle = '#06b6d4';
+                ctx.shadowColor = '#06b6d4';
+                ctx.shadowBlur = 15;
+                ctx.fill();
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 2.5;
+                ctx.stroke();
+
+                // Label Point A
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 13px "Inter", sans-serif';
+                ctx.fillText('A', sxA - 18, syA - 12);
+
+                // Synchronized Projection line down to Derivative Bottom Viewport
+                const { bottomHeight } = getLayoutDimensions();
+                const syPrime = toScreenYBottom(slopeTangent, bottomHeight, topHeight);
+
+                ctx.strokeStyle = 'rgba(6, 182, 212, 0.4)';
+                ctx.setLineDash([3, 3]);
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(sxA, syA);
+                ctx.lineTo(sxA, topHeight + bottomHeight);
+                ctx.stroke();
+
+                // Highlight point on derivative curve
+                ctx.beginPath();
+                ctx.arc(sxA, syPrime, 5, 0, Math.PI * 2);
+                ctx.fillStyle = '#38bdf8';
+                ctx.fill();
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 1.5;
+                ctx.stroke();
+
+                ctx.restore();
+            }
+
+            function drawHiker(width, topHeight) {
+                if (!state.isHikerRunning) return;
+
+                const x = state.hikerX;
+                const y = f(x);
+                if (y === null) return;
+
+                const sx = toScreenX(x, width);
+                const sy = toScreenYTop(y, topHeight);
+                const df = fPrime(x);
+                const angle = Math.atan(df);
+
+                ctx.save();
+                ctx.translate(sx, sy);
+                ctx.rotate(-angle); // Align with curve tangent slope
+
+                // Draw glowing aura/glow around particle
+                ctx.beginPath();
+                ctx.arc(0, -12, 12, 0, Math.PI * 2);
+                if (df > 0.08) {
+                    ctx.fillStyle = 'rgba(16, 185, 129, 0.4)';
+                    ctx.shadowColor = '#10b981';
+                } else if (df < -0.08) {
+                    ctx.fillStyle = 'rgba(244, 63, 94, 0.4)';
+                    ctx.shadowColor = '#f43f5e';
+                } else {
+                    ctx.fillStyle = 'rgba(245, 158, 11, 0.5)';
+                    ctx.shadowColor = '#f59e0b';
+                }
+                ctx.shadowBlur = 15;
+                ctx.fill();
+
+                // Draw Hiker Avatar (Stylized Pin / Runner)
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath();
+                ctx.arc(0, -14, 6, 0, Math.PI * 2); // head
+                ctx.fill();
+
+                ctx.lineWidth = 2.5;
+                ctx.strokeStyle = '#ffffff';
+                ctx.beginPath();
+                ctx.moveTo(0, -8);
+                ctx.lineTo(0, 0); // body
+                ctx.moveTo(-4, -5); ctx.lineTo(4, -5); // arms
+                ctx.stroke();
+
+                // Direction Vector Arrow
+                ctx.strokeStyle = df >= 0 ? '#10b981' : '#f43f5e';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(0, -14);
+                ctx.lineTo(20, -14);
+                ctx.lineTo(16, -18);
+                ctx.moveTo(20, -14);
+                ctx.lineTo(16, -10);
+                ctx.stroke();
+
+                ctx.restore();
+            }
+
+            function drawViewportSeparator(width, topHeight) {
+                ctx.save();
+                ctx.strokeStyle = '#1f293d';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(0, topHeight);
+                ctx.lineTo(width, topHeight);
+                ctx.stroke();
+                ctx.restore();
+            }
+
+            // Update UI Sidebar metrics & status badges
+            function updateMetricsUI() {
+                const xA = state.xA;
+                const yA = f(xA);
+                const xB = xA + state.h;
+                const yB = f(xB);
+
+                valXA.textContent = xA.toFixed(2);
+                valH.textContent = state.h.toFixed(2);
+                valXB.textContent = xB.toFixed(2);
+
+                const tanSlope = fPrime(xA);
+                metricTangentSlope.textContent = (tanSlope >= 0 ? '+' : '') + tanSlope.toFixed(3);
+
+                if (yA !== null && yB !== null && Math.abs(state.h) > 0.0001) {
+                    const secSlope = (yB - yA) / state.h;
+                    metricSecantSlope.textContent = (secSlope >= 0 ? '+' : '') + secSlope.toFixed(3);
+                } else {
+                    metricSecantSlope.textContent = (tanSlope >= 0 ? '+' : '') + tanSlope.toFixed(3);
+                }
+
+                // Angle in degrees
+                const deg = (Math.atan(tanSlope) * 180 / Math.PI).toFixed(1);
+                metricAngle.textContent = deg + '°';
+
+                // Monotonicity Status Badge
+                if (tanSlope > 0.08) {
+                    monotonicityBadge.className = "p-3 rounded-xl border transition-all bg-emerald-950/40 border-emerald-500/40 text-emerald-300 glow-green";
+                    statusIcon.innerHTML = '<i class="fa-solid fa-arrow-trend-up"></i>';
+                    statusTitle.textContent = "HÀM SỐ ĐỒNG BIẾN (Increasing)";
+                    statusDesc.textContent = "f'(x) > 0 ➔ Đồ thị nghiêng dốc lên từ trái sang phải (Leo dốc ↗)";
+                } else if (tanSlope < -0.08) {
+                    monotonicityBadge.className = "p-3 rounded-xl border transition-all bg-rose-950/40 border-rose-500/40 text-rose-300 glow-red";
+                    statusIcon.innerHTML = '<i class="fa-solid fa-arrow-trend-down"></i>';
+                    statusTitle.textContent = "HÀM SỐ NGHỊCH BIẾN (Decreasing)";
+                    statusDesc.textContent = "f'(x) < 0 ➔ Đồ thị nghiêng dốc xuống từ trái sang phải (Xuống dốc ↘)";
+                } else {
+                    monotonicityBadge.className = "p-3 rounded-xl border transition-all bg-amber-950/40 border-amber-500/40 text-amber-300 glow-gold";
+                    statusIcon.innerHTML = '<i class="fa-solid fa-[#f59e0b] fa-minus"></i>';
+                    statusTitle.textContent = "ĐIỂM CỰC TRỊ / ĐIỂM DỪNG";
+                    statusDesc.textContent = "f'(x) ≈ 0 ➔ Tiếp tuyến nằm ngang (Đỉnh núi hoặc đáy thung lũng ➔)";
+                }
+            }
+
+            // Animation Loop for h -> 0
+            function animateHToZero() {
+                if (state.isAnimatingH) return;
+                state.isAnimatingH = true;
+                btnAnimateH.classList.add('opacity-75');
+
+                const targetH = 0.001;
+                const duration = 1200; // ms
+                const startH = state.h;
+                const startTime = performance.now();
+
+                function step(now) {
+                    const elapsed = now - startTime;
+                    const progress = Math.min(elapsed / duration, 1.0);
+
+                    // Cubic Easing Out
+                    const ease = 1 - Math.pow(1 - progress, 3);
+                    state.h = startH + (targetH - startH) * ease;
+
+                    sliderH.value = state.h;
+                    render();
+
+                    if (progress < 1.0) {
+                        requestAnimationFrame(step);
+                    } else {
+                        state.isAnimatingH = false;
+                        btnAnimateH.classList.remove('opacity-75');
+                    }
+                }
+
+                requestAnimationFrame(step);
+            }
+
+            // Hiker Animation Loop
+            function tickHiker() {
+                if (!state.isHikerRunning) return;
+
+                state.hikerX += state.hikerSpeed;
+                if (state.hikerX > state.xMax) {
+                    state.hikerX = state.xMin;
+                }
+
+                render();
+                requestAnimationFrame(tickHiker);
+            }
+
+            // Drag Interaction on Canvas
+            function bindEvents() {
+                // Input function change
+                functionInput.addEventListener('input', (e) => {
+                    parseFunction(e.target.value);
+                    render();
+                });
+
+                document.getElementById('clearInputBtn').addEventListener('click', () => {
+                    functionInput.value = '';
+                    functionInput.focus();
+                });
+
+                // Presets
+                document.querySelectorAll('.preset-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const func = btn.getAttribute('data-func');
+                        functionInput.value = func;
+                        parseFunction(func);
+                        render();
+                    });
+                });
+
+                // Sliders
+                sliderXA.addEventListener('input', (e) => {
+                    state.xA = parseFloat(e.target.value);
+                    render();
+                });
+
+                sliderH.addEventListener('input', (e) => {
+                    state.h = parseFloat(e.target.value);
+                    render();
+                });
+
+                // Checkboxes
+                chkShowTriangle.addEventListener('change', (e) => {
+                    state.showTriangle = e.target.checked;
+                    render();
+                });
+
+                chkShowSecant.addEventListener('change', (e) => {
+                    state.showSecant = e.target.checked;
+                    render();
+                });
+
+                // Action Buttons
+                btnAnimateH.addEventListener('click', animateHToZero);
+
+                btnToggleHiker.addEventListener('click', () => {
+                    state.isHikerRunning = !state.isHikerRunning;
+                    if (state.isHikerRunning) {
+                        hikerIcon.className = "fa-solid fa-pause";
+                        hikerText.textContent = "Tạm dừng ⏸";
+                        state.hikerX = state.xMin;
+                        tickHiker();
+                    } else {
+                        hikerIcon.className = "fa-solid fa-play";
+                        hikerText.textContent = "Chạy Hiker 🏃";
+                        render();
+                    }
+                });
+
+                btnResetView.addEventListener('click', () => {
+                    state.xMin = -3.5;
+                    state.xMax = 3.5;
+                    state.xA = 0.8;
+                    state.h = 1.2;
+                    sliderXA.value = 0.8;
+                    sliderH.value = 1.2;
+                    autoAdjustYScale();
+                    render();
+                });
+
+                // Canvas Mouse Dragging
+                let isPointerDown = false;
+
+                function getCanvasMouseCoords(e) {
+                    const rect = canvas.getBoundingClientRect();
+                    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                    return {
+                        px: (clientX - rect.left) * (canvas.width / rect.width),
+                        py: (clientY - rect.top) * (canvas.height / rect.height)
+                    };
+                }
+
+                function onPointerDown(e) {
+                    const { px } = getCanvasMouseCoords(e);
+                    const mathX = toMathX(px, canvas.width);
+
+                    // Check if clicked near Point A or B
+                    const distA = Math.abs(mathX - state.xA);
+                    const distB = Math.abs(mathX - (state.xA + state.h));
+
+                    if (distA < 0.4) {
+                        state.isDraggingA = true;
+                        isPointerDown = true;
+                    } else if (distB < 0.4) {
+                        state.isDraggingB = true;
+                        isPointerDown = true;
+                    } else {
+                        // Click directly sets xA
+                        state.xA = Math.max(state.xMin, Math.min(state.xMax, mathX));
+                        sliderXA.value = state.xA;
+                        state.isDraggingA = true;
+                        isPointerDown = true;
+                        render();
+                    }
+                }
+
+                function onPointerMove(e) {
+                    if (!isPointerDown) return;
+                    const { px } = getCanvasMouseCoords(e);
+                    const mathX = Math.max(state.xMin, Math.min(state.xMax, toMathX(px, canvas.width)));
+
+                    if (state.isDraggingA) {
+                        state.xA = mathX;
+                        sliderXA.value = state.xA;
+                    } else if (state.isDraggingB) {
+                        state.h = mathX - state.xA;
+                        sliderH.value = state.h;
+                    }
+                    render();
+                }
+
+                function onPointerUp() {
+                    isPointerDown = false;
+                    state.isDraggingA = false;
+                    state.isDraggingB = false;
+                }
+
+                canvas.addEventListener('mousedown', onPointerDown);
+                canvas.addEventListener('mousemove', onPointerMove);
+                window.addEventListener('mouseup', onPointerUp);
+
+                canvas.addEventListener('touchstart', onPointerDown, { passive: true });
+                canvas.addEventListener('touchmove', onPointerMove, { passive: true });
+                window.addEventListener('touchend', onPointerUp);
+
+                // Mousewheel Zooming
+                canvas.addEventListener('wheel', (e) => {
+                    e.preventDefault();
+                    const zoom = e.deltaY < 0 ? 0.9 : 1.1;
+                    const center = (state.xMin + state.xMax) / 2;
+                    const halfSpan = (state.xMax - state.xMin) / 2 * zoom;
+
+                    if (halfSpan > 0.5 && halfSpan < 20) {
+                        state.xMin = center - halfSpan;
+                        state.xMax = center + halfSpan;
+                        sliderXA.min = state.xMin;
+                        sliderXA.max = state.xMax;
+                        autoAdjustYScale();
+                        render();
+                    }
+                }, { passive: false });
+
+                // Responsive Window Resize
+                window.addEventListener('resize', () => {
+                    render();
+                });
+            }
+
+            // Initialize App
+            window.addEventListener('load', () => {
+                parseFunction(state.funcStr);
+                bindEvents();
+                render();
+            });
+
+        })();
+    </script>
 </body>
 </html>
