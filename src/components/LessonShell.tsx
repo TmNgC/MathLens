@@ -7,10 +7,13 @@ import {
   useState,
 } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import type { Lesson, LessonClock } from '../content/types'
 import { LessonChips, LessonRail } from './LessonRail'
 import { ScrubBar } from './ScrubBar'
 import { Formula } from './Formula'
+import { FunFact } from './FunFact'
+import { TheoryPanel } from './TheoryPanel'
 import { markDone } from '../lib/progress'
 
 export const LessonClockContext = createContext<LessonClock | null>(null)
@@ -25,9 +28,10 @@ export const useLessonClock = (): LessonClock => {
 /**
  * LessonShell — persistent stage + narrative steps + animation clock.
  * Owns: current step, looping playhead (0..1 per step), pause state,
- * keyboard navigation, and progress marking.
+ * keyboard navigation, and progress marking. `mode="theory"` swaps the
+ * stage for the lesson's theory document.
  */
-export function LessonShell({ lesson }: { lesson: Lesson }) {
+export function LessonShell({ lesson, mode = 'visual' }: { lesson: Lesson; mode?: 'visual' | 'theory' }) {
   const [step, setStep] = useState(0)
   const [paused, setPaused] = useState(
     () => window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false,
@@ -98,6 +102,46 @@ export function LessonShell({ lesson }: { lesson: Lesson }) {
 
   const current = lesson.steps[step]
 
+  /** tab switch between visualizer and theory (hidden for lab) */
+  const TheoryTabs = lesson.theory ? (
+    <div className="flex gap-1 rounded-full border border-edge bg-bg/85 p-1 backdrop-blur">
+      <Link
+        to={`/lesson/${lesson.id}`}
+        className={`rounded-full px-3.5 py-1.5 text-[12px] font-semibold transition-colors ${
+          mode === 'visual' ? 'bg-curve/20 text-curve' : 'text-dim hover:text-ink'
+        }`}
+      >
+        🎬 Trực quan
+      </Link>
+      <Link
+        to={`/lesson/${lesson.id}/theory`}
+        className={`rounded-full px-3.5 py-1.5 text-[12px] font-semibold transition-colors ${
+          mode === 'theory' ? 'bg-curve/20 text-curve' : 'text-dim hover:text-ink'
+        }`}
+      >
+        📖 Lý thuyết
+      </Link>
+    </div>
+  ) : null
+
+  // theory mode: document view (no stage, no step card)
+  if (mode === 'theory' && lesson.theory) {
+    return (
+      <div className="flex h-full flex-col md:flex-row">
+        <LessonRail activeId={lesson.id} />
+        <div className="flex min-h-0 min-w-0 flex-1 flex-col">
+          <LessonChips activeId={lesson.id} />
+          <div className="border-b border-edge bg-bg-soft/60 px-4 py-2.5 md:px-6">
+            <div className="mx-auto max-w-3xl">{TheoryTabs}</div>
+          </div>
+          <div className="min-h-0 flex-1">
+            <TheoryPanel title={lesson.title} accent={lesson.accent} sections={lesson.theory} />
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   // Lab lessons have no narrative steps — the scene is a self-contained playground.
   if (lesson.kind === 'lab') {
     return (
@@ -131,6 +175,12 @@ export function LessonShell({ lesson }: { lesson: Lesson }) {
         <LessonRail activeId={lesson.id} />
         <div className="flex min-h-0 min-w-0 flex-1 flex-col">
           <LessonChips activeId={lesson.id} />
+
+          {TheoryTabs && (
+            <div className="border-b border-edge bg-bg-soft/60 px-4 py-2 md:px-6">
+              <div className="mx-auto flex max-w-5xl justify-center">{TheoryTabs}</div>
+            </div>
+          )}
 
           {/* stage — the scene owns its canvas here */}
           <div className="relative min-h-0 flex-1 bg-bg">
@@ -182,6 +232,7 @@ export function LessonShell({ lesson }: { lesson: Lesson }) {
                 <p className="mt-1 max-w-3xl text-[13.5px] leading-relaxed text-dim">
                   <Formula text={current.body} />
                 </p>
+                {current.funFact && <FunFact fact={current.funFact} />}
               </div>
 
               <div className="mt-3 max-w-xl">

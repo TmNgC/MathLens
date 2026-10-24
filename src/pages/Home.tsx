@@ -123,6 +123,27 @@ export function Home() {
           </div>
         </section>
 
+        {/* quiz banner */}
+        <section className="mt-8 overflow-hidden rounded-2xl border border-violet/35 bg-gradient-to-r from-violet/[0.12] to-transparent p-6">
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <div className="max-w-xl">
+              <h2 className="text-lg font-bold">
+                ⚡ Kiểm tra kiến thức — có AI chấm bài
+              </h2>
+              <p className="mt-1.5 text-[13.5px] leading-relaxed text-dim">
+                AI soạn câu hỏi trắc nghiệm riêng theo bài bạn chọn, bấm giờ từng câu,
+                phân tích kỹ năng yếu mạnh và gợi ý lộ trình ôn tập sau mỗi lần làm.
+              </p>
+            </div>
+            <Link
+              to="/quiz"
+              className="rounded-full bg-violet px-6 py-3 text-[14px] font-bold text-[#140b1f] shadow-[0_0_24px_rgba(178,141,221,0.3)] transition-transform hover:scale-[1.03]"
+            >
+              Vào phòng kiểm tra →
+            </Link>
+          </div>
+        </section>
+
         <footer className="mt-16 border-t border-edge pt-6 text-[12px] leading-relaxed text-faint">
           MathLens — dự án mã nguồn mở lấy cảm hứng từ spirit của 3Blue1Brown,
           Mathigon và GeoGebra. Làm để học sinh Việt Nam <em>nhìn thấy</em> hình hài

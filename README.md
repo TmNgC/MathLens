@@ -13,14 +13,37 @@ hay trả lời kết quả như WolframAlpha.
 
 | # | Bài | Nội dung |
 |---|-----|----------|
-| 1 | **Giới hạn** Σ | Nghịch lý Zeno, phóng to khoảng trống ×2¹⁷, giới hạn hàm số, dải ε |
+| 1 | **Giới hạn** Σ | Zeno ×2¹⁷, giới hạn hàm số, ε-δ, chuỗi Leibniz π, số e & lãi kép, điều hòa vs cấp số nhân — kèm mục "💡 Bạn có biết?" |
 | 2 | **Đạo hàm** ƒ′ | Cát tuyến → tiếp tuyến (kéo được), vẽ hàm phái sinh f′, cực trị |
 | 3 | **Tích phân** ∫ | Riemann (4 phương pháp), diện tích có dấu, hàm tích lũy, định lý cơ bản, vận tốc → quãng đường, nguyên hàm |
 | 4 | **Khối tròn xoay** ◉ | 3D: quay φ 0→2π, phương pháp đĩa, lát cắt, V = π∫f² |
 | 5 | **Thiết diện** ◫ | 3D: cắt trụ/nón, nguyên lý Cavalieri, bán cầu ⅔πR³ |
 | 6 | **Phòng thí nghiệm** λ | Nhập hàm số bất kỳ (MathLive), tiếp tuyến, f′, diện tích |
 
-Tiến độ được lưu tự động trong `localStorage` — không cần đăng ký.
+Mỗi bài (trừ Lab) có hai tab: **🎬 Trực quan** (hoạt hình từng bước) và
+**📖 Lý thuyết** (định nghĩa, bảng ký hiệu, ví dụ mẫu, sai lầm thường gặp —
+định dạng đề THPT). Tiến độ lưu tự động trong `localStorage`.
+
+## ⚡ Kiểm tra kiến thức (AI)
+
+`#/quiz` — phòng kiểm tra có chấm bài bằng AI:
+
+- **AI soạn câu hỏi**: chọn bài + số câu, mỗi lần một bộ câu mới (trắc nghiệm
+  tiếng Việt, kèm giải thích).
+- **Bấm giờ**: thời gian từng câu và tổng thời gian được ghi lại.
+- **Phân tích kết quả**: điểm mạnh / điểm yếu theo từng kỹ năng, tốc độ làm
+  bài, và lộ trình ôn tập gợi ý (kèm link về đúng phần Lý thuyết cần xem lại).
+
+### Bật AI (biến môi trường trên Vercel)
+
+| Biến | Ý nghĩa |
+|------|---------|
+| `LLM_API_KEY` | **bắt buộc** — API key của nhà cung cấp |
+| `LLM_BASE_URL` | mặc định `https://api.openai.com/v1`; đổi nếu dùng GLM, Groq, Together… (bất kỳ endpoint tương thích OpenAI) |
+| `LLM_MODEL` | mặc định `gpt-4o-mini` |
+
+Không có key (hoặc lỗi mạng), quiz tự chuyển sang **ngân hàng câu hỏi offline**
+và phân tích bằng bộ máy quy tắc nội bộ — trang vẫn dùng được đầy đủ.
 
 ## Công nghệ
 
@@ -60,10 +83,16 @@ npm run build
 ```
 src/
 ├── engine/       # Stage (canvas/rAF/drag), PlaneView (trục, đường cong, Riemann)
-├── components/   # LessonShell (clock + step card), LessonRail, ScrubBar, Formula
-├── content/      # mỗi bài một file: steps[] tiếng Việt + LaTeX + Scene
+├── components/   # LessonShell (clock + step card + theory tab), TheoryPanel, FunFact, ScrubBar
+├── content/      # mỗi bài một file (steps + funFacts + theory) + theory.ts (tài liệu lý thuyết)
 ├── lessons/      # scene của từng bài (Canvas 2D hoặc R3F)
+├── pages/        # Home, QuizSpace (setup → quiz → kết quả → phân tích AI)
+├── quiz/         # types, ngân hàng offline, lưu lịch sử làm bài
 └── lib/          # progress (localStorage)
+api/
+├── quiz.ts       # serverless: AI soạn câu hỏi (Vercel tự nhận thư mục api/)
+├── analyze.ts    # serverless: AI phân tích kết quả
+└── _lib/llm.ts   # client tương thích OpenAI (LLM_API_KEY / LLM_BASE_URL / LLM_MODEL)
 ```
 
 Thêm bài mới: tạo `content/<id>.ts` (định nghĩa steps + Scene) rồi đăng ký vào

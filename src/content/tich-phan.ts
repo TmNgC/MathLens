@@ -1,5 +1,6 @@
 import type { Lesson } from './types'
 import { IntegralScene } from '../lessons/IntegralLesson'
+import { integralTheory } from './theory'
 
 export const integralLesson: Lesson = {
   id: 'tich-phan',
@@ -60,4 +61,5 @@ export const integralLesson: Lesson = {
     },
   ],
   Scene: IntegralScene,
+  theory: integralTheory,
 }

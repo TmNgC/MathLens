@@ -24,6 +24,19 @@ export interface LessonStep {
   body: string
   /** seconds for one full playhead sweep (default 6) */
   duration?: number
+  /** optional "Bạn có biết?" story — collapsible gold disclosure */
+  funFact?: { title: string; body: string }
+}
+
+/** one block of the per-lesson theory document */
+export interface TheorySection {
+  heading: string
+  /** def = definition box · example = worked example · warn = common mistakes · note/text = plain */
+  kind?: 'def' | 'example' | 'warn' | 'note' | 'text'
+  /** prose with $latex$ */
+  body: string
+  /** optional notation table rendered under the body */
+  table?: Array<{ sym: string; meaning: string }>
 }
 
 export interface Lesson {
@@ -38,5 +51,7 @@ export interface Lesson {
   /** emoji or short glyph for cards */
   glyph: string
   steps: LessonStep[]
+  /** optional theory/notation document (tab inside the lesson) */
+  theory?: TheorySection[]
   Scene: ComponentType<SceneProps>
 }

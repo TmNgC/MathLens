@@ -1,5 +1,6 @@
 import { lazy, Suspense } from 'react'
 import type { Lesson } from './types'
+import { crossSectionTheory } from './theory'
 
 /** three.js weighs ~1MB — only load it when this lesson opens. */
 const CrossSectionScene = lazy(() =>
@@ -47,4 +48,5 @@ export const crossSectionLesson: Lesson = {
     },
   ],
   Scene,
+  theory: crossSectionTheory,
 }

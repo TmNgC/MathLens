@@ -1,5 +1,6 @@
 import type { Lesson } from './types'
 import { DerivativeScene } from '../lessons/DerivativeLesson'
+import { derivativeTheory } from './theory'
 
 export const derivativeLesson: Lesson = {
   id: 'dao-ham',
@@ -42,4 +43,5 @@ export const derivativeLesson: Lesson = {
     },
   ],
   Scene: DerivativeScene,
+  theory: derivativeTheory,
 }

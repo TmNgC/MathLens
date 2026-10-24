@@ -28,7 +28,10 @@ export function LimitsScene({ step }: SceneProps) {
     // era visibilities
     const vSq = st.smooth('vSq', step <= 1 ? 1 : 0, 6)
     const vFn = st.smooth('vFn', step === 2 || step === 3 ? 1 : 0, 6)
-    const vRc = st.smooth('vRc', step === 4 ? 1 : 0, 6)
+    const vLB = st.smooth('vLB', step === 4 ? 1 : 0, 6)
+    const vEU = st.smooth('vEU', step === 5 ? 1 : 0, 6)
+    const vHG = st.smooth('vHG', step === 6 ? 1 : 0, 6)
+    const vRc = st.smooth('vRc', step === 7 ? 1 : 0, 6)
     const vEps = st.smooth('vEps', step === 3 ? 1 : 0, 6)
 
     /* ---------------- Zeno square (steps 0–1) ---------------- */
@@ -199,7 +202,164 @@ export function LimitsScene({ step }: SceneProps) {
       })
     }
 
-    /* ---------------- recap (step 4) ---------------- */
+    /* ---------------- Leibniz π (step 4) ---------------- */
+    if (vLB > 0.02) {
+      const a = vLB
+      const p = new PlaneView(st, { x: W * 0.08, y: 10, w: W * 0.84, h: H - 20 }, {
+        x: [-1, 41],
+        y: [-0.06, 1.16],
+      })
+      p.grid()
+      p.axes('n', 'Sₙ')
+      const target = Math.PI / 4
+      p.hline(target, { color: C.gold, width: 2, alpha: a })
+      p.text(p.rect.x + 10, p.sy(target) - 9, 'π/4 ≈ 0.7854', {
+        color: C.gold, size: 12.5, mono: true, weight: 600,
+      })
+
+      const N = Math.max(2, Math.round(lerp(2, 40, easeInOutSine(ph))))
+      let s = 0
+      const pts: Array<[number, number]> = []
+      const dots: Array<[number, number]> = []
+      for (let k = 1; k <= N; k++) {
+        s += (k % 2 === 1 ? 1 : -1) / (2 * k - 1)
+        pts.push([k, s])
+        if (k <= 3 || k % 5 === 0 || k === N) dots.push([k, s])
+      }
+      p.polyline(pts, { color: C.dim, width: 1.5, alpha: 0.45 * a })
+      for (const [kx, ky] of dots) {
+        const side = ky >= target
+        p.point(kx, ky, { color: side ? C.mint : C.coral, r: 4 })
+      }
+      p.point(N, s, { color: s >= target ? C.mint : C.coral, r: 6, halo: true })
+
+      p.text(p.sx(6), p.sy(1.02), 'Sₙ = 1 − 1/3 + 1/5 − 1/7 + …', {
+        color: C.dim, size: 12.5, mono: true,
+      })
+      p.hud(
+        'tr',
+        [`n     = ${N}`, `Sₙ    = ${s.toFixed(6)}`, `sai số = ${Math.abs(s - target).toExponential(2)}`],
+        { color: C.curve, width: 190 },
+      )
+    }
+
+    /* ---------------- Euler e (step 5) ---------------- */
+    if (vEU > 0.02) {
+      const a = vEU
+      const ctx2 = st.ctx!
+      const p = new PlaneView(st, { x: W * 0.08, y: 10, w: W * 0.84, h: H - 20 }, {
+        x: [0.3, 7.7],
+        y: [0, 3.1],
+      })
+      p.grid()
+      p.axes()
+      p.hline(Math.E, { color: C.gold, width: 2, alpha: a })
+      p.text(p.rect.x + 10, p.sy(Math.E) - 9, 'e ≈ 2.71828 — không thể vượt qua', {
+        color: C.gold, size: 12.5, mono: true, weight: 600,
+      })
+
+      const ns = [1, 2, 4, 12, 52, 365, 8760]
+      const vals = ns.map((n) => Math.pow(1 + 1 / n, n))
+      const reveal = easeInOutSine(ph) * ns.length
+
+      ctx2.save()
+      ctx2.globalAlpha = a
+      const baseY = p.sy(0)
+      for (let i = 0; i < ns.length; i++) {
+        const grown = Math.min(1, Math.max(0, reveal - i))
+        if (grown <= 0) continue
+        const h = vals[i] * grown
+        const bx = p.sx(i + 1) - 26
+        const bw = 52
+        const bh = baseY - p.sy(h)
+        ctx2.fillStyle = `${C.teal}55`
+        ctx2.strokeStyle = C.teal
+        ctx2.lineWidth = 1.5
+        ctx2.beginPath()
+        ctx2.rect(bx, baseY - bh, bw, bh)
+        ctx2.fill()
+        ctx2.stroke()
+        // value on top
+        ctx2.font = `600 12px ${MONO}`
+        ctx2.textAlign = 'center'
+        ctx2.textBaseline = 'bottom'
+        ctx2.fillStyle = C.ink
+        ctx2.fillText(vals[i].toFixed(grown < 1 ? 3 : 4), bx + bw / 2, baseY - bh - 6)
+        // n label under the bar
+        ctx2.font = `500 11px ${MONO}`
+        ctx2.fillStyle = C.faint
+        ctx2.textBaseline = 'top'
+        ctx2.fillText(String(ns[i]), bx + bw / 2, baseY + 7)
+      }
+      ctx2.textAlign = 'left'
+      ctx2.fillStyle = C.dim
+      ctx2.font = `500 11.5px ${MONO}`
+      ctx2.textBaseline = 'top'
+      ctx2.fillText('số kỳ trả lãi n →', p.sx(1) - 26, baseY + 24)
+      ctx2.restore()
+
+      const cur = Math.min(ns.length - 1, Math.floor(reveal))
+      p.hud(
+        'tr',
+        [
+          `n = ${ns[cur].toLocaleString('vi')}`,
+          `(1 + 1/n)ⁿ = ${vals[cur].toFixed(5)}`,
+          `còn cách e: ${(Math.E - vals[cur]).toFixed(5)}`,
+        ],
+        { color: C.teal, width: 205 },
+      )
+    }
+
+    /* ---------------- Harmonic vs geometric (step 6) ---------------- */
+    if (vHG > 0.02) {
+      const a = vHG
+      const p = new PlaneView(st, { x: W * 0.1, y: 10, w: W * 0.82, h: H - 20 }, {
+        x: [0, 125],
+        y: [-0.35, 6.4],
+      })
+      p.grid()
+      p.axes('n', 'Sₙ')
+
+      p.hline(2, { color: C.gold, width: 1.5, dash: [5, 5], alpha: 0.7 * a })
+      p.text(p.rect.x + 10, p.sy(2) - 9, 'geometric → 2', {
+        color: C.gold, size: 12, mono: true,
+      })
+
+      const N = Math.max(2, Math.round(lerp(2, 120, easeInOutSine(ph))))
+      const Hpts: Array<[number, number]> = []
+      const Gpts: Array<[number, number]> = []
+      let h = 0
+      let g = 0
+      for (let k = 1; k <= N; k++) {
+        h += 1 / k
+        g += 1 / Math.pow(2, k - 1)
+        if (k % 2 === 0 || k === N || k <= 4) {
+          Hpts.push([k, h])
+          Gpts.push([k, g])
+        }
+      }
+      p.polyline(Gpts, { color: C.mint, width: 2.5, alpha: a })
+      p.polyline(Hpts, { color: C.coral, width: 2.5, alpha: a })
+      p.point(N, g, { color: C.mint })
+      p.point(N, h, { color: C.coral, halo: true })
+
+      p.text(p.sx(N) - 12, p.sy(h) - 14, `Hₙ = ${h.toFixed(2)}  ↑∞`, {
+        color: C.coral, size: 12.5, mono: true, align: 'right', weight: 600,
+        bg: 'rgba(12,16,34,0.85)',
+      })
+      p.text(p.sx(N) - 12, p.sy(2) + 14, `Gₙ = ${g.toFixed(3)}`, {
+        color: C.mint, size: 12.5, mono: true, align: 'right', weight: 600,
+        bg: 'rgba(12,16,34,0.85)',
+      })
+      p.text(p.sx(70), p.sy(4.6), 'harmonic: chậm mà không dừng', {
+        color: C.coral, size: 12, mono: true,
+      })
+      p.hud('tr', [`n  = ${N}`, `Hₙ = ${h.toFixed(3)}`, `Gₙ = ${g.toFixed(3)}`], {
+        color: C.ink, width: 165,
+      })
+    }
+
+    /* ---------------- recap (step 7) ---------------- */
     if (vRc > 0.02) {
       const a = vRc
       const half = (W - 30) / 2

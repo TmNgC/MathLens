@@ -1,5 +1,6 @@
 import { lazy, Suspense } from 'react'
 import type { Lesson } from './types'
+import { revolutionTheory } from './theory'
 
 /** three.js weighs ~1MB — only load it when this lesson opens. */
 const RevolutionScene = lazy(() =>
@@ -53,4 +54,5 @@ export const revolutionLesson: Lesson = {
     },
   ],
   Scene,
+  theory: revolutionTheory,
 }

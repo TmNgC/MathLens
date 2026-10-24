@@ -72,6 +72,23 @@ export function LessonRail({ activeId }: { activeId?: string }) {
         ))}
       </div>
 
+      <NavLink
+        to="/quiz"
+        className={({ isActive }) =>
+          `mx-3 mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 transition-colors ${
+            isActive ? 'bg-panel text-ink' : 'text-dim hover:bg-panel/60 hover:text-ink'
+          }`
+        }
+      >
+        <span className="grid size-8 shrink-0 place-items-center rounded-lg bg-violet/15 text-[15px] font-semibold text-violet">
+          ⚡
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className="block text-[13px] font-semibold">Kiểm tra</span>
+          <span className="block text-[11px] text-faint">AI soạn câu hỏi riêng</span>
+        </span>
+      </NavLink>
+
       <p className="border-t border-edge px-5 py-3 text-[10.5px] leading-relaxed text-faint">
         Làm cho học sinh Việt Nam <em>nhìn thấy</em> toán học.
       </p>
@@ -107,6 +124,16 @@ export function LessonChips({ activeId }: { activeId?: string }) {
           {l.title}
         </NavLink>
       ))}
+      <NavLink
+        to="/quiz"
+        className={({ isActive }) =>
+          `flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1.5 text-[12px] font-semibold transition-colors ${
+            isActive ? 'bg-violet/20 text-violet' : 'text-dim'
+          }`
+        }
+      >
+        ⚡ Kiểm tra
+      </NavLink>
     </div>
   )
 }
