@@ -59,7 +59,7 @@ export function DerivativeScene({ step }: SceneProps) {
     /* ---------------- parabola era (steps 0–2) ---------------- */
     const a1 = clamp(1 - t * 1.8)
     if (a1 > 0.02) {
-      left.curve(f1, { color: C.curve, width: 3, alpha: a1 })
+      left.curve(f1, { color: C.curve, width: 3, glow: 12, alpha: a1 })
 
       const ax = clamp(A.current, 0.4, 4.3)
       let bx: number
@@ -72,7 +72,7 @@ export function DerivativeScene({ step }: SceneProps) {
 
       // secant / tangent line (same geometry — crossfading styles)
       left.ray(ax, ay, slope, { color: C.violet, width: 2, dash: [8, 7], alpha: v01 * a1 })
-      left.ray(ax, ay, slope, { color: C.gold, width: 2.5, alpha: v2 * a1 })
+      left.ray(ax, ay, slope, { color: C.gold, width: 2.5, glow: 9, alpha: v2 * a1 })
 
       // rise/run triangle
       if (v01 > 0.03) {
@@ -138,7 +138,7 @@ export function DerivativeScene({ step }: SceneProps) {
     /* ---------------- cubic era (steps 3–4) ---------------- */
     const a2 = clamp(t * 1.8 - 0.15)
     if (a2 > 0.02) {
-      left.curve(f2, { color: C.curve, width: 3, alpha: a2 })
+      left.curve(f2, { color: C.curve, width: 3, glow: 12, alpha: a2 })
 
       const margin = 0.35
       const xs = lerp(d2.x[0] + margin, d2.x[1] - margin, easeInOutSine(ph))
@@ -146,7 +146,7 @@ export function DerivativeScene({ step }: SceneProps) {
       const m = f2p(xs)
 
       // sweeping tangent
-      left.ray(xs, ys, m, { color: C.gold, width: 2, alpha: 0.9 * a2 })
+      left.ray(xs, ys, m, { color: C.gold, width: 2, glow: 8, alpha: 0.9 * a2 })
       left.point(xs, ys, { color: C.gold, halo: true })
 
       const xe = Math.sqrt(8 / 3) // where f′ = 0
@@ -154,19 +154,19 @@ export function DerivativeScene({ step }: SceneProps) {
       // monotonicity coloring over the blue curve
       if (v4 > 0.03) {
         const ta = a2 * v4
-        segCurve(left, f2, d2.x[0], -xe, { color: C.mint, width: 3, alpha: 0.95 * ta })
+        segCurve(left, f2, d2.x[0], -xe, { color: C.mint, width: 3, glow: 10, alpha: 0.95 * ta })
         segCurve(left, f2, -xe, xe, { color: C.coral, width: 3, alpha: 0.95 * ta })
-        segCurve(left, f2, xe, d2.x[1], { color: C.mint, width: 3, alpha: 0.95 * ta })
+        segCurve(left, f2, xe, d2.x[1], { color: C.mint, width: 3, glow: 10, alpha: 0.95 * ta })
         // extrema markers
         left.vline(-xe, { color: C.gold, width: 1, dash: [5, 6], alpha: 0.5 * ta })
         left.vline(xe, { color: C.gold, width: 1, dash: [5, 6], alpha: 0.5 * ta })
         left.point(-xe, f2(-xe), { color: C.gold, r: 6 })
         left.point(xe, f2(xe), { color: C.gold, r: 6 })
         left.text(left.sx(-xe) - 6, left.sy(f2(-xe)) - 16, 'cực đại', {
-          color: C.gold, size: 12, mono: true, align: 'right', bg: 'rgba(12,16,34,0.85)',
+          color: C.gold, size: 12, mono: true, align: 'right', bg: `${C.bg}e6`,
         })
         left.text(left.sx(xe) + 6, left.sy(f2(xe)) - 16, 'cực tiểu', {
-          color: C.gold, size: 12, mono: true, bg: 'rgba(12,16,34,0.85)',
+          color: C.gold, size: 12, mono: true, bg: `${C.bg}e6`,
         })
       }
 
@@ -181,9 +181,9 @@ export function DerivativeScene({ step }: SceneProps) {
 
       // partial f′ curve revealed up to xs, colored by sign
       if (xs > d2.x[0]) {
-        segCurve(right, f2p, d2.x[0], Math.min(xs, -xe), { color: C.mint, width: 3, alpha: a2 })
+        segCurve(right, f2p, d2.x[0], Math.min(xs, -xe), { color: C.mint, width: 3, glow: 10, alpha: a2 })
         if (xs > -xe) segCurve(right, f2p, -xe, Math.min(xs, xe), { color: C.coral, width: 3, alpha: a2 })
-        if (xs > xe) segCurve(right, f2p, xe, xs, { color: C.mint, width: 3, alpha: a2 })
+        if (xs > xe) segCurve(right, f2p, xe, xs, { color: C.mint, width: 3, glow: 10, alpha: a2 })
       }
       right.point(xs, m, { color: m >= 0 ? C.mint : C.coral, halo: true })
 
@@ -191,10 +191,10 @@ export function DerivativeScene({ step }: SceneProps) {
         right.point(-xe, 0, { color: C.gold, r: 5 })
         right.point(xe, 0, { color: C.gold, r: 5 })
         right.text(right.sx(-xe), right.sy(0) - 16, 'f′ = 0', {
-          color: C.gold, size: 12, mono: true, align: 'center', bg: 'rgba(12,16,34,0.85)',
+          color: C.gold, size: 12, mono: true, align: 'center', bg: `${C.bg}e6`,
         })
         right.text(right.sx(xe), right.sy(0) - 16, 'f′ = 0', {
-          color: C.gold, size: 12, mono: true, align: 'center', bg: 'rgba(12,16,34,0.85)',
+          color: C.gold, size: 12, mono: true, align: 'center', bg: `${C.bg}e6`,
         })
       }
 
@@ -214,7 +214,7 @@ function segCurve(
   fn: (x: number) => number,
   x0: number,
   x1: number,
-  opts: { color?: string; width?: number; alpha?: number },
+  opts: { color?: string; width?: number; alpha?: number; glow?: number },
 ) {
   if (x1 <= x0) return
   const n = 64

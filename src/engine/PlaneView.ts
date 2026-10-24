@@ -27,6 +27,8 @@ export interface StrokeOpts {
   width?: number
   dash?: number[]
   alpha?: number
+  /** neon glow radius in px (use sparingly — it costs fill rate) */
+  glow?: number
 }
 
 export interface FillOpts {
@@ -101,6 +103,10 @@ export class PlaneView {
     ctx.setLineDash(opts.dash ?? [])
     ctx.lineJoin = 'round'
     ctx.lineCap = 'round'
+    if (opts.glow) {
+      ctx.shadowColor = opts.color ?? C.ink
+      ctx.shadowBlur = opts.glow
+    }
     ctx.stroke()
     ctx.restore()
   }
@@ -494,7 +500,7 @@ export function drawHud(
   const lh = 16
   const h = lines.length * lh + 2 * pad - 4
   ctx.save()
-  ctx.fillStyle = 'rgba(12, 16, 34, 0.82)'
+  ctx.fillStyle = `${C.bg}e8`
   ctx.strokeStyle = C.axis
   ctx.lineWidth = 1
   roundRect(ctx, x, y, w, h, 8)

@@ -23,10 +23,10 @@ export const limitsLesson: Lesson = {
       },
     },
     {
-      title: 'Phóng to khoảng trống',
+      title: 'Trục số: dồn dần về 1',
       body:
-        'Trong số thập phân, $S_n$ tiến sát 1 đến mức gần như không thể phân biệt. Hãy phóng mạnh ống kính lên chỗ còn thiếu: khoảng trống vẫn ở đó — nhưng nhỏ dần không ngừng. Ta nói giới hạn của $S_n$ là 1: $\\lim_{n\\to\\infty}S_n=1$. "Không bao giờ chạm tới", nhưng "gần tùy ý" — đó chính là ý nghĩa thật của giới hạn.',
-      duration: 14,
+        'Quay lại tổng của Zeno: $S_n=\\frac{1}{2}+\\frac{1}{4}+\\dots+\\frac{1}{2^n}$. Trên trục số, các tổng riêng $S_n$ bò dần về vạch $1$ (điểm vàng). Sau mỗi lần cộng, khoảng cách còn thiếu lại nhỏ đi đúng một nửa: sau 10 bước chỉ còn $\\frac{1}{1024}$, sau 20 bước còn chưa đến một phần triệu! "Gần tùy ý" nghĩa đen là: muốn gần đến mức nào cũng làm được — chỉ cần cộng thêm đủ nhiều bước.',
+      duration: 12,
     },
     {
       title: 'Giới hạn của hàm số',

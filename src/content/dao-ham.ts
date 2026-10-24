@@ -4,7 +4,7 @@ import { derivativeTheory } from './theory'
 
 export const derivativeLesson: Lesson = {
   id: 'dao-ham',
-  number: 2,
+  number: 3,
   title: 'Đạo hàm',
   subtitle: 'Độ dốc tức thời & hàm phái sinh',
   kind: 'calc',

@@ -4,7 +4,22 @@ import { Canvas, useFrame } from '@react-three/fiber'
 import { Grid, Line, OrbitControls } from '@react-three/drei'
 import type { SceneProps } from '../content/types'
 import { useLessonClock } from '../components/LessonShell'
+import { useIsLight } from '../lib/theme'
 import { easeInOutSine, lerp } from '../engine/easing'
+
+/** theme-aware 3D colors */
+function use3dColors() {
+  const light = useIsLight()
+  return {
+    gridA: light ? '#dfe5f2' : '#232b4d',
+    gridB: light ? '#bcc6e2' : '#31407a',
+    solid: light ? '#0a86d6' : '#45e0ff',
+    coinL: light ? '#0d9488' : '#2dffd8',
+    coinR: light ? '#7d3fd6' : '#cd9bff',
+    gold: light ? '#b86e00' : '#ffe066',
+    rim: light ? '#7fb6dd' : '#58c4dd',
+  }
+}
 
 const R = 1.2
 const H = 2.4
@@ -28,20 +43,21 @@ interface Live {
 export function CrossSectionScene({ step }: SceneProps) {
   const { playheadRef } = useLessonClock()
   const liveRef = useRef<Live>({ h: 0, r: R, area: Math.PI * R * R, volume: 0 })
+  const col = use3dColors()
 
   return (
     <div className="absolute inset-0">
       <Canvas camera={{ position: [4.4, 2.6, 5.2], fov: 42 }} dpr={[1, 2]} gl={{ antialias: true, alpha: true }}>
         <ambientLight intensity={0.6} />
         <directionalLight position={[5, 7, 4]} intensity={1.25} />
-        <directionalLight position={[-5, -3, -5]} intensity={0.4} color="#58c4dd" />
+        <directionalLight position={[-5, -3, -5]} intensity={0.4} color={col.rim} />
         <Grid
           position={[0, -0.02, 0]}
           args={[12, 12]}
           cellSize={0.5}
-          cellColor="#232b4d"
+          cellColor={col.gridA}
           sectionSize={1.5}
-          sectionColor="#31407a"
+          sectionColor={col.gridB}
           fadeDistance={16}
           infiniteGrid
         />
@@ -68,6 +84,7 @@ function Scene3D({
   const coinsL = useRef<THREE.InstancedMesh>(null)
   const coinsR = useRef<THREE.InstancedMesh>(null)
   const cavMarks = useRef<THREE.Group>(null)
+  const col = use3dColors()
   const dummy = useRef(new THREE.Object3D())
   const lastSlice = useRef('')
   const ghostOp = useRef(0)
@@ -164,17 +181,17 @@ function Scene3D({
         {/* cylinder */}
         <mesh position={[0, H / 2, 0]}>
           <cylinderGeometry args={[R, R, H, 48]} />
-          <meshStandardMaterial color="#58c4dd" transparent opacity={0.16} roughness={0.35} side={THREE.DoubleSide} />
+          <meshStandardMaterial color={col.solid} transparent opacity={0.16} roughness={0.35} side={THREE.DoubleSide} />
         </mesh>
         {/* cone */}
         <mesh position={[0, H / 2, 0]}>
           <coneGeometry args={[R, H, 48]} />
-          <meshStandardMaterial color="#58c4dd" transparent opacity={0.16} roughness={0.35} side={THREE.DoubleSide} />
+          <meshStandardMaterial color={col.solid} transparent opacity={0.16} roughness={0.35} side={THREE.DoubleSide} />
         </mesh>
         {/* hemisphere */}
         <mesh>
           <sphereGeometry args={[R, 48, 24, 0, Math.PI * 2, 0, Math.PI / 2]} />
-          <meshStandardMaterial color="#58c4dd" transparent opacity={0.16} roughness={0.35} side={THREE.DoubleSide} />
+          <meshStandardMaterial color={col.solid} transparent opacity={0.16} roughness={0.35} side={THREE.DoubleSide} />
         </mesh>
       </group>
 
@@ -192,7 +209,7 @@ function Scene3D({
             [-1.8, 0, 1.8],
             [-1.8, 0, -1.8],
           ]}
-          color="#ffd35c"
+          color={col.gold}
           lineWidth={1.5}
           transparent
           opacity={0.5}
@@ -207,11 +224,11 @@ function Scene3D({
       {/* Cavalieri stacks */}
       <instancedMesh ref={coinsL} args={[undefined, undefined, COINS]} visible={false}>
         <cylinderGeometry args={[1, 1, 1, 40]} />
-        <meshStandardMaterial color="#5cd6c0" transparent opacity={0.75} roughness={0.4} />
+        <meshStandardMaterial color={col.coinL} transparent opacity={0.75} roughness={0.4} />
       </instancedMesh>
       <instancedMesh ref={coinsR} args={[undefined, undefined, COINS]} visible={false}>
         <cylinderGeometry args={[1, 1, 1, 40]} />
-        <meshStandardMaterial color="#b28ddd" transparent opacity={0.75} roughness={0.4} />
+        <meshStandardMaterial color={col.coinR} transparent opacity={0.75} roughness={0.4} />
       </instancedMesh>
 
       {/* gold rings on the two equal cross-sections (Cavalieri) */}

@@ -8,8 +8,12 @@ import { chatJSON, json, llmConfig } from './_lib/llm.ts'
 const LESSON_TOPICS: Record<string, string> = {
   'gioi-han':
     'Giới hạn: tính giới hạn dãy hữu tỉ, lim q^n với |q|<1, lim(1+1/n)^n=e, giới hạn hàm số & hai giới hạn một bên, chuỗi hội tụ/phân kỳ (Zeno, chuỗi điều hòa), ý nghĩa epsilon-delta',
+  'gioi-han-nang-cao':
+    'Giới hạn nâng cao: nguyên lý kẹp, các giới hạn tiêu chuẩn (sinx/x, ln(1+x)/x, (1+a/x)^x→e^a), quy tắc L\'Hôpital (dạng 0/0, ∞/∞ và các bẫy), khai triển Taylor, tiêu chuẩn Weierstrass cho dãy truy hồi u_{n+1}=f(u_n), định lý Stolz–Cesàro',
   'dao-ham':
-    'Đạo hàm: định nghĩa bằng giới hạn của tỉ số hiệu, bảng đạo hàm cơ bản, quy tắc tích/thương/hợp (chuỗi), phương trình tiếp tuyến, ý nghĩa đơn điệu, điều kiện cực trị',
+    'Đạo hàm: định nghĩa bằng giới hạn của tỉ số hiệu, bảng đạo hàm cơ bản, ý nghĩa đơn điệu, điều kiện cực trị, phương trình tiếp tuyến',
+  'quy-tac-dao-ham':
+    'Quy tắc tính đạo hàm: quy tắc tổng hiệu (u±v)\', quy tắc tích (uv)\'=u\'v+uv\', quy tắc thương (u/v)\', hệ quả (1/u)\', quy tắc chuỗi (f(g(x)))\'=f\'(g)·g\' với ví dụ hàm hợp như sin(3x), √(x²+1), (x³-x+1)^5',
   'tich-phan':
     'Tích phân: nguyên hàm cơ bản, định lý cơ bản của giải tích ∫=F(b)−F(a), diện tích có dấu khi f đổi dấu, tổng Riemann, ứng dụng vận tốc–quãng đường',
   'khoi-tron-xoay':

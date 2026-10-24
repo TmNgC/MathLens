@@ -26,7 +26,8 @@ export function LimitsScene({ step }: SceneProps) {
     const ctx = st.ctx!
 
     // era visibilities
-    const vSq = st.smooth('vSq', step <= 1 ? 1 : 0, 6)
+    const vSq = st.smooth('vSq', step === 0 ? 1 : 0, 6)
+    const vNL = st.smooth('vNL', step === 1 ? 1 : 0, 6)
     const vFn = st.smooth('vFn', step === 2 || step === 3 ? 1 : 0, 6)
     const vLB = st.smooth('vLB', step === 4 ? 1 : 0, 6)
     const vEU = st.smooth('vEU', step === 5 ? 1 : 0, 6)
@@ -34,39 +35,19 @@ export function LimitsScene({ step }: SceneProps) {
     const vRc = st.smooth('vRc', step === 7 ? 1 : 0, 6)
     const vEps = st.smooth('vEps', step === 3 ? 1 : 0, 6)
 
-    /* ---------------- Zeno square (steps 0–1) ---------------- */
+    /* ---------------- Zeno square (step 0) ---------------- */
     if (vSq > 0.02) {
-      const n = step === 0
-        ? Math.max(1, Math.round(lerp(1, 12, easeInOutSine(ph))))
-        : Math.round(lerp(12, 21, easeInOutSine(ph)))
+      const n = Math.max(1, Math.round(lerp(1, 12, easeInOutSine(ph))))
       const gap = Math.pow(2, -n)
-      // zoom grows to keep the gap a visible sliver (capped for float sanity)
-      const zoom = step === 0 ? 1 : Math.min(0.22 / gap, Math.pow(2, 17))
 
       const size = Math.min(W * 0.52, H * 0.72)
       const cx = W / 2
       const cy = H / 2 - 14
       const x0 = cx - size / 2
       const y0 = cy - size / 2
-      const focusX = x0 + size // gap lives at the right edge
-      const focusY = cy
 
       ctx.save()
       ctx.globalAlpha = vSq
-      // clip a soft region around the square (screen space)
-      ctx.beginPath()
-      ctx.rect(x0 - 70, y0 - 46, size + 140, size + 92)
-      ctx.clip()
-      // zoom camera
-      ctx.translate(focusX, focusY)
-      ctx.scale(zoom, zoom)
-      ctx.translate(-focusX, -focusY)
-
-      const lw = 1.5 / zoom
-
-      // backdrop: the "unreached" region [1-g_prev .. 1] in faint
-      ctx.fillStyle = 'rgba(255, 139, 139, 0.05)'
-      ctx.fillRect(x0, y0, size, size)
 
       // bars: bar j occupies [1-2^-(j-1), 1-2^-j]
       for (let j = 1; j <= n; j++) {
@@ -77,7 +58,7 @@ export function LimitsScene({ step }: SceneProps) {
         ctx.fillRect(bx, y0, bw, size)
         ctx.globalAlpha = vSq
         ctx.strokeStyle = C.bg
-        ctx.lineWidth = lw
+        ctx.lineWidth = 1.5
         ctx.strokeRect(bx, y0, bw, size)
       }
 
@@ -85,35 +66,29 @@ export function LimitsScene({ step }: SceneProps) {
       const pulse = 0.6 + 0.4 * Math.sin(st.time * 4)
       ctx.globalAlpha = vSq * pulse
       ctx.strokeStyle = C.coral
-      ctx.lineWidth = 2 / zoom
-      ctx.strokeRect(x0 + (1 - gap) * size, y0, gap * size, size)
+      ctx.lineWidth = 2
+      ctx.strokeRect(x0 + (1 - gap) * size, y0, Math.max(gap * size, 2), size)
       ctx.globalAlpha = vSq
 
-      // width labels for the first bars (only while not zoomed)
-      if (zoom < 2.5) {
-        ctx.font = `600 ${13}px ${MONO}`
-        ctx.textAlign = 'center'
-        ctx.textBaseline = 'bottom'
-        ctx.fillStyle = C.dim
-        const nLabels = Math.min(n, 6)
-        for (let j = 1; j <= nLabels; j++) {
-          const bx = x0 + (1 - Math.pow(2, -(j - 1))) * size
-          const bw = Math.pow(2, -j) * size
-          ctx.fillText(`1/${Math.pow(2, j)}`, bx + bw / 2, y0 - 8)
-        }
+      // width labels for the first bars
+      ctx.font = `600 13px ${MONO}`
+      ctx.textAlign = 'center'
+      ctx.textBaseline = 'bottom'
+      ctx.fillStyle = C.dim
+      const nLabels = Math.min(n, 6)
+      for (let j = 1; j <= nLabels; j++) {
+        const bx = x0 + (1 - Math.pow(2, -(j - 1))) * size
+        const bw = Math.pow(2, -j) * size
+        ctx.fillText(`1/${Math.pow(2, j)}`, bx + bw / 2, y0 - 8)
       }
 
       // axis ticks 0 and 1 below the square
-      ctx.font = `600 ${13}px ${MONO}`
+      ctx.font = `600 13px ${MONO}`
       ctx.textAlign = 'center'
       ctx.textBaseline = 'top'
       ctx.fillStyle = C.faint
-      if (zoom < 2.5) {
-        ctx.fillText('0', x0, y0 + size + 10)
-        ctx.fillText('1', x0 + size, y0 + size + 10)
-      } else {
-        ctx.fillText(`×${zoom >= 1000 ? Math.pow(2, Math.round(Math.log2(zoom))).toLocaleString('vi') : Math.round(zoom)}`, focusX - 60 / zoom < x0 ? x0 + 40 : focusX - 60, y0 + size + 10)
-      }
+      ctx.fillText('0', x0, y0 + size + 10)
+      ctx.fillText('1', x0 + size, y0 + size + 10)
       ctx.restore()
 
       const sn = 1 - gap
@@ -122,14 +97,85 @@ export function LimitsScene({ step }: SceneProps) {
         W - 218,
         14,
         200,
-        [
-          `n      = ${n}`,
-          `Sₙ     = ${sn.toFixed(12)}`,
-          `1 − Sₙ = ${gap.toExponential(3)}`,
-          step === 1 ? `phóng  = ×${Math.round(zoom).toLocaleString('vi')}` : '',
-        ].filter(Boolean),
-        step === 0 ? C.curve : C.teal,
+        [`n      = ${n}`, `Sₙ     = ${sn.toFixed(6)}`, `1 − Sₙ = ${gap.toFixed(6)}`],
+        C.curve,
       )
+    }
+
+    /* ---------------- number line: Sₙ → 1 (step 1) ---------------- */
+    if (vNL > 0.02) {
+      const a = vNL
+      const p = new PlaneView(
+        st,
+        { x: W * 0.07, y: H * 0.16, w: W * 0.86, h: H * 0.68 },
+        { x: [0.42, 1.1], y: [-1.35, 1.35] },
+      )
+
+      // the number line itself
+      p.hline(0, { color: C.axis, width: 2, alpha: a })
+      const ctx2 = st.ctx!
+      ctx2.save()
+      ctx2.globalAlpha = a
+      for (const t of [0.5, 0.75, 1.0]) {
+        ctx2.strokeStyle = C.axis
+        ctx2.lineWidth = t === 1 ? 0 : 1.2
+        ctx2.beginPath()
+        ctx2.moveTo(p.sx(t), p.sy(0) - 4)
+        ctx2.lineTo(p.sx(t), p.sy(0) + 4)
+        if (t !== 1) {
+          ctx2.stroke()
+          ctx2.font = `500 11px ${MONO}`
+          ctx2.fillStyle = C.faint
+          ctx2.textAlign = 'center'
+          ctx2.textBaseline = 'top'
+          ctx2.fillText(String(t), p.sx(t), p.sy(0) + 8)
+        }
+      }
+      ctx2.restore()
+
+      // the limit marker L = 1
+      p.vline(1, { color: C.gold, width: 2.5, alpha: a, glow: 10 })
+      p.point(1, 0, { color: C.gold, r: 6, halo: true })
+      p.text(p.sx(1) - 8, p.sy(-0.72), 'giới hạn L = 1', {
+        color: C.gold, size: 13, mono: true, align: 'right', weight: 600,
+      })
+
+      // partial sums marching in
+      const N = Math.max(1, Math.round(lerp(1, 18, easeInOutSine(ph))))
+      const sn = 1 - Math.pow(2, -N)
+      const from = Math.max(1, N - 7)
+      for (let k = from; k <= N; k++) {
+        const sk = 1 - Math.pow(2, -k)
+        const fade = 0.25 + 0.75 * ((k - from) / Math.max(1, N - from))
+        p.point(sk, 0, { color: C.mint, r: 3.5 })
+        ctx2.save()
+        ctx2.globalAlpha = a * fade * 0.9
+        ctx2.font = `600 10.5px ${MONO}`
+        ctx2.textAlign = 'center'
+        ctx2.textBaseline = k % 2 === 0 ? 'bottom' : 'top'
+        ctx2.fillStyle = C.dim
+        ctx2.fillText(`S${k}`, p.sx(sk), p.sy(0) + (k % 2 === 0 ? -10 : 10))
+        ctx2.restore()
+      }
+      p.point(sn, 0, { color: C.mint, r: 6, halo: true })
+
+      // coral bracket for the remaining gap
+      const gy = 0.62
+      p.segment([sn, gy], [1, gy], { color: C.coral, width: 1.8, alpha: a })
+      p.segment([sn, gy - 0.07], [sn, gy + 0.07], { color: C.coral, width: 1.8, alpha: a })
+      p.segment([1, gy - 0.07], [1, gy + 0.07], { color: C.coral, width: 1.8, alpha: a })
+      p.text(p.sx((sn + 1) / 2), p.sy(gy) - 10, `còn thiếu 2⁻ⁿ = ${Math.pow(2, -N).toExponential(2)}`, {
+        color: C.coral, size: 12.5, mono: true, align: 'center', weight: 600,
+      })
+
+      p.hud(
+        'tr',
+        [`n  = ${N}`, `Sₙ = ${sn.toFixed(9)}`, `1 − Sₙ = ${Math.pow(2, -N).toExponential(3)}`],
+        { color: C.mint, width: 200 },
+      )
+      p.text(p.rect.x + 8, p.rect.y - 2, 'Sₙ = ½ + ¼ + ⅛ + … + 1/2ⁿ', {
+        color: C.dim, size: 13, mono: true,
+      })
     }
 
     /* ---------------- function limit (steps 2–3) ---------------- */
@@ -165,7 +211,7 @@ export function LimitsScene({ step }: SceneProps) {
 
       // the line y = x+1 with a hole at x = 1
       p.curve((x) => (Math.abs(x - 1) < 0.001 ? NaN : g(x)), {
-        color: C.curve, width: 3, alpha: a,
+        color: C.curve, width: 3, glow: 12, alpha: a,
       })
       // hole marker
       p.point(1, 2, { color: C.bg, r: 6 })
@@ -198,7 +244,7 @@ export function LimitsScene({ step }: SceneProps) {
       )
 
       p.text(p.sx(1) + 12, p.sy(2) - 14, 'khoảng trống tại x = 1', {
-        color: C.coral, size: 12, mono: true, bg: 'rgba(12,16,34,0.85)',
+        color: C.coral, size: 12, mono: true, bg: `${C.bg}e6`,
       })
     }
 
@@ -212,7 +258,7 @@ export function LimitsScene({ step }: SceneProps) {
       p.grid()
       p.axes('n', 'Sₙ')
       const target = Math.PI / 4
-      p.hline(target, { color: C.gold, width: 2, alpha: a })
+      p.hline(target, { color: C.gold, width: 2, glow: 8, alpha: a })
       p.text(p.rect.x + 10, p.sy(target) - 9, 'π/4 ≈ 0.7854', {
         color: C.gold, size: 12.5, mono: true, weight: 600,
       })
@@ -253,7 +299,7 @@ export function LimitsScene({ step }: SceneProps) {
       })
       p.grid()
       p.axes()
-      p.hline(Math.E, { color: C.gold, width: 2, alpha: a })
+      p.hline(Math.E, { color: C.gold, width: 2, glow: 8, alpha: a })
       p.text(p.rect.x + 10, p.sy(Math.E) - 9, 'e ≈ 2.71828 — không thể vượt qua', {
         color: C.gold, size: 12.5, mono: true, weight: 600,
       })
@@ -339,17 +385,17 @@ export function LimitsScene({ step }: SceneProps) {
         }
       }
       p.polyline(Gpts, { color: C.mint, width: 2.5, alpha: a })
-      p.polyline(Hpts, { color: C.coral, width: 2.5, alpha: a })
+      p.polyline(Hpts, { color: C.coral, width: 2.5, alpha: a, glow: 8 })
       p.point(N, g, { color: C.mint })
       p.point(N, h, { color: C.coral, halo: true })
 
       p.text(p.sx(N) - 12, p.sy(h) - 14, `Hₙ = ${h.toFixed(2)}  ↑∞`, {
         color: C.coral, size: 12.5, mono: true, align: 'right', weight: 600,
-        bg: 'rgba(12,16,34,0.85)',
+        bg: `${C.bg}e6`,
       })
       p.text(p.sx(N) - 12, p.sy(2) + 14, `Gₙ = ${g.toFixed(3)}`, {
         color: C.mint, size: 12.5, mono: true, align: 'right', weight: 600,
-        bg: 'rgba(12,16,34,0.85)',
+        bg: `${C.bg}e6`,
       })
       p.text(p.sx(70), p.sy(4.6), 'harmonic: chậm mà không dừng', {
         color: C.coral, size: 12, mono: true,
@@ -376,7 +422,7 @@ export function LimitsScene({ step }: SceneProps) {
       p1.grid()
       p1.axes('x', 'y')
       const f1 = (x: number) => (x * x) / 4
-      p1.curve(f1, { color: C.curve, width: 3, alpha: a })
+      p1.curve(f1, { color: C.curve, width: 3, glow: 12, alpha: a })
       const axv = 1.6
       const h = lerp(1.9, 0.02, easeInOutCubic(ph))
       const slope = (f1(axv + h) - f1(axv)) / h
@@ -394,7 +440,7 @@ export function LimitsScene({ step }: SceneProps) {
       p2.grid()
       p2.axes('x', 'y')
       const f2 = (x: number) => 1 + 0.9 * Math.sin(1.2 * x) + x / 5
-      p2.curve(f2, { color: C.curve, width: 3, alpha: a })
+      p2.curve(f2, { color: C.curve, width: 3, glow: 12, alpha: a })
       const n = Math.round(Math.exp(lerp(Math.log(2), Math.log(120), easeInOutSine(ph))))
       p2.riemann(f2, 1, 5, n, 'midpoint', {
         fill: C.teal, alpha: 0.3, stroke: C.teal, strokeAlpha: 0.5,

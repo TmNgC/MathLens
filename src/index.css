@@ -5,25 +5,47 @@
   --font-sans: 'Be Vietnam Pro', ui-sans-serif, system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
 
-  /* MathLens palette — inspired by 3Blue1Brown, tuned for dark UI */
-  --color-bg: #0c1022;
-  --color-bg-soft: #10152c;
-  --color-panel: #151b33;
-  --color-panel-2: #1a2140;
-  --color-edge: #262f57;
-  --color-ink: #e9edff;
-  --color-dim: #98a1c9;
-  --color-faint: #5f6890;
+  /* MathLens neon palette (dark, default) — bright on deep navy */
+  --color-bg: #0a0e20;
+  --color-bg-soft: #0e142a;
+  --color-panel: #121a33;
+  --color-panel-2: #172240;
+  --color-edge: #2c3d72;
+  --color-ink: #eef2ff;
+  --color-dim: #a9b6e6;
+  --color-faint: #6d7ab0;
 
-  --color-grid: #1c2344;
-  --color-axis: #414c80;
+  --color-grid: #222e5c;
+  --color-axis: #5d76c8;
 
-  --color-curve: #58c4dd; /* blue */
-  --color-gold: #ffd35c;
-  --color-mint: #97e3a2;
-  --color-coral: #ff8b8b;
-  --color-teal: #5cd6c0;
-  --color-violet: #b28ddd;
+  --color-curve: #45e0ff; /* neon cyan */
+  --color-gold: #ffe066;
+  --color-mint: #4dffa0;
+  --color-coral: #ff7a7a;
+  --color-teal: #2dffd8;
+  --color-violet: #cd9bff;
+}
+
+/* ---------- light theme ---------- */
+html.light {
+  --color-bg: #f6f8fd;
+  --color-bg-soft: #eef1f9;
+  --color-panel: #ffffff;
+  --color-panel-2: #f1f4fb;
+  --color-edge: #d9dfee;
+  --color-ink: #171a2e;
+  --color-dim: #49536e;
+  --color-faint: #8a93b0;
+
+  --color-grid: #e6eaf5;
+  --color-axis: #b3bdd6;
+
+  --color-curve: #0077d9;
+  --color-gold: #b86e00;
+  --color-mint: #0a9e58;
+  --color-coral: #d92c2c;
+  --color-teal: #0d8f7e;
+  --color-violet: #7d3fd6;
 }
 
 html,
@@ -39,13 +61,16 @@ body {
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   overscroll-behavior: none;
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease;
 }
 
 ::selection {
   background: color-mix(in oklab, var(--color-curve) 35%, transparent);
 }
 
-/* Slim scrollbars to match the dark UI */
+/* Slim scrollbars to match the UI */
 * {
   scrollbar-width: thin;
   scrollbar-color: var(--color-edge) transparent;
@@ -57,6 +82,11 @@ body {
 
 .katex-display {
   margin: 0.4em 0;
+}
+
+/* neon glow for primary UI accents */
+.glow-curve {
+  text-shadow: 0 0 18px color-mix(in oklab, var(--color-curve) 55%, transparent);
 }
 
 /* Step card entrance */

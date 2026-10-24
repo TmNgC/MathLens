@@ -25,6 +25,10 @@ export const useLessonClock = (): LessonClock => {
   return clock
 }
 
+function truncate(s: string, n: number): string {
+  return s.length > n ? s.slice(0, n - 1) + '…' : s
+}
+
 /**
  * LessonShell — persistent stage + narrative steps + animation clock.
  * Owns: current step, looping playhead (0..1 per step), pause state,
@@ -102,6 +106,21 @@ export function LessonShell({ lesson, mode = 'visual' }: { lesson: Lesson; mode?
 
   const current = lesson.steps[step]
 
+  // theory-only lessons: straight to the document (no stage, no tabs)
+  if (lesson.kind === 'theory' && lesson.theory) {
+    return (
+      <div className="flex h-full flex-col md:flex-row">
+        <LessonRail activeId={lesson.id} />
+        <div className="flex min-h-0 min-w-0 flex-1 flex-col">
+          <LessonChips activeId={lesson.id} />
+          <div className="min-h-0 flex-1">
+            <TheoryPanel title={lesson.title} accent={lesson.accent} sections={lesson.theory} />
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   /** tab switch between visualizer and theory (hidden for lab) */
   const TheoryTabs = lesson.theory ? (
     <div className="flex gap-1 rounded-full border border-edge bg-bg/85 p-1 backdrop-blur">
@@ -150,7 +169,7 @@ export function LessonShell({ lesson, mode = 'visual' }: { lesson: Lesson; mode?
         <div className="flex min-h-0 min-w-0 flex-1 flex-col">
           <LessonChips activeId={lesson.id} />
           <div className="relative min-h-0 flex-1 bg-bg">
-            <lesson.Scene step={0} />
+            {lesson.Scene && <lesson.Scene step={0} />}
             <div className="pointer-events-none absolute left-4 top-3 md:left-6 md:top-5">
               <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-faint">
                 Phòng thí nghiệm
@@ -184,7 +203,7 @@ export function LessonShell({ lesson, mode = 'visual' }: { lesson: Lesson; mode?
 
           {/* stage — the scene owns its canvas here */}
           <div className="relative min-h-0 flex-1 bg-bg">
-            <lesson.Scene step={step} />
+            {lesson.Scene && <lesson.Scene step={step} />}
             <div className="pointer-events-none absolute left-4 top-3 md:left-6 md:top-5">
               <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-faint">
                 Bài {lesson.number}
@@ -204,27 +223,32 @@ export function LessonShell({ lesson, mode = 'visual' }: { lesson: Lesson; mode?
           {/* narrative step card */}
           <footer className="border-t border-edge bg-bg-soft/95 px-4 py-3.5 md:px-6">
             <div className="mx-auto max-w-5xl">
-              <div className="mb-2.5 flex items-center gap-3">
-                <div className="flex items-center gap-1.5" role="tablist" aria-label="Các bước">
-                  {lesson.steps.map((s, i) => (
+              {/* named section buttons — jump straight to any step */}
+              <div className="mb-2.5 flex items-center gap-1.5 overflow-x-auto pb-0.5" role="tablist" aria-label="Các phần">
+                {lesson.steps.map((s, i) => {
+                  const label = s.title.replace(/\$(.+?)\$/g, '$1')
+                  return (
                     <button
                       key={i}
                       role="tab"
                       aria-selected={i === step}
-                      aria-label={`Bước ${i + 1}: ${s.title.replace(/\$(.+?)\$/g, '$1')}`}
+                      title={`${i + 1}. ${label}`}
                       onClick={() => {
                         setStep(i)
                         playheadRef.current = 0
                       }}
-                      className={`h-1.5 rounded-full transition-all ${
-                        i === step ? 'w-7 bg-curve' : i < step ? 'w-3 bg-curve/40' : 'w-3 bg-edge'
+                      className={`shrink-0 rounded-full px-3 py-1 text-[11.5px] font-semibold transition-colors ${
+                        i === step
+                          ? 'bg-curve/20 text-curve shadow-[0_0_12px_rgba(69,224,255,0.25)]'
+                          : i < step
+                            ? 'bg-panel-2 text-dim hover:text-ink'
+                            : 'bg-panel-2/50 text-faint hover:text-dim'
                       }`}
-                    />
-                  ))}
-                </div>
-                <p className="text-[11px] font-semibold uppercase tracking-wider text-faint">
-                  Bước {step + 1}/{lesson.steps.length}
-                </p>
+                    >
+                      <span className="opacity-60">{i + 1}·</span> {truncate(label, 22)}
+                    </button>
+                  )
+                })}
               </div>
 
               <div key={step} className="rise">

@@ -4,7 +4,7 @@ import { integralTheory } from './theory'
 
 export const integralLesson: Lesson = {
   id: 'tich-phan',
-  number: 3,
+  number: 5,
   title: 'Tích phân',
   subtitle: 'Từ lát cắt đến định lý cơ bản',
   kind: 'calc',

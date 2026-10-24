@@ -44,14 +44,16 @@ export interface Lesson {
   number: number
   title: string
   subtitle: string
-  /** 'calc' 2D canvas · 'geo3d' R3F canvas · 'lab' free playground */
-  kind: 'calc' | 'geo3d' | 'lab'
+  /** 'calc' 2D canvas · 'geo3d' R3F canvas · 'lab' playground · 'theory' document-only */
+  kind: 'calc' | 'geo3d' | 'lab' | 'theory'
   /** accent color (hex) for cards and rail */
   accent: string
   /** emoji or short glyph for cards */
   glyph: string
+  /** theory-only lessons use a single stub step so progress tracking works */
   steps: LessonStep[]
-  /** optional theory/notation document (tab inside the lesson) */
+  /** theory/notation document ('theory' lessons REQUIRE it; others optional tab) */
   theory?: TheorySection[]
-  Scene: ComponentType<SceneProps>
+  /** absent for 'theory' lessons */
+  Scene?: ComponentType<SceneProps>
 }

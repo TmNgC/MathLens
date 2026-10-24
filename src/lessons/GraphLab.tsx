@@ -126,7 +126,7 @@ export default function GraphLab(_: SceneProps) {
       return
     }
 
-    p.curve(fn, { color: C.curve, width: 3 })
+    p.curve(fn, { color: C.curve, width: 3, glow: 12 })
 
     // area layer
     if (toggles.area && table) {
@@ -159,7 +159,7 @@ export default function GraphLab(_: SceneProps) {
     if (Number.isFinite(ay)) {
       const slope = fp ? fp(ax) : numericSlope(fn, ax)
       if (toggles.tangent && Number.isFinite(slope)) {
-        p.ray(ax, ay, slope, { color: C.gold, width: 2 })
+        p.ray(ax, ay, slope, { color: C.gold, width: 2, glow: 8 })
       }
       p.point(ax, ay, { color: C.gold, halo: true, r: 6 })
       p.draggablePoint(ax, ay, (mx) => {

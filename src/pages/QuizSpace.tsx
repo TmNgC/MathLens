@@ -8,6 +8,7 @@ import { FALLBACK_BANK } from '../quiz/fallback'
 import type { AnswerRecord, QuizAnalysis, QuizQuestion } from '../quiz/types'
 
 type Phase = 'setup' | 'loading' | 'quiz' | 'results'
+type QuizMode = 'ai' | 'offline'
 
 const quizLessons = lessons.filter((l) => l.id !== 'lab')
 const COUNTS = [6, 10, 15]
@@ -28,6 +29,7 @@ const fmtMs = (ms: number) => {
 
 export function QuizSpace() {
   const [phase, setPhase] = useState<Phase>('setup')
+  const [mode, setMode] = useState<QuizMode>('ai')
   const [selected, setSelected] = useState<string[]>(quizLessons.map((l) => l.id))
   const [count, setCount] = useState(10)
   const [questions, setQuestions] = useState<QuizQuestion[]>([])
@@ -63,21 +65,28 @@ export function QuizSpace() {
   async function startQuiz() {
     setPhase('loading')
     setAnalysis(null)
-    try {
-      const res = await fetch('/api/quiz', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ lessonIds: selected, count }),
-      })
-      if (!res.ok) throw new Error(`status ${res.status}`)
-      const data = await res.json()
-      if (!Array.isArray(data.questions) || data.questions.length === 0) throw new Error('empty')
-      setQuestions(data.questions)
-      setOffline(false)
-    } catch {
+    if (mode === 'offline') {
       const pool = FALLBACK_BANK.filter((q) => selected.includes(q.lessonId))
       setQuestions(shuffle(pool).slice(0, Math.min(count, pool.length)))
       setOffline(true)
+    } else {
+      try {
+        const res = await fetch('/api/quiz', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ lessonIds: selected, count }),
+        })
+        if (!res.ok) throw new Error(`status ${res.status}`)
+        const data = await res.json()
+        if (!Array.isArray(data.questions) || data.questions.length === 0) throw new Error('empty')
+        setQuestions(data.questions)
+        setOffline(false)
+      } catch {
+        // AI unavailable (no key / network) → offline bank with a notice
+        const pool = FALLBACK_BANK.filter((q) => selected.includes(q.lessonId))
+        setQuestions(shuffle(pool).slice(0, Math.min(count, pool.length)))
+        setOffline(true)
+      }
     }
     setPhase('quiz')
     setQIndex(0)
@@ -170,6 +179,8 @@ export function QuizSpace() {
                 setSelected={setSelected}
                 count={count}
                 setCount={setCount}
+                mode={mode}
+                setMode={setMode}
                 onStart={startQuiz}
               />
             )}
@@ -212,12 +223,16 @@ function SetupScreen({
   setSelected,
   count,
   setCount,
+  mode,
+  setMode,
   onStart,
 }: {
   selected: string[]
   setSelected: (v: string[]) => void
   count: number
   setCount: (v: number) => void
+  mode: QuizMode
+  setMode: (v: QuizMode) => void
   onStart: () => void
 }) {
   const attempts = getAttempts()
@@ -226,7 +241,37 @@ function SetupScreen({
   return (
     <>
       <div className="mt-6 rounded-2xl border border-edge bg-panel p-5">
-        <p className="mb-2 text-[13px] font-bold">Chọn phạm vi</p>
+        <p className="mb-2 text-[13px] font-bold">Nguồn câu hỏi</p>
+        <div className="grid gap-2.5 sm:grid-cols-2">
+          <button
+            onClick={() => setMode('ai')}
+            className={`rounded-xl border p-3.5 text-left transition-colors ${
+              mode === 'ai' ? 'border-violet/60 bg-violet/10' : 'border-edge bg-panel-2 hover:border-violet/30'
+            }`}
+          >
+            <p className={`text-[13.5px] font-bold ${mode === 'ai' ? 'text-violet' : 'text-ink'}`}>
+              ⚡ AI — bộ câu mới mỗi lần
+            </p>
+            <p className="mt-1 text-[11.5px] leading-relaxed text-dim">
+              LLM soạn câu hỏi riêng theo bài bạn chọn. Mỗi lần bấm đầu là một đề hoàn toàn mới.
+            </p>
+          </button>
+          <button
+            onClick={() => setMode('offline')}
+            className={`rounded-xl border p-3.5 text-left transition-colors ${
+              mode === 'offline' ? 'border-curve/60 bg-curve/10' : 'border-edge bg-panel-2 hover:border-curve/30'
+            }`}
+          >
+            <p className={`text-[13.5px] font-bold ${mode === 'offline' ? 'text-curve' : 'text-ink'}`}>
+              📚 Offline — ngân hàng cố định
+            </p>
+            <p className="mt-1 text-[11.5px] leading-relaxed text-dim">
+              Câu hỏi dựng sẵn, không cần mạng. Nhanh, nhẹ, và đúng chất "đề thi".
+            </p>
+          </button>
+        </div>
+
+        <p className="mb-2 mt-5 text-[13px] font-bold">Chọn phạm vi</p>
         <div className="flex flex-wrap gap-2">
           <button
             onClick={() => setSelected(all ? [] : quizLessons.map((l) => l.id))}
@@ -275,10 +320,10 @@ function SetupScreen({
           disabled={selected.length === 0}
           className="mt-6 w-full rounded-xl bg-curve py-3 text-[14px] font-bold text-[#08101c] transition-transform hover:scale-[1.01] disabled:opacity-40"
         >
-          ⚡ Bắt đầu — AI soạn câu hỏi riêng cho bạn
+          {mode === 'ai' ? '⚡ Bắt đầu — AI soạn câu hỏi riêng cho bạn' : '📚 Bắt đầu — ngân hàng offline'}
         </button>
         <p className="mt-2.5 text-center text-[11px] leading-relaxed text-faint">
-          Mỗi câu đều bấm giờ riêng · không có API key thì tự dùng ngân hàng câu hỏi offline
+          Mỗi câu đều bấm giờ riêng · chế độ AI tự đổi sang offline khi không có kết nối
         </p>
       </div>
 

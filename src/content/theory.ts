@@ -65,6 +65,12 @@ export const derivativeTheory: TheorySection[] = [
       'Phương trình tiếp tuyến tại $x_0$: $y=f(x_0)+f\'(x_0)(x-x_0)$. Trên khoảng nào đó: $f\'>0 \\Rightarrow f$ đồng biến; $f\'<0 \\Rightarrow f$ nghịch biến; $f\'(x_0)=0$ là ứng viên cực trị (điểm "phẳng" — như bạn thấy ở bước 5 của phần trực quan).',
   },
   {
+    heading: 'Suy ra công thức chuẩn từ định nghĩa',
+    kind: 'example',
+    body:
+      'Mọi công thức trong bảng dưới đều chui ra từ một chỗ duy nhất — định nghĩa $f\'(x)=\\lim_{\\Delta x\\to0}\\frac{f(x+\\Delta x)-f(x)}{\\Delta x}$. Xem $(x^2)\'$ ra đời: $\\lim_{h\\to0}\\frac{(x+h)^2-x^2}{h}=\\lim_{h\\to0}\\frac{2xh+h^2}{h}=\\lim_{h\\to0}(2x+h)=2x$. Tương tự khai triển $(x+h)^3=x^3+3x^2h+3xh^2+h^3$ cho ra $3x^2$ — và quy luật tổng quát là $(x^n)\'=nx^{n-1}$. Với lượng giác, dùng công thức cộng: $\\frac{\\sin(x+h)-\\sin x}{h}=\\frac{2\\cos\\left(x+\\frac{h}{2}\\right)\\sin\\frac{h}{2}}{h}\\xrightarrow{h\\to0}\\cos x$ (nhờ $\\lim_{t\\to0}\\frac{\\sin t}{t}=1$). Còn $(e^x)\'=e^x$ — hàm duy nhất bằng chính đạo hàm của mình — là món quà của số $e$.',
+  },
+  {
     heading: 'Bảng đạo hàm cơ bản',
     kind: 'note',
     body: 'Đây là "bảng cửu chương" của giải tích — phải thuộc nằm lòng trước mọi bài kiểm tra.',

@@ -126,7 +126,7 @@ export function IntegralScene({ step }: SceneProps) {
 
     /* ---------------- steps 0–2: Riemann era ---------------- */
     if (eraF > 0.02 && step <= 2) {
-      left.curve(f, { color: C.curve, width: 3, alpha: eraF })
+      left.curve(f, { color: C.curve, width: 3, glow: 12, alpha: eraF })
       if (step === 0) {
         left.areaUnder(f, ax, bx, { fill: C.teal, alpha: 0.22 })
         left.vline(ax, { color: C.gold, width: 1.5, dash: [5, 5] })
@@ -164,7 +164,7 @@ export function IntegralScene({ step }: SceneProps) {
 
     /* ---------------- step 3: signed area ---------------- */
     if (vG > 0.02) {
-      left.curve(g, { color: C.curve, width: 3, alpha: vG })
+      left.curve(g, { color: C.curve, width: 3, glow: 12, alpha: vG })
       const n = 34
       left.riemann(g, GA, GB, n, 'midpoint', {
         fill: C.teal, negativeFill: C.coral, alpha: 0.35, stroke: C.dim, strokeAlpha: 0.4,
@@ -182,14 +182,14 @@ export function IntegralScene({ step }: SceneProps) {
         { color: C.mint, width: 205 },
       )
       left.text(left.sx(4.1), left.sy(g(4.1)) + 22, 'âm → bị trừ', {
-        color: C.coral, size: 12, mono: true, align: 'center', bg: 'rgba(12,16,34,0.85)',
+        color: C.coral, size: 12, mono: true, align: 'center', bg: `${C.bg}e6`,
       })
     }
 
     /* ---------------- step 6: velocity → distance ---------------- */
     if (vCar > 0.02) {
       const xs = lerp(X0 + 0.03, X1 - 0.03, easeInOutSine(ph))
-      left.curve(f, { color: C.curve, width: 3, alpha: vCar })
+      left.curve(f, { color: C.curve, width: 3, glow: 12, alpha: vCar })
       left.areaUnder(f, X0, xs, { fill: C.teal, alpha: 0.3 * vCar })
       left.vline(xs, { color: C.gold, width: 1.5, dash: [5, 5], alpha: vCar })
       left.point(xs, f(xs), { color: C.gold })
@@ -213,7 +213,7 @@ export function IntegralScene({ step }: SceneProps) {
         const x = X0 + ((X1 - X0) * i) / n
         pts.push([x, F(x)])
       }
-      left.polyline(pts, { color: C.mint, width: 3, alpha: vAnti })
+      left.polyline(pts, { color: C.mint, width: 3, glow: 10, alpha: vAnti })
       const Fa = F(GA)
       const Fb = F(GB)
       const reveal = easeInOutCubic(ph)
@@ -267,7 +267,7 @@ export function IntegralScene({ step }: SceneProps) {
       const al = clamp(split * 1.6 - 0.15)
       const xs = lerp(X0 + 0.03, X1 - 0.03, easeInOutSine(ph))
 
-      left.curve(f, { color: C.curve, width: 3, alpha: al })
+      left.curve(f, { color: C.curve, width: 3, glow: 12, alpha: al })
       left.areaUnder(f, X0, xs, { fill: C.teal, alpha: 0.26 * al })
       left.vline(xs, { color: C.gold, width: 1.5, dash: [5, 5], alpha: al })
       left.point(xs, f(xs), { color: C.gold })
@@ -281,7 +281,7 @@ export function IntegralScene({ step }: SceneProps) {
           const x = X0 + ((xs - X0) * i) / n
           pts.push([x, F(x)])
         }
-        right.polyline(pts, { color: C.mint, width: 3, alpha: al })
+        right.polyline(pts, { color: C.mint, width: 3, glow: 10, alpha: al })
       }
       right.point(xs, F(xs), { color: C.mint, halo: true })
 
@@ -292,7 +292,7 @@ export function IntegralScene({ step }: SceneProps) {
 
       if (v04 > 0.03) {
         const t4 = v04 * al
-        right.ray(xs, F(xs), f(xs), { color: C.gold, width: 2, alpha: t4 })
+        right.ray(xs, F(xs), f(xs), { color: C.gold, width: 2, glow: 8, alpha: t4 })
         left.hline(f(xs), { color: C.gold, width: 1.5, dash: [4, 5], alpha: t4 })
         right.hud(
           'bl',

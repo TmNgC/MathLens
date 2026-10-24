@@ -2,6 +2,7 @@ import { Link, NavLink } from 'react-router-dom'
 import { useSyncExternalStore } from 'react'
 import { lessons } from '../content'
 import { getProgress, subscribe } from '../lib/progress'
+import { ThemeToggle } from './ThemeToggle'
 
 /** Left chapter rail (tablet/desktop). */
 export function LessonRail({ activeId }: { activeId?: string }) {
@@ -10,18 +11,16 @@ export function LessonRail({ activeId }: { activeId?: string }) {
 
   return (
     <nav className="hidden h-full w-64 shrink-0 flex-col border-r border-edge bg-bg-soft md:flex">
-      <Link
-        to="/"
-        className="flex items-center gap-2.5 px-5 pb-5 pt-6 transition-colors hover:bg-panel"
-      >
-        <span className="grid size-9 place-items-center rounded-xl bg-curve/15 text-lg text-curve">
-          ∫
-        </span>
-        <span>
-          <span className="block text-[15px] font-bold tracking-wide">MathLens</span>
-          <span className="block text-[11px] text-dim">Giải tích thị giác</span>
-        </span>
-      </Link>
+      <div className="flex items-center gap-2 px-4 pb-5 pt-6">
+        <Link to="/" className="flex min-w-0 flex-1 items-center gap-2.5 transition-colors hover:opacity-85">
+          <span className="grid size-9 place-items-center rounded-xl bg-curve/15 text-lg text-curve">∫</span>
+          <span className="min-w-0">
+            <span className="block text-[15px] font-bold tracking-wide">MathLens</span>
+            <span className="block truncate text-[11px] text-dim">Giải tích thị giác</span>
+          </span>
+        </Link>
+        <ThemeToggle />
+      </div>
 
       <div className="px-5 pb-4">
         <div className="h-1 overflow-hidden rounded-full bg-edge">

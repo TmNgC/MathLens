@@ -193,4 +193,61 @@ export const FALLBACK_BANK: QuizQuestion[] = [
     explanation:
       '$V=\\frac{1}{3}\\pi R^2H=\\frac13\\pi\\cdot4\\cdot3=4\\pi$. Tích phân các lát tròn co dần sinh ra đúng công thức nón quen thuộc $\\frac13\\pi R^2H$.',
   },
+  // ---------- Quy tắc tính đạo hàm ----------
+  {
+    id: 'qt-1',
+    lessonId: 'quy-tac-dao-ham',
+    skillTag: 'quy tắc chuỗi',
+    question: 'Đạo hàm của $f(x)=\\sqrt{x^2+1}$ là?',
+    options: ['$\\frac{1}{2\\sqrt{x^2+1}}$', '$\\frac{x}{\\sqrt{x^2+1}}$', '$\\frac{2x}{\\sqrt{x^2+1}}$', '$\\sqrt{2x}$'],
+    correctIndex: 1,
+    explanation:
+      'Chuỗi: lớp ngoài $\\sqrt{u}$ có đạo hàm $\\frac{u\'}{2\\sqrt{u}}$, với $u=x^2+1$, $u\'=2x$. Kết quả $\\frac{2x}{2\\sqrt{x^2+1}}=\\frac{x}{\\sqrt{x^2+1}}$.',
+  },
+  {
+    id: 'qt-2',
+    lessonId: 'quy-tac-dao-ham',
+    skillTag: 'quy tắc tích & thương',
+    question: 'Đạo hàm của $f(x)=x^2\\sin x$ là?',
+    options: ['$2x\\cos x$', '$2x\\sin x+x^2\\cos x$', '$2x\\sin x-x^2\\cos x$', '$x^2\\cos x$'],
+    correctIndex: 1,
+    explanation:
+      'Quy tắc tích: $(uv)\'=u\'v+uv\'$ — lấy "cộng chéo": $(2x)(\\sin x)+(x^2)(\\cos x)$. Đáp án $2x\\sin x+x^2\\cos x$ — chú ý KHÔNG phải $u\'v\'$.',
+  },
+  // ---------- Giới hạn nâng cao ----------
+  {
+    id: 'ghnc-1',
+    lessonId: 'gioi-han-nang-cao',
+    skillTag: "quy tắc L'Hôpital",
+    question: 'Tính $\\lim_{x\\to0}\\frac{\\ln(1+x)}{x}$ bằng L\'Hôpital. Kết quả là?',
+    options: ['$0$', '$1$', '$e$', 'không tồn tại'],
+    correctIndex: 1,
+    explanation:
+      'Dạng $\\frac00$ thỏa điều kiện: đạo hàm tử $\\frac{1}{1+x}$, đạo hàm mẫu $1$ → giới hạn $\\frac{1}{1+0}=1$. Đây cũng là một trong các giới hạn tiêu chuẩn nên nằm lòng.',
+  },
+  {
+    id: 'ghnc-2',
+    lessonId: 'gioi-han-nang-cao',
+    skillTag: "bẫy L'Hôpital",
+    question: 'Xét $\\lim_{x\\to+\\infty}\\frac{x+\\sin x}{x}$. Khẳng định nào ĐÚNG?',
+    options: [
+      'L\'Hôpital cho $\\frac{1+\\cos x}{1}$ không giới hạn nên giới hạn gốc không tồn tại',
+      'Giới hạn bằng 1 — không thể kết luận từ L\'Hôpital, nhưng viết $1+\\frac{\\sin x}{x}$ ra ngay kết quả',
+      'Giới hạn bằng 0',
+      'Phải dùng khai triển Taylor',
+    ],
+    correctIndex: 1,
+    explanation:
+      'Bẫy kinh điển: L\'Hôpital chỉ cho kết luận KHI giới hạn của $f\'/g\'$ tồn tại — ở đây nó không tồn tại, nhưng giới hạn gốc vẫn tồn tại: $\\frac{x+\\sin x}{x}=1+\\frac{\\sin x}{x}\\to1+0=1$.',
+  },
+  {
+    id: 'ghnc-3',
+    lessonId: 'gioi-han-nang-cao',
+    skillTag: 'dãy truy hồi Weierstrass',
+    question: 'Dãy $u_1=\\sqrt2$, $u_{n+1}=\\sqrt{2u_n}$. Nếu $(u_n)$ hội tụ về $L$ thì $L$ bằng?',
+    options: ['$L=1$', '$L=2$', '$L=4$', '$L=\\sqrt2$'],
+    correctIndex: 1,
+    explanation:
+      'Cho $n\\to\\infty$ trong công thức truy hồi: $L=\\sqrt{2L}$ ⇒ $L^2=2L$ ⇒ $L=0$ hoặc $L=2$. Dãy tăng từ $\\sqrt2$ nên loại 0 → $L=2$ (đúng như bước Zeno: nhân đôi mãi "gần" 2).',
+  },
 ]

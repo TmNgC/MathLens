@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { useSyncExternalStore } from 'react'
 import { lessons } from '../content'
 import { getProgress, subscribe } from '../lib/progress'
+import { ThemeToggle } from '../components/ThemeToggle'
 import { useStage } from '../engine/useStage'
 import { PlaneView } from '../engine/PlaneView'
 import { C } from '../engine/palette'
@@ -21,11 +22,11 @@ function HeroDemo() {
     p.areaUnder(f, -3.4, lerp(-3.4, 3.4, easeInOutSine(st.time * 0.05 % 1)), {
       fill: C.teal, alpha: 0.16,
     })
-    p.curve(f, { color: C.curve, width: 3 })
+    p.curve(f, { color: C.curve, width: 3, glow: 12 })
 
     const xs = lerp(-3, 3, easeInOutSine(st.time * 0.09 % 1))
     const ys = f(xs)
-    p.ray(xs, ys, fp(xs), { color: C.gold, width: 2, alpha: 0.9 })
+    p.ray(xs, ys, fp(xs), { color: C.gold, width: 2, glow: 8, alpha: 0.9 })
     p.point(xs, ys, { color: C.gold, halo: true })
   })
   return <canvas ref={canvasRef} className="h-full w-full touch-none" aria-hidden />
@@ -37,6 +38,9 @@ export function Home() {
 
   return (
     <div className="h-full overflow-y-auto">
+      <div className="fixed right-4 top-4 z-20 md:right-6 md:top-6">
+        <ThemeToggle />
+      </div>
       <div className="mx-auto max-w-6xl px-5 pb-16 pt-10 md:px-8 md:pt-16">
         {/* hero */}
         <section className="grid items-center gap-8 md:grid-cols-2">
@@ -104,6 +108,10 @@ export function Home() {
                   {progress[l.id] ? (
                     <span className="rounded-full bg-mint/15 px-2.5 py-1 text-[11px] font-semibold text-mint">
                       ✓ xong
+                    </span>
+                  ) : l.kind === 'theory' ? (
+                    <span className="rounded-full bg-panel-2 px-2.5 py-1 text-[11px] font-semibold text-faint">
+                      📖 lý thuyết
                     </span>
                   ) : (
                     <span className="rounded-full bg-panel-2 px-2.5 py-1 text-[11px] font-semibold text-faint">

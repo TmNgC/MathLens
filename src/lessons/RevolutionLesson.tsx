@@ -4,7 +4,21 @@ import { Canvas, useFrame } from '@react-three/fiber'
 import { Grid, Line, OrbitControls } from '@react-three/drei'
 import type { SceneProps } from '../content/types'
 import { useLessonClock } from '../components/LessonShell'
+import { useIsLight } from '../lib/theme'
 import { easeInOutSine, lerp } from '../engine/easing'
+
+/** theme-aware 3D colors */
+function use3dColors() {
+  const light = useIsLight()
+  return {
+    gridA: light ? '#dfe5f2' : '#232b4d',
+    gridB: light ? '#bcc6e2' : '#31407a',
+    solid: light ? '#0a86d6' : '#45e0ff',
+    disk: light ? '#0d9488' : '#2dffd8',
+    gold: light ? '#b86e00' : '#ffe066',
+    rim: light ? '#7fb6dd' : '#58c4dd',
+  }
+}
 
 const A = 0
 const B = 3
@@ -60,6 +74,7 @@ export function RevolutionScene({ step }: SceneProps) {
   const { playheadRef } = useLessonClock()
   const liveRef = useRef<Live>({ phi: Math.PI * 2, n: 1, sum: 0, xs: 0 })
   const [userN, setUserN] = useState<number | null>(null)
+  const col = use3dColors()
 
   return (
     <div className="absolute inset-0">
@@ -70,14 +85,14 @@ export function RevolutionScene({ step }: SceneProps) {
       >
         <ambientLight intensity={0.6} />
         <directionalLight position={[5, 7, 4]} intensity={1.25} />
-        <directionalLight position={[-5, -3, -5]} intensity={0.4} color="#58c4dd" />
+        <directionalLight position={[-5, -3, -5]} intensity={0.4} color={col.rim} />
         <Grid
           position={[1.5, -1.6, 0]}
           args={[12, 12]}
           cellSize={0.5}
-          cellColor="#232b4d"
+          cellColor={col.gridA}
           sectionSize={1.5}
-          sectionColor="#31407a"
+          sectionColor={col.gridB}
           fadeDistance={16}
           infiniteGrid
         />
@@ -129,6 +144,7 @@ function Scene3D({
   liveRef: LiveRef
   userN: number | null
 }) {
+  const col = use3dColors()
   const solid = useRef<THREE.Mesh>(null)
   const disks = useRef<THREE.InstancedMesh>(null)
   const slice = useRef<THREE.Mesh>(null)
@@ -217,7 +233,7 @@ function Scene3D({
           [A - 0.6, 0, 0],
           [B + 0.8, 0, 0],
         ]}
-        color="#ffd35c"
+        color={col.gold}
         lineWidth={2}
         dashed
         dashSize={0.12}
@@ -229,14 +245,14 @@ function Scene3D({
           const x = A + ((B - A) * i) / 72
           return [x, f(x), 0] as [number, number, number]
         })}
-        color="#ffd35c"
+        color={col.gold}
         lineWidth={2.5}
       />
 
       {/* surface of revolution (lathe around axis Ox via rotation) */}
       <mesh ref={solid} rotation={[0, 0, -Math.PI / 2]}>
         <meshStandardMaterial
-          color="#58c4dd"
+          color={col.solid}
           transparent
           opacity={0.85}
           roughness={0.35}
@@ -248,12 +264,12 @@ function Scene3D({
       {/* disk stack (instanced cylinders) */}
       <instancedMesh ref={disks} args={[undefined, undefined, 150]}>
         <cylinderGeometry args={[1, 1, 1, 40]} />
-        <meshStandardMaterial color="#5cd6c0" transparent opacity={0.5} roughness={0.4} />
+        <meshStandardMaterial color={col.disk} transparent opacity={0.5} roughness={0.4} />
       </instancedMesh>
 
       {/* cross-section circle */}
       <mesh ref={slice} rotation={[0, Math.PI / 2, 0]} visible={false}>
-        <meshBasicMaterial color="#ffd35c" transparent opacity={0.45} side={THREE.DoubleSide} />
+        <meshBasicMaterial color={col.gold} transparent opacity={0.45} side={THREE.DoubleSide} />
       </mesh>
     </group>
   )

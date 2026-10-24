@@ -15,7 +15,7 @@ const Scene = (props: { step: number }) => (
 
 export const revolutionLesson: Lesson = {
   id: 'khoi-tron-xoay',
-  number: 4,
+  number: 6,
   title: 'Khối tròn xoay',
   subtitle: 'Khi đường cong quay quanh trục',
   kind: 'geo3d',
