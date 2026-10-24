@@ -111,7 +111,7 @@ export const FALLBACK_BANK: QuizQuestion[] = [
     options: ['$F(a)-F(b)$', '$F(a)+F(b)$', '$F(b)-F(a)$', '$f(b)-f(a)$'],
     correctIndex: 2,
     explanation:
-      'Định lý cơ bản của giải tích: tích phân và đạo hàm là hai phép ngược nhau — chỉ cần trừ hai số $F(b)-F(a)$. Sai dấu ($F(a)-F(b)$) là lỗi "ăn điểm" kinh điển.',
+      'Định lý cơ bản của giải tích: tích phân và đạo hàm là hai phép ngược nhau — chỉ cần trừ hai số $F(b)-F(a)$. Sai dấu ($F(a)-F(b)$) là một lỗi phổ biến trong bài kiểm tra.',
   },
   // ---------- Khối tròn xoay ----------
   {
@@ -212,7 +212,7 @@ export const FALLBACK_BANK: QuizQuestion[] = [
     options: ['$2x\\cos x$', '$2x\\sin x+x^2\\cos x$', '$2x\\sin x-x^2\\cos x$', '$x^2\\cos x$'],
     correctIndex: 1,
     explanation:
-      'Quy tắc tích: $(uv)\'=u\'v+uv\'$ — lấy "cộng chéo": $(2x)(\\sin x)+(x^2)(\\cos x)$. Đáp án $2x\\sin x+x^2\\cos x$ — chú ý KHÔNG phải $u\'v\'$.',
+      'Quy tắc tích: $(uv)\'=u\'v+uv\'$ — đạo hàm của tích bằng tổng hai số hạng "đạo hàm nhân": $(2x)(\\sin x)+(x^2)(\\cos x)$. Đáp án $2x\\sin x+x^2\\cos x$ — chú ý KHÔNG phải $u\'v\'$.',
   },
   // ---------- Giới hạn nâng cao ----------
   {
@@ -223,7 +223,7 @@ export const FALLBACK_BANK: QuizQuestion[] = [
     options: ['$0$', '$1$', '$e$', 'không tồn tại'],
     correctIndex: 1,
     explanation:
-      'Dạng $\\frac00$ thỏa điều kiện: đạo hàm tử $\\frac{1}{1+x}$, đạo hàm mẫu $1$ → giới hạn $\\frac{1}{1+0}=1$. Đây cũng là một trong các giới hạn tiêu chuẩn nên nằm lòng.',
+      'Dạng $\\frac00$ thỏa điều kiện: đạo hàm tử $\\frac{1}{1+x}$, đạo hàm mẫu $1$ → giới hạn $\\frac{1}{1+0}=1$. Đây cũng là một trong các giới hạn tiêu chuẩn nên ghi nhớ.',
   },
   {
     id: 'ghnc-2',
@@ -249,5 +249,94 @@ export const FALLBACK_BANK: QuizQuestion[] = [
     correctIndex: 1,
     explanation:
       'Cho $n\\to\\infty$ trong công thức truy hồi: $L=\\sqrt{2L}$ ⇒ $L^2=2L$ ⇒ $L=0$ hoặc $L=2$. Dãy tăng từ $\\sqrt2$ nên loại 0 → $L=2$ (đúng như bước Zeno: nhân đôi mãi "gần" 2).',
+  },
+  // ---------- Dạng đề AP Calculus (tham khảo Varsity Tutors) ----------
+  {
+    id: 'ap-1',
+    lessonId: 'dao-ham',
+    skillTag: 'tiếp tuyến',
+    question:
+      'Viết phương trình tiếp tuyến của đồ thị $f(x)=x^3-2x$ tại điểm có hoành độ $x=1$?',
+    options: ['$y=x-2$', '$y=x+2$', '$y=3x-2$', '$y=-x-2$'],
+    correctIndex: 0,
+    explanation:
+      '$f(1)=1-2=-1$ và $f\'(x)=3x^2-2$ nên $f\'(1)=1$. Tiếp tuyến: $y=f(1)+f\'(1)(x-1)=-1+(x-1)=x-2$. Hai dữ kiện cần và đủ: tung độ điểm và độ dốc.',
+  },
+  {
+    id: 'ap-2',
+    lessonId: 'quy-tac-dao-ham',
+    skillTag: 'quy tắc chuỗi',
+    question: 'Đạo hàm của $y=\\sin\\left(2x^2\\right)$ là?',
+    options: [
+      '$4x\\cos\\left(2x^2\\right)$',
+      '$2x\\cos\\left(2x^2\\right)$',
+      '$\\cos\\left(2x^2\\right)$',
+      '$4x^2\\cos\\left(2x^2\\right)$',
+    ],
+    correctIndex: 0,
+    explanation:
+      'Quy tắc chuỗi với $u=2x^2$: $y\'=\\cos(u)\\cdot u\'=\\cos(2x^2)\\cdot4x$. Đạo hàm của lớp trong ($4x$) luôn nhân vào cùng.',
+  },
+  {
+    id: 'ap-3',
+    lessonId: 'dao-ham',
+    skillTag: 'chiều biến thiên',
+    question: 'Hàm số $f(x)=x^2-4x+5$ nghịch biến trên khoảng nào?',
+    options: ['$(-\\infty;2)$', '$(2;+\\infty)$', '$\\mathbb{R}$', '$(-2;2)$'],
+    correctIndex: 0,
+    explanation:
+      '$f\'(x)=2x-4<0 \\Leftrightarrow x<2$. Theo định lý chiều biến thiên, $f$ nghịch biến trên $(-\\infty;2)$ và đồng biến trên $(2;+\\infty)$.',
+  },
+  {
+    id: 'ap-4',
+    lessonId: 'tich-phan',
+    skillTag: 'định lý cơ bản',
+    question: 'Tính $\\dfrac{d}{dx}\\displaystyle\\int_0^x\\sin\\left(t^2\\right)dt$?',
+    options: [
+      '$\\sin\\left(x^2\\right)$',
+      '$\\cos\\left(x^2\\right)$',
+      '$2x\\sin\\left(x^2\\right)$',
+      '$\\sin\\left(t^2\\right)$',
+    ],
+    correctIndex: 0,
+    explanation:
+      'Định lý cơ bản (phần 1): đạo hàm của $\\int_0^x f(t)\\,dt$ theo $x$ chính là $f(x)$ — phép đạo hàm triệt tiêu phép tích phân, chỉ thay biến $t$ bằng cận trên $x$.',
+  },
+  {
+    id: 'ap-5',
+    lessonId: 'gioi-han',
+    skillTag: 'giới hạn hữu tỉ',
+    question: 'Tính $\\lim\\limits_{x\\to+\\infty}\\dfrac{3x^2-2x+1}{5x^2+x}$?',
+    options: ['$\\dfrac{3}{5}$', '$\\dfrac{1}{5}$', '$+\\infty$', '$0$'],
+    correctIndex: 0,
+    explanation:
+      'Tử và mẫu cùng bậc hai nên giới hạn bằng tỉ số hệ số bậc cao nhất: $\\frac{3}{5}$. Cách khác: chia cả tử và mẫu cho $x^2$ rồi cho các số hạng $\\frac{1}{x}$ tiến về 0.',
+  },
+  {
+    id: 'ap-6',
+    lessonId: 'khoi-tron-xoay',
+    skillTag: 'thể tích tròn xoay',
+    question:
+      'Quay hình bán cầu phẳng $y=\\sqrt{4-x^2}$ trên $[-2;2]$ quanh trục $Ox$. Thể tích khối tạo thành bằng?',
+    options: [
+      '$\\dfrac{32\\pi}{3}$',
+      '$\\dfrac{16\\pi}{3}$',
+      '$8\\pi$',
+      '$\\dfrac{32\\pi}{5}$',
+    ],
+    correctIndex: 0,
+    explanation:
+      '$V=\\pi\\int_{-2}^{2}\\left(4-x^2\\right)dx=\\pi\\left[4x-\\frac{x^3}{3}\\right]_{-2}^{2}=\\pi\\left(\\frac{16}{3}+\\frac{16}{3}\\right)=\\frac{32\\pi}{3}$. Kiểm tra: khối vừa tạo là hình cầu bán kính 2, đúng bằng $\\frac{4}{3}\\pi R^3=\\frac{32\\pi}{3}$.',
+  },
+  {
+    id: 'ap-7',
+    lessonId: 'dao-ham',
+    skillTag: 'đạo hàm ẩn',
+    question:
+      'Cho đường tròn $x^2+y^2=25$. Tại điểm $(3;4)$, hệ số góc của tiếp tuyến bằng?',
+    options: ['$-\\dfrac{3}{4}$', '$\\dfrac{3}{4}$', '$-\\dfrac{4}{3}$', '$\\dfrac{4}{3}$'],
+    correctIndex: 0,
+    explanation:
+      'Lấy đạo hàm hai vế theo $x$ (kỹ thuật đạo hàm ẩn): $2x+2y\\cdot y\'=0 \\Rightarrow y\'=-\\frac{x}{y}$. Tại $(3;4)$: $y\'=-\\frac34$. Lưu ý $y$ được xem như hàm của $x$ nên phải nhân $y\'$ theo quy tắc chuỗi.',
   },
 ]

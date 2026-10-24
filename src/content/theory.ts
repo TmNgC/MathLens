@@ -38,10 +38,10 @@ export const limitsTheory: TheorySection[] = [
       '1) Nhầm "không xác định tại $x_0$" với "không có giới hạn tại $x_0$" — hai việc khác nhau. 2) Tin rằng mọi dãy giảm dần về 0 thì tổng hội tụ: chuỗi điều hòa $1+\\frac12+\\frac13+\\dots$ là phản ví dụ kinh điển. 3) Quên kiểm tra CẢ hai giới hạn một bên trước khi kết luận $\\lim_{x\\to x_0}$ tồn tại.',
   },
   {
-    heading: 'Ba giới hạn nên thuộc lòng',
+    heading: 'Công thức thiết yếu',
     kind: 'note',
     body:
-      '$\\lim_{n\\to\\infty}q^n=0$ nếu $|q|<1$ · $\\lim_{n\\to\\infty}\\left(1+\\frac1n\\right)^n=e$ · $\\lim_{x\\to0}\\frac{\\sin x}{x}=1$. Ba kết quả này xuất hiện xuyên suốt từ giới hạn, đạo hàm đến tích phân.',
+      '$\\lim_{n\\to\\infty}q^n=0$ nếu $|q|<1$ · $\\lim_{n\\to\\infty}\\left(1+\\frac1n\\right)^n=e$ · $\\lim_{x\\to0}\\frac{\\sin x}{x}=1$. Ba kết quả này được dùng xuyên suốt từ giới hạn, đạo hàm đến tích phân.',
   },
 ]
 
@@ -59,26 +59,26 @@ export const derivativeTheory: TheorySection[] = [
     ],
   },
   {
-    heading: 'Tiếp tuyến & ý nghĩa đơn điệu',
+    heading: 'Tiếp tuyến và chiều biến thiên',
     kind: 'def',
     body:
-      'Phương trình tiếp tuyến tại $x_0$: $y=f(x_0)+f\'(x_0)(x-x_0)$. Trên khoảng nào đó: $f\'>0 \\Rightarrow f$ đồng biến; $f\'<0 \\Rightarrow f$ nghịch biến; $f\'(x_0)=0$ là ứng viên cực trị (điểm "phẳng" — như bạn thấy ở bước 5 của phần trực quan).',
+      'Phương trình tiếp tuyến tại $x_0$: $y=f(x_0)+f\'(x_0)(x-x_0)$. Định lý (chiều biến thiên): cho hàm số $f$ có đạo hàm trên khoảng $K$ — nếu $f\'(x)\\ge0$ với mọi $x\\in K$ thì $f$ đồng biến trên $K$; nếu $f\'(x)\\le0$ với mọi $x\\in K$ thì $f$ nghịch biến trên $K$; nếu dấu bằng chỉ xảy ra tại hữu hạn điểm thì tính đơn điệu là ngặt. Điểm $x_0$ thỏa $f\'(x_0)=0$ là ứng viên cực trị — như bạn thấy ở bước 5 của phần trực quan.',
   },
   {
     heading: 'Suy ra công thức chuẩn từ định nghĩa',
     kind: 'example',
     body:
-      'Mọi công thức trong bảng dưới đều chui ra từ một chỗ duy nhất — định nghĩa $f\'(x)=\\lim_{\\Delta x\\to0}\\frac{f(x+\\Delta x)-f(x)}{\\Delta x}$. Xem $(x^2)\'$ ra đời: $\\lim_{h\\to0}\\frac{(x+h)^2-x^2}{h}=\\lim_{h\\to0}\\frac{2xh+h^2}{h}=\\lim_{h\\to0}(2x+h)=2x$. Tương tự khai triển $(x+h)^3=x^3+3x^2h+3xh^2+h^3$ cho ra $3x^2$ — và quy luật tổng quát là $(x^n)\'=nx^{n-1}$. Với lượng giác, dùng công thức cộng: $\\frac{\\sin(x+h)-\\sin x}{h}=\\frac{2\\cos\\left(x+\\frac{h}{2}\\right)\\sin\\frac{h}{2}}{h}\\xrightarrow{h\\to0}\\cos x$ (nhờ $\\lim_{t\\to0}\\frac{\\sin t}{t}=1$). Còn $(e^x)\'=e^x$ — hàm duy nhất bằng chính đạo hàm của mình — là món quà của số $e$.',
+      'Mọi công thức trong bảng dưới đều được suy ra trực tiếp từ định nghĩa $f\'(x)=\\lim_{\\Delta x\\to0}\\frac{f(x+\\Delta x)-f(x)}{\\Delta x}$. Xét $(x^2)\'$: $\\lim_{h\\to0}\\frac{(x+h)^2-x^2}{h}=\\lim_{h\\to0}\\frac{2xh+h^2}{h}=\\lim_{h\\to0}(2x+h)=2x$. Tương tự, khai triển $(x+h)^3=x^3+3x^2h+3xh^2+h^3$ cho kết quả $3x^2$ — và quy luật tổng quát là $(x^n)\'=nx^{n-1}$. Với lượng giác, dùng công thức cộng: $\\frac{\\sin(x+h)-\\sin x}{h}=\\frac{2\\cos\\left(x+\\frac{h}{2}\\right)\\sin\\frac{h}{2}}{h}\\xrightarrow{h\\to0}\\cos x$ (nhờ $\\lim_{t\\to0}\\frac{\\sin t}{t}=1$). Riêng $(e^x)\'=e^x$ — hàm duy nhất bằng chính đạo hàm của mình — là tính chất đặc trưng của số $e$.',
   },
   {
-    heading: 'Bảng đạo hàm cơ bản',
+    heading: 'Công thức thiết yếu',
     kind: 'note',
-    body: 'Đây là "bảng cửu chương" của giải tích — phải thuộc nằm lòng trước mọi bài kiểm tra.',
+    body: 'Bảng đạo hàm và các quy tắc thường dùng nhất của phép tính đạo hàm.',
     table: [
       { sym: '$x^n$', meaning: '$nx^{n-1}$' },
       { sym: '$\\sin x$', meaning: '$\\cos x$' },
       { sym: '$\\cos x$', meaning: '$-\\sin x$' },
-      { sym: '$e^x$', meaning: '$e^x$ (duy nhất bằng chính nó!)' },
+      { sym: '$e^x$', meaning: '$e^x$ (bằng chính nó)' },
       { sym: '$\\ln x$', meaning: '$1/x$' },
       { sym: '$u\\cdot v$', meaning: '$u\'v+uv\'$ (tích)' },
       { sym: '$\\frac{u}{v}$', meaning: '$\\frac{u\'v-uv\'}{v^2}$ (thương)' },
@@ -90,6 +90,63 @@ export const derivativeTheory: TheorySection[] = [
     kind: 'example',
     body:
       'Tính đạo hàm của $f(x)=x^2$ bằng định nghĩa: $f\'(x)=\\lim_{h\\to0}\\frac{(x+h)^2-x^2}{h}=\\lim_{h\\to0}\\frac{2xh+h^2}{h}=\\lim_{h\\to0}(2x+h)=2x$ — khớp với hàng $x^n$ của bảng. Đúng như hoạt hình: độ dốc đường parabol $y=x^2/4$ tại $x=a$ là $a/2$.',
+  },
+  {
+    heading: 'Định lý giá trị trung gian',
+    kind: 'def',
+    body:
+      'Nếu $f$ liên tục trên $[a;b]$ và $f(a)\\cdot f(b)<0$ thì tồn tại ít nhất một $c\\in(a;b)$ sao cho $f(c)=0$. Ứng dụng: chứng minh phương trình $f(x)=0$ có nghiệm trên một khoảng — biến đổi tương đương để đưa về dấu trái nhau tại hai đầu mút, rồi kết luận bằng định lý này.',
+  },
+  {
+    heading: 'Định lý Rolle',
+    kind: 'def',
+    body:
+      'Nếu $f$ liên tục trên $[a;b]$, có đạo hàm trên $(a;b)$ và $f(a)=f(b)$ thì tồn tại ít nhất một $c\\in(a;b)$ sao cho $f\'(c)=0$. Hình học: giữa hai điểm cùng độ cao, đồ thị phải có điểm có tiếp tuyến nằm ngang.',
+  },
+  {
+    heading: 'Định lý Lagrange (giá trị trung bình)',
+    kind: 'def',
+    body:
+      'Nếu $f$ liên tục trên $[a;b]$ và có đạo hàm trên $(a;b)$ thì tồn tại ít nhất một $c\\in(a;b)$ sao cho $f\'(c)=\\dfrac{f(b)-f(a)}{b-a}$. Hình học: luôn có điểm mà tiếp tuyến song song với dây nối hai đầu mút $A(a,f(a))$ và $B(b,f(b))$. Rolle chính là trường hợp riêng $f(a)=f(b)$ của định lý này. Đây là công cụ chuẩn để chứng minh bất đẳng thức dạng $|f(b)-f(a)|\\le M|b-a|$ khi chặn được $|f\'|\\le M$.',
+  },
+  {
+    heading: 'Định lý Cauchy (giá trị trung gian mở rộng)',
+    kind: 'def',
+    body:
+      'Nếu $f$ và $g$ liên tục trên $[a;b]$, có đạo hàm trên $(a;b)$ và $g\'(x)\\ne0$ với mọi $x\\in(a;b)$ thì tồn tại ít nhất một $c\\in(a;b)$ sao cho $\\dfrac{f(b)-f(a)}{g(b)-g(a)}=\\dfrac{f\'(c)}{g\'(c)}$. Lagrange là trường hợp riêng khi $g(x)=x$. Định lý Cauchy cũng chính là nền tảng để chứng minh quy tắc L\'Hôpital (xem bài Giới hạn nâng cao).',
+  },
+  {
+    heading: 'Khai triển Taylor',
+    kind: 'def',
+    body:
+      'Nếu $f$ có đạo hàm đến cấp $n+1$ trong một lân cận của $x_0$ thì với mọi $x$ trong lân cận đó: $f(x)=f(x_0)+\\dfrac{f\'(x_0)}{1!}(x-x_0)+\\dfrac{f\'\'(x_0)}{2!}(x-x_0)^2+\\dots+\\dfrac{f^{(n)}(x_0)}{n!}(x-x_0)^n+R_n(x)$, với số dư $R_n(x)=\\dfrac{f^{(n+1)}(c)}{(n+1)!}(x-x_0)^{n+1}$ ($c$ nằm giữa $x$ và $x_0$). Khi $x_0=0$, khai triển được gọi là khai triển Mac-laurin. Các khai triển quen thuộc của $e^x$, $\\sin x$, $\\cos x$ và cách dùng chúng để tính giới hạn xem ở bài Giới hạn nâng cao.',
+  },
+  {
+    heading: 'Chiều lồi lõm và bất đẳng thức Jensen',
+    kind: 'def',
+    body:
+      'Định lý (lồi — lõm): nếu $f\'\'(x)\\ge0$ với mọi $x\\in K$ thì đồ thị của $f$ lồi trên $K$; nếu $f\'\'(x)\\le0$ thì đồ thị lõm trên $K$ (dấu ngặt cho lồi/lõm ngặt). Định lý Jensen: nếu $f$ lồi trên $K$, các số $x_1,\\dots,x_n\\in K$ và $p_1,\\dots,p_n\\ge0$ với $p_1+\\dots+p_n=1$ thì $p_1f(x_1)+\\dots+p_nf(x_n)\\ge f\\left(p_1x_1+\\dots+p_nx_n\\right)$. Với $p_i=\\frac1n$ đây chính là bất đẳng thức trung bình của hàm lồi; dấu đổi chiều với hàm lõm.',
+  },
+  {
+    heading: 'Hàm số mũ và đa thức',
+    kind: 'note',
+    body:
+      'Với mọi đa thức $P(x)$ và mọi $a>1$: $\\lim\\limits_{x\\to+\\infty}\\dfrac{P(x)}{a^x}=0$ — hàm số mũ luôn tăng nhanh hơn mọi đa thức. Đây là sự thật nền tảng khi so sánh tốc độ tăng trưởng (chứng minh bằng quy tắc L\'Hôpital lặp hoặc khai triển Taylor, xem bài Giới hạn nâng cao).',
+  },
+  {
+    heading: 'Các bất đẳng thức và giới hạn quen thuộc',
+    kind: 'note',
+    body: 'Bộ công thức sau suy ra từ khai triển Taylor, dùng thường xuyên trong chứng minh bất đẳng thức và tính giới hạn:',
+    table: [
+      { sym: '$\\dfrac{x}{1+x}\\le\\ln(1+x)\\le x$ ($x>-1$)', meaning: 'logarit kẹp giữa hai hàm bậc nhất' },
+      { sym: '$e^x\\ge1+x$ với mọi $x$', meaning: 'tiếp tuyến của $e^x$ tại $x=0$' },
+      { sym: '$x-\\dfrac{x^3}{6}\\le\\sin x\\le x$ ($x\\ge0$)', meaning: 'sin kẹp giữa hai đa thức' },
+      { sym: '$\\tan x\\ge x$ ($0\\le x<\\frac{\\pi}{2}$)', meaning: 'dùng để so sánh với $\\sin x$' },
+      { sym: '$\\lim\\limits_{x\\to0}\\dfrac{\\sin x}{x}=\\lim\\limits_{x\\to0}\\dfrac{\\tan x}{x}=1$', meaning: 'hai giới hạn lượng giác nền tảng' },
+      { sym: '$\\lim\\limits_{x\\to+\\infty}\\left(1+\\dfrac{a}{x}\\right)^x=e^a$', meaning: 'dạng tổng quát của số $e$' },
+      { sym: '$\\lim\\limits_{x\\to0}\\dfrac{\\ln(1+x)}{x}=1$', meaning: 'logarit gần $1$' },
+      { sym: '$\\lim\\limits_{x\\to0}\\dfrac{a^x-1}{x}=\\ln a$', meaning: 'mũ gần $1$' },
+    ],
   },
   {
     heading: 'Sai lầm thường gặp',

@@ -16,47 +16,46 @@ export const advancedLimitsLesson: Lesson = {
   steps: [
     {
       title: 'Tài liệu chuyên đề',
-      body: 'Bộ định lý "xịn" dùng ở đề chuyên và VMO.',
+      body: 'Các định lý quan trọng của chương trình chuyên.',
     },
   ],
   theory: [
     {
-      heading: 'Nguyên lý kẹp (sandwich)',
+      heading: 'Nguyên lý kẹp',
       kind: 'def',
       body:
-        'Nếu $v_n \\le x_n \\le w_n$ từ một vị trí nào đó và $\\lim v_n=\\lim w_n=L$ thì $\\lim x_n=L$. Ví dụ đẹp: chứng minh $\\lim\\sqrt[n]{n}=1$ bằng AM-GM: $1\\le\\sqrt[n]{n}=\\sqrt[n]{\\sqrt{n}\\cdot\\sqrt{n}\\cdot1\\cdots1}\\le\\dfrac{2\\sqrt{n}+n-2}{n}\\to1$. Hoặc $\\lim\\dfrac{\\cos(n+3)}{n}=0$ vì $\\left|\\dfrac{\\cos(n+3)}{n}\\right|\\le\\dfrac1n\\to0$. Nguyên tắc dùng: khi $x_n$ "khoét" được vào giữa hai dãy dễ tính cùng hội tụ.',
+        'Nếu $v_n \\le x_n \\le w_n$ từ một vị trí nào đó và $\\lim v_n=\\lim w_n=L$ thì $\\lim x_n=L$. Ví dụ điển hình: chứng minh $\\lim\\sqrt[n]{n}=1$ bằng AM-GM: $1\\le\\sqrt[n]{n}=\\sqrt[n]{\\sqrt{n}\\cdot\\sqrt{n}\\cdot1\\cdots1}\\le\\dfrac{2\\sqrt{n}+n-2}{n}\\to1$. Hoặc $\\lim\\dfrac{\\cos(n+3)}{n}=0$ vì $\\left|\\dfrac{\\cos(n+3)}{n}\\right|\\le\\dfrac1n\\to0$. Nguyên tắc sử dụng: áp dụng khi $x_n$ kẹp được vào giữa hai dãy dễ tính và cùng hội tụ.',
     },
     {
-      heading: 'Các giới hạn "phải nằm lòng"',
+      heading: 'Các công thức thiết yếu',
       kind: 'note',
-      body:
-        'Từ nguyên lý kẹp và khai triển Taylor, ta có bộ giới hạn tiêu chuẩn dùng xuyên suốt:',
+      body: 'Các giới hạn tiêu chuẩn sau xuất hiện liên tục trong mọi bài tính giới hạn:',
       table: [
         { sym: '$\\lim\\limits_{x\\to0}\\dfrac{\\sin x}{x}=\\lim\\limits_{x\\to0}\\dfrac{\\tan x}{x}=1$', meaning: 'dạng sin trên sin' },
         { sym: '$\\lim\\limits_{x\\to0}\\dfrac{\\ln(1+x)}{x}=1$', meaning: 'logarit gần 1' },
         { sym: '$\\lim\\limits_{x\\to0}\\dfrac{a^x-1}{x}=\\ln a$', meaning: 'mũ gần 1' },
         { sym: '$\\lim\\limits_{x\\to+\\infty}\\left(1+\\dfrac{a}{x}\\right)^x=e^a$', meaning: 'mở rộng của số $e$' },
         { sym: '$\\lim q^n=0$ khi $|q|<1$', meaning: 'cơ sở Zeno' },
-        { sym: '$\\lim\\limits_{x\\to0}(1+x)^{1/x}=e$', meaning: 'dạng "1^∞" mượn log' },
+        { sym: '$\\lim\\limits_{x\\to0}(1+x)^{1/x}=e$', meaning: 'dạng "$1^\\infty$" — mượn logarit' },
       ],
     },
     {
       heading: 'Quy tắc L\'Hôpital',
       kind: 'def',
       body:
-        'Nếu $\\dfrac{f(x)}{g(x)}$ có dạng $\\dfrac00$ hoặc $\\dfrac{\\infty}{\\infty}$ khi $x\\to c$, và $\\lim\\dfrac{f\'(x)}{g\'(x)}$ tồn tại thì $\\lim\\dfrac{f(x)}{g(x)}=\\lim\\dfrac{f\'(x)}{g\'(x)}$. Ví dụ: $\\lim\\limits_{x\\to0}\\dfrac{\\ln(1+x)}{x}=\\lim\\dfrac{1/(1+x)}{1}=1$. Ứng dụng "khủng": $\\lim\\limits_{x\\to+\\infty}\\dfrac{P(x)}{a^x}=0$ với mọi đa thức $P$ và $a>1$ — hàm mũ LUÔN thắng đa thức (một trong những sự thật quan trọng nhất của giải tích).',
+        'Nếu $\\dfrac{f(x)}{g(x)}$ có dạng $\\dfrac00$ hoặc $\\dfrac{\\infty}{\\infty}$ khi $x\\to c$, và $\\lim\\dfrac{f\'(x)}{g\'(x)}$ tồn tại thì $\\lim\\dfrac{f(x)}{g(x)}=\\lim\\dfrac{f\'(x)}{g\'(x)}$. Ví dụ: $\\lim\\limits_{x\\to0}\\dfrac{\\ln(1+x)}{x}=\\lim\\dfrac{1/(1+x)}{1}=1$. Một hệ quả quan trọng: $\\lim\\limits_{x\\to+\\infty}\\dfrac{P(x)}{a^x}=0$ với mọi đa thức $P$ và $a>1$ — hàm mũ luôn tăng nhanh hơn mọi đa thức (một trong những sự thật quan trọng nhất của giải tích).',
     },
     {
-      heading: 'Khi nào L\'Hôpital "mắc bẫy"?',
+      heading: 'Khi nào quy tắc L\'Hôpital không áp dụng được',
       kind: 'warn',
       body:
-        '1) Chỉ được dùng khi thỏa DẠNG $\\frac00$ hoặc $\\frac{\\infty}{\\infty}$ — không kiểm tra mà dùng là trừ điểm. 2) Bẫy kinh điển: $\\lim\\limits_{x\\to+\\infty}\\dfrac{x+\\sin x}{x}$ — dùng L\'Hôpital ra $\\dfrac{1+\\cos x}{1}$ không tồn tại, nhưng giới hạn gốc bằng $1+\\dfrac{\\sin x}{x}\\to1$! Kết quả giới hạn của $f\'/g\'$ không tồn tại KHÔNG có nghĩa giới hạn gốc không tồn tại. 3) Dùng lặp vô hạn như $\\lim\\dfrac{e^x}{e^x}$ — khỏi đạo hàm cũng biết bằng 1.',
+        '1) Chỉ được dùng khi biểu thức có dạng $\\frac00$ hoặc $\\frac{\\infty}{\\infty}$ — dùng khi chưa kiểm tra dạng là một lỗi nghiêm trọng. 2) Ví dụ kinh điển: $\\lim\\limits_{x\\to+\\infty}\\dfrac{x+\\sin x}{x}$ — dùng L\'Hôpital ra $\\dfrac{1+\\cos x}{1}$ không tồn tại, nhưng giới hạn gốc bằng $1+\\dfrac{\\sin x}{x}\\to1$! Việc $\\lim\\dfrac{f\'}{g\'}$ không tồn tại KHÔNG kéo theo giới hạn gốc không tồn tại. 3) Trường hợp lặp vô hạn như $\\lim\\dfrac{e^x}{e^x}$ — khi đó không cần đạo hàm cũng thấy kết quả bằng 1.',
     },
     {
-      heading: 'Khai triển Taylor — "máy xé giới hạn"',
+      heading: 'Khai triển Taylor',
       kind: 'def',
       body:
-        '$f(x)=f(x_0)+\\dfrac{f\'(x_0)}{1!}(x-x_0)+\\dots+\\dfrac{f^{(n)}(x_0)}{n!}(x-x_0)^n+\\dots$. Các khai triển dùng nhiều: $e^x=1+x+\\dfrac{x^2}{2!}+\\dfrac{x^3}{3!}+\\dots$; $\\sin x=x-\\dfrac{x^3}{3!}+\\dfrac{x^5}{5!}-\\dots$; $\\cos x=1-\\dfrac{x^2}{2!}+\\dfrac{x^4}{4!}-\\dots$; $\\dfrac{1}{1-x}=1+x+x^2+\\dots$ khi $|x|<1$. Tại sao "xé" được? Vì gần $x_0$ mọi hàm trơn đều là đa thức cộng số dư nhỏ — bài $\\frac00$ thành phép trừ tử số thuần túy. Đây cũng là nguồn gốc của mọi bất đẳng thức quen thuộc: $e^x\\ge1+x$, $x-\\frac{x^3}{6}\\le\\sin x\\le x$ ($x\\ge0$), $\\tan x\\ge x$.',
+        '$f(x)=f(x_0)+\\dfrac{f\'(x_0)}{1!}(x-x_0)+\\dots+\\dfrac{f^{(n)}(x_0)}{n!}(x-x_0)^n+\\dots$. Các khai triển dùng nhiều: $e^x=1+x+\\dfrac{x^2}{2!}+\\dfrac{x^3}{3!}+\\dots$; $\\sin x=x-\\dfrac{x^3}{3!}+\\dfrac{x^5}{5!}-\\dots$; $\\cos x=1-\\dfrac{x^2}{2!}+\\dfrac{x^4}{4!}-\\dots$; $\\dfrac{1}{1-x}=1+x+x^2+\\dots$ khi $|x|<1$. Vì sao khai triển tính được giới hạn? Gần $x_0$, mọi hàm trơn đều viết thành đa thức cộng một số dư nhỏ — bài toán $\\frac00$ trở thành phép so sánh các số hạng cấp số. Đây cũng là nguồn gốc của các bất đẳng thức quen thuộc: $e^x\\ge1+x$, $x-\\frac{x^3}{6}\\le\\sin x\\le x$ ($x\\ge0$), $\\tan x\\ge x$.',
     },
     {
       heading: 'Tiêu chuẩn Weierstrass & dãy truy hồi',
@@ -68,19 +67,19 @@ export const advancedLimitsLesson: Lesson = {
       heading: 'Bài mẫu: dãy truy hồi $u_{n+1}=\\frac{3u_n+4}{2u_n+1}$',
       kind: 'example',
       body:
-        'Cho $u_1=\\frac12$, $u_{n+1}=\\dfrac{3u_n+4}{2u_n+1}$. Bước 1 — ứng viên: $L=\\dfrac{3L+4}{2L+1}\\Rightarrow L^2=4\\Rightarrow L=2$ (dãy dương nên loại $-2$). Bước 2 — bị chặn: $f\'(x)=-\\dfrac{5}{(2x+1)^2}<0$ nên $f$ nghịch biến; quy nạp được $0<u_n<4$. Bước 3 — đơn điệu từng nhánh: $f$ nghịch biến ⇒ $u_{2n}$ giảm, $u_{2n+1}$ tăng, hai nhánh kẹp nhau (dãy lẻ $\\le$ dãy chẵn). Bước 4 — Weierstrass: cả hai nhánh hội tụ; giới hạn $a,b$ thỏa hệ $\\left\\{\\begin{aligned}a&=f(b)\\\\b&=f(a)\\end{aligned}\\right.$\\Rightarrow $a=b=2$. Vậy $\\lim u_n=2$. Đây là "kung-fu" 4 bước chuẩn cho mọi bài $u_{n+1}=f(u_n)$.',
+        'Cho $u_1=\\frac12$, $u_{n+1}=\\dfrac{3u_n+4}{2u_n+1}$. Bước 1 — ứng viên: $L=\\dfrac{3L+4}{2L+1}\\Rightarrow L^2=4\\Rightarrow L=2$ (dãy dương nên loại $-2$). Bước 2 — bị chặn: $f\'(x)=-\\dfrac{5}{(2x+1)^2}<0$ nên $f$ nghịch biến; quy nạp được $0<u_n<4$. Bước 3 — đơn điệu từng nhánh: $f$ nghịch biến ⇒ $u_{2n}$ giảm, $u_{2n+1}$ tăng, hai nhánh kẹp nhau (dãy lẻ $\\le$ dãy chẵn). Bước 4 — Weierstrass: cả hai nhánh hội tụ; giới hạn $a,b$ thỏa hệ $\\left\\{\\begin{aligned}a&=f(b)\\\\b&=f(a)\\end{aligned}\\right.$\\Rightarrow $a=b=2$. Vậy $\\lim u_n=2$. Đây là quy trình bốn bước chuẩn cho mọi bài $u_{n+1}=f(u_n)$.',
     },
     {
-      heading: 'Định lý Stolz–Cesàro — "L\'Hôpital của dãy số"',
+      heading: 'Định lý Stolz–Cesàro',
       kind: 'def',
       body:
-        'Nếu $(b_n)$ tăng ngặt lên $+\\infty$ và $\\lim\\dfrac{a_{n+1}-a_n}{b_{n+1}-b_n}=L$ thì $\\lim\\dfrac{a_n}{b_n}=L$. Ví dụ: $\\lim\\dfrac{1+2+\\dots+n}{n^2}$: lấy $a_n=\\dfrac{n(n+1)}{2}$, $b_n=n^2$, tỉ số hiệu $=\\dfrac{n+1}{2n+1}\\to\\dfrac12$. Stolz–Cesàro đúng là "phép chia liên phân số" của dãy — cực mạnh với tổng tích lũy và trung bình Cesàro $\\left(\\lim\\dfrac{a_1+\\dots+a_n}{n}=\\lim a_n\\right)$.',
+        'Nếu $(b_n)$ tăng ngặt lên $+\\infty$ và $\\lim\\dfrac{a_{n+1}-a_n}{b_{n+1}-b_n}=L$ thì $\\lim\\dfrac{a_n}{b_n}=L$. Ví dụ: $\\lim\\dfrac{1+2+\\dots+n}{n^2}$: lấy $a_n=\\dfrac{n(n+1)}{2}$, $b_n=n^2$, tỉ số hiệu $=\\dfrac{n+1}{2n+1}\\to\\dfrac12$. Định lý này rất hiệu quả với tổng tích lũy và trung bình Cesàro $\\left(\\lim\\dfrac{a_1+\\dots+a_n}{n}=\\lim a_n\\right)$.',
     },
     {
-      heading: 'Bài tập thử thách (từ chuyên đề)',
+      heading: 'Lời kết',
       kind: 'note',
       body:
-        '1) $x_1=\\sqrt2,\\ x_{n+1}=\\sqrt{2x_n}$: chứng minh $(x_n)$ tăng, bị chặn trên bởi 2, và $\\lim x_n=2$. Gợi ý: $x_{n+1}^2=2x_n$ ⇒ điểm bất động $L=0$ hoặc $L=2$. 2) Tính $\\lim\\sqrt[n]{3n^5-n^3+1}$: kẹp giữa $\\sqrt[n]{3n^5}$ và $\\sqrt[n]{4n^5}$, rồi dùng $\\lim\\sqrt[n]{n}=1$ và $\\lim\\sqrt[n]{c}=1$ — đáp số $1$. 3) (TST Quảng Trị 2020) $x_1=\\frac52$, $x_{n+1}^2=\\dfrac{x_n^3-12x_n+20n+21}{n+1}$: chứng minh hội tụ và tìm giới hạn — kỹ thuật xét hàm 2 biến $g(x,n)$, đoán giới hạn bằng việc bậc $n$ ở tử và mẫu cân nhau. Làm được bài 3 là sẵn sàng chơi ở đội tuyển.',
+        'Toàn bộ chuyên đề xoay quanh một ý tưởng: đưa giới hạn chưa biết về giới hạn đã biết — bằng nguyên lý kẹp, bằng quy tắc L\'Hôpital, bằng khai triển Taylor, bằng Stolz–Cesàro. Trước mỗi buổi luyện tập, đọc lại bảng công thức thiết yếu là đủ. Còn bây giờ — tận hưởng quãng thời gian rảnh của bạn!',
     },
   ],
 }

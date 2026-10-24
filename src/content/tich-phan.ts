@@ -32,7 +32,7 @@ export const integralLesson: Lesson = {
     {
       title: 'Khi $f$ xuống dưới trục hoành',
       body:
-        'Điều gì xảy ra nếu đồ thị chìm dưới trục $Ox$? Hình chữ nhật nằm dưới trục có chiều cao âm — nên diện tích của nó bị trừ đi. Đó là diện tích có dấu: $\\int_a^b f = A_+ - A_-$, với $A_+$ là phần trên trục, $A_-$ là phần dưới. Bài thi rất hay \"ăn điểm\" ở chỗ này!',
+        'Điều gì xảy ra nếu đồ thị chìm dưới trục $Ox$? Hình chữ nhật nằm dưới trục có chiều cao âm — nên diện tích của nó bị trừ đi. Đó là diện tích có dấu: $\\int_a^b f = A_+ - A_-$, với $A_+$ là phần trên trục, $A_-$ là phần dưới. Đây là nội dung được kiểm tra thường xuyên trong các bài thi.',
       duration: 10,
     },
     {
