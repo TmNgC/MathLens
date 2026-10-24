@@ -1,0 +1,82 @@
+@import 'tailwindcss';
+@import 'katex/dist/katex.min.css';
+
+@theme {
+  --font-sans: 'Be Vietnam Pro', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+  /* MathLens palette — inspired by 3Blue1Brown, tuned for dark UI */
+  --color-bg: #0c1022;
+  --color-bg-soft: #10152c;
+  --color-panel: #151b33;
+  --color-panel-2: #1a2140;
+  --color-edge: #262f57;
+  --color-ink: #e9edff;
+  --color-dim: #98a1c9;
+  --color-faint: #5f6890;
+
+  --color-grid: #1c2344;
+  --color-axis: #414c80;
+
+  --color-curve: #58c4dd; /* blue */
+  --color-gold: #ffd35c;
+  --color-mint: #97e3a2;
+  --color-coral: #ff8b8b;
+  --color-teal: #5cd6c0;
+  --color-violet: #b28ddd;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  overscroll-behavior: none;
+}
+
+::selection {
+  background: color-mix(in oklab, var(--color-curve) 35%, transparent);
+}
+
+/* Slim scrollbars to match the dark UI */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-edge) transparent;
+}
+
+.katex {
+  font-size: 1.06em;
+}
+
+.katex-display {
+  margin: 0.4em 0;
+}
+
+/* Step card entrance */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.rise {
+  animation: rise 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rise {
+    animation: none;
+  }
+}

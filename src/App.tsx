@@ -1,0 +1,23 @@
+import { HashRouter, Navigate, Route, Routes, useParams } from 'react-router-dom'
+import { Home } from './pages/Home'
+import { LessonShell } from './components/LessonShell'
+import { lessonById } from './content'
+
+function LessonRoute() {
+  const { id } = useParams()
+  const lesson = id ? lessonById(id) : undefined
+  if (!lesson) return <Navigate to="/" replace />
+  return <LessonShell lesson={lesson} />
+}
+
+export default function App() {
+  return (
+    <HashRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/lesson/:id" element={<LessonRoute />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </HashRouter>
+  )
+}
