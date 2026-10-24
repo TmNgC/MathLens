@@ -159,33 +159,98 @@ export const derivativeTheory: TheorySection[] = [
 /** Lý thuyết — Tích phân */
 export const integralTheory: TheorySection[] = [
   {
-    heading: 'Tích phân xác định',
+    heading: 'Tích phân xác định và tổng Riemann',
     kind: 'def',
     body:
-      '$\\int_a^b f(x)\\,dx=\\lim_{n\\to\\infty}\\sum_{i=1}^{n}f(x_i)\\,\\Delta x$ với $\\Delta x=\\frac{b-a}{n}$ — giới hạn của tổng Riemann. Về hình học: diện tích có dấu của hình thang cong giới hạn bởi đồ thị $f$, trục $Ox$ và hai đường $x=a$, $x=b$.',
-  },
-  {
-    heading: 'Nguyên hàm & định lý cơ bản',
-    kind: 'def',
-    body:
-      '$F$ là nguyên hàm của $f$ trên khoảng $K$ nếu $F\'(x)=f(x)$ với mọi $x\\in K$. Định lý cơ bản của giải tích: $\\int_a^bf(x)\\,dx=F(b)-F(a)$, với $F$ là một nguyên hàm BẤT KỲ của $f$ (hằng số $C$ tự triệt tiêu khi trừ). Đây chính là chiếc chìa khóa "tính nhanh" ở bước 8 phần trực quan.',
+      'Chia đoạn $[a;b]$ thành $n$ khoảng con bằng nhau, mỗi khoảng rộng $\\Delta x=\\frac{b-a}{n}$. Trên mỗi khoảng lấy điểm đại diện $x_i$ và lập tổng diện tích các hình chữ nhật cao $f(x_i)$: $S_n=\\sum_{i=1}^{n}f(x_i)\\,\\Delta x$. Khi $n\\to\\infty$, nếu giới hạn tồn tại thì nó là tích phân xác định: $\\int_a^b f(x)\\,dx=\\lim_{n\\to\\infty}\\sum_{i=1}^{n}f(x_i)\\,\\Delta x$. Về hình học: diện tích có dấu của hình thang cong giới hạn bởi đồ thị $f$, trục $Ox$ và hai đường $x=a$, $x=b$. Điều kiện đủ quan trọng: nếu $f$ liên tục trên $[a;b]$ thì tích phân luôn tồn tại.',
     table: [
-      { sym: '$\\int f(x)\\,dx$', meaning: 'họ nguyên hàm $F(x)+C$ (tích phân bất định)' },
       { sym: '$\\int_a^b f(x)\\,dx$', meaning: 'tích phân xác định — một SỐ' },
-      { sym: '$F(x)\\Big|_a^b$', meaning: 'viết gọn của $F(b)-F(a)$' },
+      { sym: '$a$, $b$', meaning: 'cận dưới và cận trên của phép tích phân' },
+      { sym: '$dx$', meaning: 'biến tích phân — "cộng dồn theo $x$"' },
+      { sym: '$f(x_i)\\,\\Delta x$', meaning: 'diện tích hình chữ nhật thứ $i$ trong tổng Riemann' },
     ],
   },
   {
-    heading: 'Bảng nguyên hàm cơ bản',
-    kind: 'note',
-    body: 'Đọc từ phải sang trái chính là bảng đạo hàm — hai bảng là một.',
+    heading: 'Các tính chất của tích phân xác định',
+    kind: 'def',
+    body: 'Với $f$, $g$ liên tục trên $[a;b]$, các tính chất sau được dùng liên tục trong tính toán:',
     table: [
-      { sym: '$x^n$', meaning: '$\\frac{x^{n+1}}{n+1}+C$ ($n\\ne-1$)' },
-      { sym: '$\\frac{1}{x}$', meaning: '$\\ln|x|+C$' },
+      { sym: '$\\int_a^b[\\alpha f(x)+\\beta g(x)]dx=\\alpha\\int_a^bf+\\beta\\int_a^bg$', meaning: 'tuyến tính' },
+      { sym: '$\\int_a^bf=\\int_a^cf+\\int_c^bf$', meaning: 'chia đoạn tích phân theo điểm $c$' },
+      { sym: '$\\int_a^af=0$ và $\\int_a^bf=-\\int_b^af$', meaning: 'đổi chiều cận thì đổi dấu' },
+      { sym: '$f\\le g$ trên $[a;b]\\Rightarrow\\int_a^bf\\le\\int_a^bg$', meaning: 'bảo toàn thứ tự' },
+      { sym: '$m\\lef\\le M\\Rightarrow m(b-a)\\le\\int_a^bf\\le M(b-a)$', meaning: 'ước lượng tích phân دون tính toán' },
+    ],
+  },
+  {
+    heading: 'Nguyên hàm',
+    kind: 'def',
+    body:
+      '$F$ là nguyên hàm của $f$ trên khoảng $K$ nếu $F\'(x)=f(x)$ với mọi $x\\in K$. Nếu $f$ có một nguyên hàm $F$ thì mọi nguyên hàm của nó có dạng $F(x)+C$ — họ nguyên hàm; hằng số $C$ là lý do phải ghi $+C$ trong tích phân bất định.',
+    table: [
+      { sym: '$\\int f(x)\\,dx$', meaning: 'tích phân bất định — họ nguyên hàm $F(x)+C$' },
+      { sym: '$F(x)\\Big|_a^b$', meaning: 'viết gọn của $F(b)-F(a)$' },
+      { sym: '$C$', meaning: 'hằng số tùy ý — nguyên hàm chỉ xác định đến một hằng số' },
+    ],
+  },
+  {
+    heading: 'Hai định lý cơ bản của giải tích',
+    kind: 'def',
+    body:
+      'Định lý 1 (đạo hàm của tích phân với cận biến): nếu $f$ liên tục và $A(x)=\\int_a^x f(t)\\,dt$ thì $A\'(x)=f(x)$. Tổng quát với cận trên là hàm số: $\\dfrac{d}{dx}\\displaystyle\\int_a^{u(x)}f(t)\\,dt=f(u(x))\\cdot u\'(x)$ — nhân thêm $u\'$ theo quy tắc chuỗi. Đây chính là hàm tích lũy ở bước 5 phần trực quan. Định lý 2 (công thức Newton–Leibniz): nếu $f$ liên tục trên $[a;b]$ và $F$ là một nguyên hàm bất kỳ của $f$ thì $\\int_a^bf(x)\\,dx=F(b)-F(a)$ — hằng số $C$ tự triệt tiêu khi trừ. Hai định lý khẳng định cùng một sự thật: đạo hàm và tích phân là hai phép toán ngược của nhau.',
+  },
+  {
+    heading: 'Định lý giá trị trung bình của tích phân',
+    kind: 'def',
+    body:
+      'Nếu $f$ liên tục trên $[a;b]$ thì tồn tại ít nhất một $c\\in[a;b]$ sao cho $\\int_a^bf(x)\\,dx=f(c)(b-a)$. Số $\\bar{f}=\\dfrac{1}{b-a}\\displaystyle\\int_a^bf(x)\\,dx$ gọi là giá trị trung bình của $f$ trên $[a;b]$. Hình học: tồn tại một hình chữ nhật cao $f(c)$ có diện tích đúng bằng hình thang cong — cùng nền, diện tích bằng nhau.',
+  },
+  {
+    heading: 'Công thức thiết yếu',
+    kind: 'note',
+    body: 'Bảng nguyên hàm thường dùng nhất — mỗi hàng đọc từ phải sang trái chính là một công thức đạo hàm, hai bảng là một.',
+    table: [
+      { sym: '$x^n$ ($n\\ne-1$)', meaning: '$\\dfrac{x^{n+1}}{n+1}+C$' },
+      { sym: '$\\dfrac{1}{x}$', meaning: '$\\ln|x|+C$' },
       { sym: '$\\sin x$', meaning: '$-\\cos x+C$' },
       { sym: '$\\cos x$', meaning: '$\\sin x+C$' },
       { sym: '$e^x$', meaning: '$e^x+C$' },
+      { sym: '$a^x$ ($a>0$)', meaning: '$\\dfrac{a^x}{\\ln a}+C$' },
+      { sym: '$\\dfrac{1}{1+x^2}$', meaning: '$\\arctan x+C$' },
+      { sym: '$\\dfrac{1}{\\sqrt{1-x^2}}$', meaning: '$\\arcsin x+C$' },
+      { sym: '$\\tan x$', meaning: '$-\\ln|\\cos x|+C$' },
+      { sym: '$\\cot x$', meaning: '$\\ln|\\sin x|+C$' },
     ],
+  },
+  {
+    heading: 'Kỹ thuật 1: phương pháp đổi biến số',
+    kind: 'def',
+    body:
+      'Đặt $u=u(x)$, khi đó $\\displaystyle\\int_a^bf(u(x))\\,u\'(x)\\,dx=\\int_{u(a)}^{u(b)}f(u)\\,du$ (nhớ đổi cả hai cận), hoặc với tích phân bất định thì tính theo $u$ rồi thay ngược lại $u=u(x)$. Dấu hiệu nhận biết: trong biểu thức có hàm hợp $f(u(x))$ và ngay cạnh nó có (hoặc bóc ra được) nhân tử $u\'(x)$. Phương pháp này chính là quy tắc chuỗi viết ngược. Ví dụ: tính $\\displaystyle\\int_0^1\\frac{x}{x^2+1}\\,dx$. Đặt $u=x^2+1$, $u\'=2x$, cận đổi từ $[0;1]$ sang $[1;2]$: $\\frac12\\int_1^2\\frac{du}{u}=\\frac12\\ln2$. Ví dụ thứ hai: $\\displaystyle\\int x\\sqrt{x^2+3}\\,dx=\\frac12\\int\\sqrt{u}\\,du=\\frac13(x^2+3)^{3/2}+C$.',
+  },
+  {
+    heading: 'Kỹ thuật 2: tích phân từng phần',
+    kind: 'def',
+    body:
+      '$\\displaystyle\\int u\\,dv=uv-\\int v\\,du$. Dùng khi tích phân là tích của hai loại hàm khác nhau (đa thức nhân mũ, đa số nhân lượng giác, logarit, hàm ngược). Quy tắc chọn $u$ — ưu tiên theo thứ tự: hàm số ngược, logarit, đa thức, lượng giác, mũ. Ví dụ 1: $\\displaystyle\\int_0^1xe^x\\,dx$: chọn $u=x$, $dv=e^xdx$ thì $du=dx$, $v=e^x$, kết quả $xe^x\\Big|_0^1-\\int_0^1e^xdx=e-(e-1)=1$. Ví dụ 2: $\\displaystyle\\int\\ln x\\,dx$: chọn $u=\\ln x$, $dv=dx$, kết quả $x\\ln x-x+C$. Nếu chọn ngược thứ tự ưu tiên (ví dụ $u=e^x$), tích phân mới phức tạp hơn tích phân cũ — hãy đảo lại.',
+  },
+  {
+    heading: 'Tích phân hàm số chẵn, hàm số lẻ',
+    kind: 'note',
+    body:
+      'Trên đoạn đối xứng $[-a;a]$: nếu $f$ chẵn thì $\\displaystyle\\int_{-a}^{a}f(x)\\,dx=2\\int_0^af(x)\\,dx$; nếu $f$ lẻ thì $\\displaystyle\\int_{-a}^{a}f(x)\\,dx=0$. Ví dụ: $\\displaystyle\\int_{-2}^{2}x^3\\cos(x^2)\\,dx=0$ không cần tính — hàm dưới dấu tích phân là hàm lẻ. Dùng để rút ngắn đáng kể thời gian làm bài.',
+  },
+  {
+    heading: 'Ứng dụng: diện tích hình phẳng',
+    kind: 'def',
+    body:
+      'Diện tích hình phẳng giới hạn bởi $y=f(x)$, $y=g(x)$ và hai đường $x=a$, $x=b$ ($f\\geg$ trên $[a;b]$): $S=\\displaystyle\\int_a^b[f(x)-g(x)]\\,dx$. Khi hai đồ thị cắt nhau, tách đoạn theo các giao điểm và lấy giá trị tuyệt đối từng phần. Trường hợp riêng với trục $Ox$ chính là $g\\equiv0$. Với hình giới hạn bởi đồ thị hàm của $y$: $S=\\displaystyle\\int_c^d[\\varphi(y)-\\psi(y)]\\,dy$.',
+  },
+  {
+    heading: 'Ứng dụng: thể tích khối',
+    kind: 'def',
+    body:
+      'Hình phẳng giới hạn bởi $y=f(x)$ ($f\\ge0$), trục $Ox$, $x=a$, $x=b$ quay quanh $Ox$ tạo khối tròn xoay với $V=\\pi\\displaystyle\\int_a^bf^2(x)\\,dx$. Tổng quát nhất: nếu mỗi thiết diện vuông góc với $Ox$ tại $x$ có diện tích $S(x)$ thì $V=\\displaystyle\\int_a^bS(x)\\,dx$ — chi tiết và minh họa động xem hai bài Khối tròn xoay và Thiết diện.',
   },
   {
     heading: 'Ví dụ mẫu',
@@ -197,7 +262,7 @@ export const integralTheory: TheorySection[] = [
     heading: 'Sai lầm thường gặp',
     kind: 'warn',
     body:
-      '1) Khi $f$ đổi dấu trên $[a,b]$: $\\int_a^b f$ là diện tích CÓ DẤU (phần dưới trục bị trừ) — muốn diện tích hình học phải tách khoảng theo nghiệm của $f(x)=0$ rồi lấy $|\\int|$. 2) Quên ghi $dx$ hoặc quên đổi chiều khi hoán vị cận: $\\int_a^b=-\\int_b^a$. 3) Tính $\\int_a^b$ bằng $F(a)-F(b)$ — sai dấu.',
+      '1) Khi $f$ đổi dấu trên $[a;b]$: $\\int_a^b f$ là diện tích có dấu (phần dưới trục bị trừ) — muốn diện tích hình học phải tách khoảng theo nghiệm của $f(x)=0$ rồi lấy giá trị tuyệt đối từng đoạn. 2) Quên ghi $dx$ hoặc quên đổi dấu khi hoán vị cận: $\\int_a^b=-\\int_b^a$; tính bằng $F(a)-F(b)$ là sai dấu. 3) Đổi biến mà không đổi cận — hoặc đổi cận mà vẫn thay ngược về $x$ trước khi thay số. 4) Từng phần chọn $u$ ngược thứ tự ưu tiên khiến tích phân mới khó hơn tích phân cũ. 5) Nghĩ rằng $\\int f\\cdot g=\\int f\\cdot\\int g$ — không có quy tắc tích phân của tích; phải dùng đổi biến hoặc từng phần.',
   },
 ]
 

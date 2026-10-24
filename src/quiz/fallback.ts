@@ -339,4 +339,75 @@ export const FALLBACK_BANK: QuizQuestion[] = [
     explanation:
       'Lấy đạo hàm hai vế theo $x$ (kỹ thuật đạo hàm ẩn): $2x+2y\\cdot y\'=0 \\Rightarrow y\'=-\\frac{x}{y}$. Tại $(3;4)$: $y\'=-\\frac34$. Lưu ý $y$ được xem như hàm của $x$ nên phải nhân $y\'$ theo quy tắc chuỗi.',
   },
+  {
+    id: 'ap-8',
+    lessonId: 'tich-phan',
+    skillTag: 'đổi biến số',
+    question: 'Tính $\\displaystyle\\int_0^1 2x\\,e^{x^2}\\,dx$?',
+    options: ['$e-1$', '$e$', '$e+1$', '$1$'],
+    correctIndex: 0,
+    explanation:
+      'Đặt $u=x^2$ thì $du=2x\\,dx$, hai cận giữ nguyên $0\\to0$, $1\\to1$: $\\int_0^1e^u\\,du=e^u\\Big|_0^1=e-1$. Dấu hiệu nhận biết: có $u\'=2x$ đứng ngay cạnh hàm hợp $e^{x^2}$.',
+  },
+  {
+    id: 'ap-9',
+    lessonId: 'tich-phan',
+    skillTag: 'tích phân từng phần',
+    question: 'Tính $\\displaystyle\\int_0^1 x e^x\\,dx$?',
+    options: ['$1$', '$e-1$', '$e$', '$e-2$'],
+    correctIndex: 0,
+    explanation:
+      'Chọn $u=x$, $dv=e^x\\,dx$ (đa thức trước mũ) thì $du=dx$, $v=e^x$: $\\int_0^1xe^x\\,dx=xe^x\\Big|_0^1-\\int_0^1e^x\\,dx=e-(e-1)=1$.',
+  },
+  {
+    id: 'ap-10',
+    lessonId: 'tich-phan',
+    skillTag: 'giá trị trung bình',
+    question: 'Giá trị trung bình của hàm số $f(x)=x^2$ trên đoạn $[0;3]$ bằng?',
+    options: ['$3$', '$9$', '$\\dfrac{3}{2}$', '$\\sqrt{3}$'],
+    correctIndex: 0,
+    explanation:
+      '$\\bar{f}=\\dfrac{1}{b-a}\\int_a^bf=\\dfrac13\\int_0^3x^2\\,dx=\\dfrac13\\cdot\\dfrac{27}{3}=3$. Lưu ý: giá trị trung bình khác giá trị trung bình cộng hai đầu mút $\\frac{f(0)+f(3)}{2}=\\frac92$.',
+  },
+  {
+    id: 'ap-11',
+    lessonId: 'tich-phan',
+    skillTag: 'định lý cơ bản',
+    question: 'Tính $\\dfrac{d}{dx}\\displaystyle\\int_0^{x^2}\\cos t\\,dt$?',
+    options: [
+      '$2x\\cos\\left(x^2\\right)$',
+      '$\\cos\\left(x^2\\right)$',
+      '$x\\cos\\left(x^2\\right)$',
+      '$\\sin\\left(x^2\\right)$',
+    ],
+    correctIndex: 0,
+    explanation:
+      'Định lý cơ bản (phần 1) kết hợp quy tắc chuỗi vì cận trên là hàm $u(x)=x^2$: kết quả bằng $f(u)\\cdot u\'=\\cos(x^2)\\cdot2x$. So sánh với câu $\\int_0^x$: cận là $x$ thì chỉ thay trực tiếp.',
+  },
+  {
+    id: 'ap-12',
+    lessonId: 'tich-phan',
+    skillTag: 'diện tích hình học',
+    question: 'Tính $\\displaystyle\\int_{-2}^{2}\\sqrt{4-x^2}\\,dx$?',
+    options: ['$2\\pi$', '$4\\pi$', '$\\pi$', '$8$'],
+    correctIndex: 0,
+    explanation:
+      'Đồ thị $y=\\sqrt{4-x^2}$ chính là nửa trên đường tròn tâm $O$ bán kính 2. Tích phân là diện tích nửa đĩa: $\\frac12\\pi R^2=\\frac12\\pi\\cdot4=2\\pi$. Nhận diện hình học nhanh hơn nhiều so với tìm nguyên hàm.',
+  },
+  {
+    id: 'ap-13',
+    lessonId: 'tich-phan',
+    skillTag: 'tổng Riemann',
+    question:
+      'Biết $\\lim\\limits_{n\\to\\infty}\\left(\\dfrac{1^2}{n^3}+\\dfrac{2^2}{n^3}+\\dots+\\dfrac{n^2}{n^3}\\right)$ là tổng Riemann của một tích phân. Giá trị của giới hạn bằng?',
+    options: [
+      '$\\dfrac{1}{3}$',
+      '$1$',
+      '$\\dfrac{1}{2}$',
+      '$0$',
+    ],
+    correctIndex: 0,
+    explanation:
+      'Viết lại thành $\\sum_{i=1}^{n}\\left(\\frac{i}{n}\\right)^2\\cdot\\frac1n$: đây là tổng Riemann của $f(x)=x^2$ trên $[0;1]$ với $\\Delta x=\\frac1n$, $x_i=\\frac{i}{n}$. Giới hạn bằng $\\int_0^1x^2\\,dx=\\frac13$.',
+  },
 ]
