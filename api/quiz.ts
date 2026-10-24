@@ -20,6 +20,8 @@ const LESSON_TOPICS: Record<string, string> = {
     'Khối tròn xoay: thể tích V=π∫f²(x)dx khi quay quanh Ox, π∫φ²(y)dy khi quay quanh Oy, phương pháp đĩa, bài toán vòng xuyến R²−r²',
   'thiet-dien':
     'Thiết diện: công thức V=∫S(x)dx, nguyên lý Cavalieri (hai khối cùng diện tích thiết diện thì cùng thể tích), thể tích nón ⅓πR²H và khối cầu 4/3πR³ qua tích phân',
+  'toan-ly':
+    'Từ toán học đến vật lý: đạo hàm theo thời gian (v=dx/dt, a=dv/dt, I=dq/dt, e=−NdΦ/dt, P=dW/dt), tích phân cộng dồn (độ dời ∫v dt, điện tích ∫I dt, công ∫F ds), diện tích dưới đồ thị v–t và F–s, dao động điều hòa x=Acos(ωt+φ) với v và a là đạo hàm, thế năng đàn hồi ½kx² từ tích phân',
 }
 
 interface GenQuestion {

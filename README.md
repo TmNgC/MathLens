@@ -13,12 +13,15 @@ hay trả lời kết quả như WolframAlpha.
 
 | # | Bài | Nội dung |
 |---|-----|----------|
-| 1 | **Giới hạn** Σ | Zeno ×2¹⁷, giới hạn hàm số, ε-δ, chuỗi Leibniz π, số e & lãi kép, điều hòa vs cấp số nhân — kèm mục "💡 Bạn có biết?" |
-| 2 | **Đạo hàm** ƒ′ | Cát tuyến → tiếp tuyến (kéo được), vẽ hàm phái sinh f′, cực trị |
-| 3 | **Tích phân** ∫ | Riemann (4 phương pháp), diện tích có dấu, hàm tích lũy, định lý cơ bản, vận tốc → quãng đường, nguyên hàm |
-| 4 | **Khối tròn xoay** ◉ | 3D: quay φ 0→2π, phương pháp đĩa, lát cắt, V = π∫f² |
-| 5 | **Thiết diện** ◫ | 3D: cắt trụ/nón, nguyên lý Cavalieri, bán cầu ⅔πR³ |
-| 6 | **Phòng thí nghiệm** λ | Nhập hàm số bất kỳ (MathLive), tiếp tuyến, f′, diện tích |
+| 1 | **Giới hạn** Σ | Zeno ×2¹⁷, dồn dần về 1 trên trục số, giới hạn hàm số, ε-δ, chuỗi Leibniz π, số e & lãi kép, điều hòa vs cấp số nhân — kèm mục "💡 Bạn có biết?" |
+| 2 | **Giới hạn nâng cao** ∞ | Lý thuyết chuyên đề: nguyên lý kẹp, công thức thiết yếu, L'Hôpital & các bẫy, khai triển Taylor, Weierstrass & dãy truy hồi, Stolz–Cesàro |
+| 3 | **Đạo hàm** ƒ′ | Cát tuyến → tiếp tuyến (kéo được), vẽ hàm phái sinh f′, cực trị |
+| 4 | **Quy tắc tính đạo hàm** ⚙ | Lý thuyết: tổng/tích/thương/chuỗi kèm chứng minh, bảng hàm hợp, bài mẫu hai tầng |
+| 5 | **Tích phân** ∫ | Riemann (4 phương pháp), diện tích có dấu, hàm tích lũy, định lý cơ bản, vận tốc → quãng đường, nguyên hàm |
+| 6 | **Khối tròn xoay** ◉ | 3D: quay φ 0→2π, phương pháp đĩa, lát cắt, V = π∫f² |
+| 7 | **Thiết diện** ◫ | 3D: cắt trụ/nón, nguyên lý Cavalieri, bán cầu ⅔πR³ |
+| 8 | **Phòng thí nghiệm** λ | Nhập hàm số bất kỳ (MathLive), tiếp tuyến, f′, diện tích |
+| 9 | **Từ toán học đến vật lý** Φ | Cầu nối Vật lí 10–11 (GDPT 2018): đạo hàm = tốc độ biến đổi (v, a, I, e, P), tích phân = cộng dồn (độ dời, điện tích, công), dao động điều hòa, Faraday |
 
 Mỗi bài (trừ Lab) có hai tab: **🎬 Trực quan** (hoạt hình từng bước) và
 **📖 Lý thuyết** (định nghĩa, bảng ký hiệu, ví dụ mẫu, sai lầm thường gặp —

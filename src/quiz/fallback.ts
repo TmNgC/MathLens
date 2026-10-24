@@ -339,6 +339,45 @@ export const FALLBACK_BANK: QuizQuestion[] = [
     explanation:
       'Lấy đạo hàm hai vế theo $x$ (kỹ thuật đạo hàm ẩn): $2x+2y\\cdot y\'=0 \\Rightarrow y\'=-\\frac{x}{y}$. Tại $(3;4)$: $y\'=-\\frac34$. Lưu ý $y$ được xem như hàm của $x$ nên phải nhân $y\'$ theo quy tắc chuỗi.',
   },
+  // ---------- Từ toán học đến vật lý ----------
+  {
+    id: 'tl-1',
+    lessonId: 'toan-ly',
+    skillTag: 'đồ thị vận tốc',
+    question:
+      'Một ô tô chạy thẳng với $v(t)=5t$ (m/s) trong $4$ giây đầu. Độ dời của ô tô trong khoảng thời gian đó bằng?',
+    options: ['$40$ m', '$20$ m', '$80$ m', '$10$ m'],
+    correctIndex: 0,
+    explanation:
+      'Độ dời là diện tích dưới đồ thị $v$–$t$, tức $\\int_0^4 5t\\,dt=\\frac{5t^2}{2}\\Big|_0^4=40$ m. Diện tích tam giác (đáy 4, cao 20) cho cùng kết quả.',
+  },
+  {
+    id: 'tl-2',
+    lessonId: 'toan-ly',
+    skillTag: 'đạo hàm trong vật lý',
+    question:
+      'Một chất điểm dao động điều hòa với li độ $x=5\\cos(2t)$ (cm). Vận tốc của chất điểm là $v=\\dfrac{dx}{dt}$ bằng?',
+    options: [
+      '$-10\\sin(2t)$ cm/s',
+      '$10\\sin(2t)$ cm/s',
+      '$-2\\sin(2t)$ cm/s',
+      '$5\\sin(2t)$ cm/s',
+    ],
+    correctIndex: 0,
+    explanation:
+      'Đạo hàm hàm hợp: $v=(5\\cos 2t)\'=5\\cdot(-\\sin 2t)\\cdot2=-10\\sin(2t)$. Hệ số $\\omega=2$ từ phía trong nhân lên ngoài — đúng quy tắc chuỗi của bài Quy tắc tính đạo hàm.',
+  },
+  {
+    id: 'tl-3',
+    lessonId: 'toan-ly',
+    skillTag: 'cảm ứng điện từ',
+    question:
+      'Từ thông qua khung dây (10 vòng) giảm đều từ $0{,}5$ Wb xuống $0{,}1$ Wb trong $0{,}2$ s. Suất điện động cảm ứng xuất hiện có độ lớn bằng?',
+    options: ['$20$ V', '$2$ V', '$40$ V', '$8$ V'],
+    correctIndex: 0,
+    explanation:
+      '$|e|=N\\left|\\dfrac{\\Delta\\Phi}{\\Delta t}\\right|=10\\cdot\\dfrac{0{,}4}{0{,}2}=20$ V. Vì từ thông giảm đều nên giá trị trung bình bằng giá trị tức thời — nếu $\\Phi(t)$ cong thì phải lấy đạo hàm $e=-N\\Phi\'(t)$.',
+  },
   {
     id: 'ap-8',
     lessonId: 'tich-phan',

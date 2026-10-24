@@ -7,6 +7,7 @@ import { derivativeRulesLesson } from './quy-tac-dao-ham'
 import { integralLesson } from './tich-phan'
 import { revolutionLesson } from './khoi-tron-xoay'
 import { crossSectionLesson } from './thiet-dien'
+import { mathPhysicsLesson } from './toan-ly'
 
 /** Graph Lab pulls in MathLive + mathjs — load it only when opened. */
 const LabScene = lazy(() => import('../lessons/GraphLab'))
@@ -42,6 +43,7 @@ export const lessons: Lesson[] = [
   revolutionLesson, // 6
   crossSectionLesson, // 7
   labLesson, // 8
+  mathPhysicsLesson, // 9
 ]
 
 export function lessonById(id: string): Lesson | undefined {
