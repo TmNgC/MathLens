@@ -73,12 +73,21 @@ export default async function handler(req: Request): Promise<Response> {
     return json({ error: 'no_api_key', hint: 'Đặt biến môi trường LLM_API_KEY trên Vercel để bật AI.' }, 501)
   }
 
-  let body: { lessonIds?: string[]; count?: number; difficulty?: string }
+  let body: { lessonIds?: string[]; count?: number; difficulty?: string; lang?: string }
   try {
     body = await req.json()
   } catch {
     return json({ error: 'invalid JSON body' }, 400)
   }
+
+  const LANG_NAMES: Record<string, string> = {
+    en: 'English',
+    vi: 'Vietnamese',
+    fr: 'French',
+    zh: 'Simplified Chinese',
+    ja: 'Japanese',
+  }
+  const langName = LANG_NAMES[body.lang ?? 'vi'] ?? 'Vietnamese'
 
   const lessonIds = (body.lessonIds ?? []).filter((id) => id in LESSON_TOPICS)
   const count = Math.min(15, Math.max(3, Number(body.count) || 10))
@@ -94,7 +103,9 @@ export default async function handler(req: Request): Promise<Response> {
         {
           role: 'system',
           content:
-            'Bạn là giáo viên Toán THPT Việt Nam nhiều kinh nghiệm ra đề. Bạn soạn câu hỏi trắc nghiệm chính xác về mặt toán học, bám chương trình lớp 11-12, bằng tiếng Việt. Công thức toán viết trong cặp $...$ (LaTeX). LUÔN trả về một JSON object duy nhất, không thêm chữ nào khác.',
+            'Bạn là giáo viên Toán THPT Việt Nam nhiều kinh nghiệm ra đề. Bạn soạn câu hỏi trắc nghiệm chính xác về mặt toán học, bám chương trình lớp 11-12. Công thức toán viết trong cặp $...$ (LaTeX). LUÔN trả về một JSON object duy nhất, không thêm chữ nào khác. Viết toàn bộ câu hỏi, phương án, skillTag và explanation bằng ' +
+            langName +
+            ' — không dùng ngôn ngữ nào khác (ký hiệu toán vẫn giữ LaTeX).',
         },
         {
           role: 'user',

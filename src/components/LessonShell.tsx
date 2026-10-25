@@ -15,6 +15,7 @@ import { Formula } from './Formula'
 import { FunFact } from './FunFact'
 import { TheoryPanel } from './TheoryPanel'
 import { markDone } from '../lib/progress'
+import { useLang } from '../i18n/LangContext'
 
 export const LessonClockContext = createContext<LessonClock | null>(null)
 
@@ -36,6 +37,7 @@ function truncate(s: string, n: number): string {
  * stage for the lesson's theory document.
  */
 export function LessonShell({ lesson, mode = 'visual' }: { lesson: Lesson; mode?: 'visual' | 'theory' }) {
+  const { t, lessonTitle } = useLang()
   const [step, setStep] = useState(0)
   const [paused, setPaused] = useState(
     () => window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false,
@@ -130,7 +132,7 @@ export function LessonShell({ lesson, mode = 'visual' }: { lesson: Lesson; mode?
           mode === 'visual' ? 'bg-curve/20 text-curve' : 'text-dim hover:text-ink'
         }`}
       >
-        🎬 Trực quan
+        🎬 {t('shell.visual')}
       </Link>
       <Link
         to={`/lesson/${lesson.id}/theory`}
@@ -138,7 +140,7 @@ export function LessonShell({ lesson, mode = 'visual' }: { lesson: Lesson; mode?
           mode === 'theory' ? 'bg-curve/20 text-curve' : 'text-dim hover:text-ink'
         }`}
       >
-        📖 Lý thuyết
+        📖 {t('shell.theory')}
       </Link>
     </div>
   ) : null
@@ -172,16 +174,13 @@ export function LessonShell({ lesson, mode = 'visual' }: { lesson: Lesson; mode?
             {lesson.Scene && <lesson.Scene step={0} />}
             <div className="pointer-events-none absolute left-4 top-3 md:left-6 md:top-5">
               <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-faint">
-                Phòng thí nghiệm
+                {t('shell.labHeader')}
               </p>
-              <h1 className="text-lg font-bold md:text-xl">{lesson.title}</h1>
+              <h1 className="text-lg font-bold md:text-xl">{lessonTitle(lesson.id, lesson.title)}</h1>
             </div>
           </div>
           <footer className="border-t border-edge bg-bg-soft/95 px-4 py-2.5 md:px-6">
-            <p className="mx-auto max-w-5xl text-center text-[12px] text-faint">
-              Nhập hàm số bất kỳ · kéo điểm vàng để di chuyển · bật/tắt các lớp hiển
-              thị phía dưới — toán học là của bạn, hãy nghịch phá!
-            </p>
+            <p className="mx-auto max-w-5xl text-center text-[12px] text-faint">{t('shell.labFooter')}</p>
           </footer>
         </div>
       </div>
@@ -206,16 +205,16 @@ export function LessonShell({ lesson, mode = 'visual' }: { lesson: Lesson; mode?
             {lesson.Scene && <lesson.Scene step={step} />}
             <div className="pointer-events-none absolute left-4 top-3 md:left-6 md:top-5">
               <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-faint">
-                Bài {lesson.number}
+                {t('shell.lessonNo', { n: lesson.number })}
               </p>
-              <h1 className="text-lg font-bold md:text-xl">{lesson.title}</h1>
+              <h1 className="text-lg font-bold md:text-xl">{lessonTitle(lesson.id, lesson.title)}</h1>
             </div>
             {step === lastStep && (
               <button
                 onClick={() => navigate('/')}
                 className="absolute right-4 top-4 rounded-full border border-mint/40 bg-mint/10 px-3.5 py-1.5 text-[12px] font-semibold text-mint transition-colors hover:bg-mint/20 md:right-6 md:top-5"
               >
-                ✓ Hoàn thành — về trang chủ
+                {t('shell.done')}
               </button>
             )}
           </div>
@@ -224,7 +223,7 @@ export function LessonShell({ lesson, mode = 'visual' }: { lesson: Lesson; mode?
           <footer className="border-t border-edge bg-bg-soft/95 px-4 py-3.5 md:px-6">
             <div className="mx-auto max-w-5xl">
               {/* named section buttons — jump straight to any step */}
-              <div className="mb-2.5 flex items-center gap-1.5 overflow-x-auto pb-0.5" role="tablist" aria-label="Các phần">
+              <div className="mb-2.5 flex items-center gap-1.5 overflow-x-auto pb-0.5" role="tablist" aria-label={t('shell.parts')}>
                 {lesson.steps.map((s, i) => {
                   const label = s.title.replace(/\$(.+?)\$/g, '$1')
                   return (

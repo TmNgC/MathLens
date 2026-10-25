@@ -17,6 +17,7 @@ export default async function handler(req: Request): Promise<Response> {
     score?: number
     count?: number
     totalMs?: number
+    lang?: string
     answers?: Array<{ skillTag?: string; correct?: boolean; ms?: number }>
   }
   try {
@@ -24,6 +25,15 @@ export default async function handler(req: Request): Promise<Response> {
   } catch {
     return json({ error: 'invalid JSON body' }, 400)
   }
+
+  const LANG_NAMES: Record<string, string> = {
+    en: 'English',
+    vi: 'Vietnamese',
+    fr: 'French',
+    zh: 'Simplified Chinese',
+    ja: 'Japanese',
+  }
+  const langName = LANG_NAMES[body.lang ?? 'vi'] ?? 'Vietnamese'
 
   const answers = Array.isArray(body.answers) ? body.answers : []
   if (answers.length === 0) return json({ error: 'no answers' }, 400)
@@ -45,7 +55,9 @@ export default async function handler(req: Request): Promise<Response> {
         {
           role: 'system',
           content:
-            'Bạn là cố vấn học tập môn Toán THPT Việt Nam. Phân tích kết quả bài trắc nghiệm của học sinh: ấm áp, cụ thể, khích lệ nhưng thẳng thắn. LUÔN trả về một JSON object duy nhất.',
+            'Bạn là cố vấn học tập môn Toán THPT Việt Nam. Phân tích kết quả bài trắc nghiệm của học sinh: ấm áp, cụ thể, khích lệ nhưng thẳng thắn. LUÔN trả về một JSON object duy nhất. Viết toàn bộ nội dung (cả JSON) bằng ' +
+            langName +
+            ' — không dùng ngôn ngữ nào khác.',
         },
         {
           role: 'user',

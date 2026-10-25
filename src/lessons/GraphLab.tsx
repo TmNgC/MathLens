@@ -7,6 +7,7 @@ import { C } from '../engine/palette'
 import { clamp } from '../engine/easing'
 import { derivative, parse } from 'mathjs'
 import { MathfieldElement } from 'mathlive'
+import { useLang } from '../i18n/LangContext'
 
 declare module 'react' {
   namespace JSX {
@@ -101,6 +102,7 @@ function tableAt(table: Float64Array, x: number): number {
  * type any f(x), drag the probe point, toggle tangent / f′ / area layers.
  */
 export default function GraphLab(_: SceneProps) {
+  const { t } = useLang()
   const [expr, setExpr] = useState('sin(x) + x/3 + 1.5')
   const [toggles, setToggles] = useState<Toggles>({ tangent: true, deriv: false, area: false })
   const mfRef = useRef<MathfieldElement>(null)
@@ -174,9 +176,9 @@ export default function GraphLab(_: SceneProps) {
 
     // legend
     const legend: string[] = []
-    if (toggles.tangent) legend.push('— tiếp tuyến')
+    if (toggles.tangent) legend.push(`— ${t('lab.tangent')}`)
     if (toggles.deriv) legend.push('-- f′(x)')
-    if (toggles.area) legend.push('▨ diện tích')
+    if (toggles.area) legend.push(`▨ ${t('lab.area')}`)
     if (legend.length) {
       p.text(p.rect.x + 10, p.rect.y + p.rect.h - 10, legend.join('    '), {
         color: C.dim, size: 11.5, mono: true,
@@ -201,16 +203,16 @@ export default function GraphLab(_: SceneProps) {
                 ['--contains-highlight-background-color' as string]: '#1a2140',
                 ['--primary' as string]: '#58c4dd',
               }}
-              aria-label="Biểu thức hàm số"
+              aria-label={t('lab.expr')}
             ></math-field>
           </div>
 
           <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
             {(
               [
-                ['tangent', 'tiếp tuyến'],
-                ['deriv', 'đồ thị f′'],
-                ['area', 'diện tích ∫'],
+                ['tangent', t('lab.tangent')],
+                ['deriv', t('lab.deriv')],
+                ['area', t('lab.area')],
               ] as Array<[keyof Toggles, string]>
             ).map(([key, label]) => (
               <label key={key} className="flex cursor-pointer items-center gap-1.5 text-[12.5px] font-semibold text-dim">

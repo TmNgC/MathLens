@@ -3,10 +3,14 @@ import { useSyncExternalStore } from 'react'
 import { lessons } from '../content'
 import { getProgress, subscribe } from '../lib/progress'
 import { ThemeToggle } from './ThemeToggle'
+import { LanguagePicker } from './LanguagePicker'
+import { useLang } from '../i18n/LangContext'
+import { RichText } from '../i18n/RichText'
 
 /** Left chapter rail (tablet/desktop). */
 export function LessonRail({ activeId }: { activeId?: string }) {
   const progress = useSyncExternalStore(subscribe, getProgress)
+  const { t, lessonTitle, lessonSubtitle } = useLang()
   const done = lessons.filter((l) => progress[l.id]).length
 
   return (
@@ -16,9 +20,10 @@ export function LessonRail({ activeId }: { activeId?: string }) {
           <span className="grid size-9 place-items-center rounded-xl bg-curve/15 text-lg text-curve">∫</span>
           <span className="min-w-0">
             <span className="block text-[15px] font-bold tracking-wide">MathLens</span>
-            <span className="block truncate text-[11px] text-dim">Giải tích thị giác</span>
+            <span className="block truncate text-[11px] text-dim">{t('app.tagline')}</span>
           </span>
         </Link>
+        <LanguagePicker />
         <ThemeToggle />
       </div>
 
@@ -30,7 +35,7 @@ export function LessonRail({ activeId }: { activeId?: string }) {
           />
         </div>
         <p className="mt-1.5 text-[11px] text-faint">
-          {done}/{lessons.length} bài hoàn thành
+          {t('rail.progress', { done, total: lessons.length })}
         </p>
       </div>
 
@@ -56,11 +61,15 @@ export function LessonRail({ activeId }: { activeId?: string }) {
               {l.glyph}
             </span>
             <span className="min-w-0 flex-1">
-              <span className="block truncate text-[13px] font-semibold">{l.title}</span>
-              <span className="block truncate text-[11px] text-faint">{l.subtitle}</span>
+              <span className="block truncate text-[13px] font-semibold">
+                {lessonTitle(l.id, l.title)}
+              </span>
+              <span className="block truncate text-[11px] text-faint">
+                {lessonSubtitle(l.id, l.subtitle)}
+              </span>
             </span>
             {progress[l.id] && (
-              <svg viewBox="0 0 16 16" className="size-4 shrink-0 text-mint" aria-label="hoàn thành">
+              <svg viewBox="0 0 16 16" className="size-4 shrink-0 text-mint" aria-label={t('rail.done')}>
                 <path
                   fill="currentColor"
                   d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0ZM6.8 11.6 3.5 8.3l1.2-1.2 2.1 2.1 4.5-4.5 1.2 1.2-5.7 5.7Z"
@@ -83,13 +92,13 @@ export function LessonRail({ activeId }: { activeId?: string }) {
           ⚡
         </span>
         <span className="min-w-0 flex-1">
-          <span className="block text-[13px] font-semibold">Kiểm tra</span>
-          <span className="block text-[11px] text-faint">AI soạn câu hỏi riêng</span>
+          <span className="block text-[13px] font-semibold">{t('rail.quiz')}</span>
+          <span className="block truncate text-[11px] text-faint">{t('rail.quizSub')}</span>
         </span>
       </NavLink>
 
       <p className="border-t border-edge px-5 py-3 text-[10.5px] leading-relaxed text-faint">
-        Làm cho học sinh Việt Nam <em>nhìn thấy</em> toán học.
+        <RichText k="rail.footer" />
       </p>
     </nav>
   )
@@ -97,6 +106,7 @@ export function LessonRail({ activeId }: { activeId?: string }) {
 
 /** Horizontal chapter chips (mobile). */
 export function LessonChips({ activeId }: { activeId?: string }) {
+  const { t, lessonTitle } = useLang()
   return (
     <div className="flex items-center gap-2 overflow-x-auto border-b border-edge bg-bg-soft px-3 py-2 md:hidden">
       <Link
@@ -120,7 +130,7 @@ export function LessonChips({ activeId }: { activeId?: string }) {
           })}
         >
           <span style={{ color: l.accent }}>{l.glyph}</span>
-          {l.title}
+          {lessonTitle(l.id, l.title)}
         </NavLink>
       ))}
       <NavLink
@@ -131,7 +141,7 @@ export function LessonChips({ activeId }: { activeId?: string }) {
           }`
         }
       >
-        ⚡ Kiểm tra
+        ⚡ {t('rail.quiz')}
       </NavLink>
     </div>
   )

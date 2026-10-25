@@ -3,6 +3,7 @@ import { Home } from './pages/Home'
 import { QuizSpace } from './pages/QuizSpace'
 import { LessonShell } from './components/LessonShell'
 import { lessonById } from './content'
+import { LangProvider } from './i18n/LangContext'
 
 function LessonRoute({ mode = 'visual' }: { mode?: 'visual' | 'theory' }) {
   const { id } = useParams()
@@ -14,14 +15,16 @@ function LessonRoute({ mode = 'visual' }: { mode?: 'visual' | 'theory' }) {
 
 export default function App() {
   return (
-    <HashRouter>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/quiz" element={<QuizSpace />} />
-        <Route path="/lesson/:id" element={<LessonRoute />} />
-        <Route path="/lesson/:id/theory" element={<LessonRoute mode="theory" />} />
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-    </HashRouter>
+    <LangProvider>
+      <HashRouter>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/quiz" element={<QuizSpace />} />
+          <Route path="/lesson/:id" element={<LessonRoute />} />
+          <Route path="/lesson/:id/theory" element={<LessonRoute mode="theory" />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </HashRouter>
+    </LangProvider>
   )
 }

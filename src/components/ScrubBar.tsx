@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import { useLang } from '../i18n/LangContext'
 
 /**
  * Playhead scrubber. The fill width mirrors the shared playhead ref at
@@ -17,6 +18,7 @@ export function ScrubBar({
 }) {
   const fillRef = useRef<HTMLDivElement>(null)
   const trackRef = useRef<HTMLDivElement>(null)
+  const { t } = useLang()
 
   useEffect(() => {
     let raf = 0
@@ -40,8 +42,8 @@ export function ScrubBar({
       <button
         onClick={onTogglePause}
         className="grid size-9 shrink-0 place-items-center rounded-full bg-curve/15 text-curve transition-colors hover:bg-curve/25"
-        aria-label={paused ? 'Phát' : 'Tạm dừng'}
-        title="Phát / tạm dừng (Space)"
+        aria-label={paused ? t('scrub.play') : t('scrub.pause')}
+        title={t('scrub.playToggle')}
       >
         {paused ? (
           <svg viewBox="0 0 16 16" className="size-4 fill-current">
@@ -65,7 +67,7 @@ export function ScrubBar({
           if (e.buttons === 1) scrubFrom(e)
         }}
         role="slider"
-        aria-label="Vị trí hoạt hình"
+        aria-label={t('scrub.position')}
         aria-valuemin={0}
         aria-valuemax={100}
         aria-valuenow={Math.round(playheadRef.current * 100)}
@@ -82,8 +84,8 @@ export function ScrubBar({
         <button
           onClick={() => onStep(-1)}
           className="grid size-9 place-items-center rounded-full bg-panel-2 text-dim transition-colors hover:bg-edge hover:text-ink"
-          aria-label="Bước trước"
-          title="Bước trước (←)"
+          aria-label={t('scrub.prev')}
+          title={t('scrub.prevKey')}
         >
           <svg viewBox="0 0 16 16" className="size-4 fill-current">
             <path d="M10.5 3.2v9.6L4 8l6.5-4.8ZM3 3h1.2v10H3V3Z" />
@@ -92,8 +94,8 @@ export function ScrubBar({
         <button
           onClick={() => onStep(1)}
           className="grid size-9 place-items-center rounded-full bg-panel-2 text-dim transition-colors hover:bg-edge hover:text-ink"
-          aria-label="Bước tiếp"
-          title="Bước tiếp (→)"
+          aria-label={t('scrub.next')}
+          title={t('scrub.nextKey')}
         >
           <svg viewBox="0 0 16 16" className="size-4 fill-current">
             <path d="M5.5 3.2v9.6L12 8 5.5 3.2ZM11.8 3H13v10h-1.2V3Z" />

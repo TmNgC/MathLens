@@ -6,6 +6,7 @@ import { LessonChips, LessonRail } from '../components/LessonRail'
 import { getAttempts, saveAttempt } from '../quiz/store'
 import { FALLBACK_BANK } from '../quiz/fallback'
 import type { AnswerRecord, QuizAnalysis, QuizQuestion } from '../quiz/types'
+import { useLang } from '../i18n/LangContext'
 
 type Phase = 'setup' | 'loading' | 'quiz' | 'results'
 type QuizMode = 'ai' | 'offline'
@@ -28,6 +29,7 @@ const fmtMs = (ms: number) => {
 }
 
 export function QuizSpace() {
+  const { t, lang } = useLang()
   const [phase, setPhase] = useState<Phase>('setup')
   const [mode, setMode] = useState<QuizMode>('ai')
   const [selected, setSelected] = useState<string[]>(quizLessons.map((l) => l.id))
@@ -74,7 +76,7 @@ export function QuizSpace() {
         const res = await fetch('/api/quiz', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ lessonIds: selected, count }),
+          body: JSON.stringify({ lessonIds: selected, count, lang }),
         })
         if (!res.ok) throw new Error(`status ${res.status}`)
         const data = await res.json()
@@ -148,13 +150,14 @@ export function QuizSpace() {
           score,
           count: questions.length,
           totalMs,
+          lang,
           answers: answers.map((a) => ({ skillTag: a.skillTag, correct: a.correct, ms: a.ms })),
         }),
       })
       if (!res.ok) throw new Error(`status ${res.status}`)
       setAnalysis((await res.json()) as QuizAnalysis)
     } catch {
-      setAnalysis(localAnalysis(answers, questions))
+      setAnalysis(localAnalysis(answers, questions, t))
     }
     setAnalyzing(false)
   }
@@ -167,10 +170,10 @@ export function QuizSpace() {
         <div className="min-h-0 flex-1 overflow-y-auto">
           <div className="mx-auto max-w-3xl px-5 pb-20 pt-8 md:px-8">
             <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-faint">
-              Ôn tập có tính giờ
+              {t('quiz.overline')}
             </p>
             <h1 className="mt-1 text-2xl font-extrabold">
-              Kiểm tra <span className="text-curve">kiến thức</span>
+              {t('quiz.titleA')} <span className="text-curve">{t('quiz.titleB')}</span>
             </h1>
 
             {phase === 'setup' && (
@@ -237,11 +240,12 @@ function SetupScreen({
 }) {
   const attempts = getAttempts()
   const all = selected.length === quizLessons.length
+  const { t, lang, lessonTitle } = useLang()
 
   return (
     <>
       <div className="mt-6 rounded-2xl border border-edge bg-panel p-5">
-        <p className="mb-2 text-[13px] font-bold">Nguồn câu hỏi</p>
+        <p className="mb-2 text-[13px] font-bold">{t('quiz.source')}</p>
         <div className="grid gap-2.5 sm:grid-cols-2">
           <button
             onClick={() => setMode('ai')}
@@ -250,11 +254,9 @@ function SetupScreen({
             }`}
           >
             <p className={`text-[13.5px] font-bold ${mode === 'ai' ? 'text-violet' : 'text-ink'}`}>
-              ⚡ AI — bộ câu mới mỗi lần
+              {t('quiz.ai.title')}
             </p>
-            <p className="mt-1 text-[11.5px] leading-relaxed text-dim">
-              LLM soạn câu hỏi riêng theo bài bạn chọn. Mỗi lần bấm đầu là một đề hoàn toàn mới.
-            </p>
+            <p className="mt-1 text-[11.5px] leading-relaxed text-dim">{t('quiz.ai.body')}</p>
           </button>
           <button
             onClick={() => setMode('offline')}
@@ -263,15 +265,13 @@ function SetupScreen({
             }`}
           >
             <p className={`text-[13.5px] font-bold ${mode === 'offline' ? 'text-curve' : 'text-ink'}`}>
-              📚 Offline — ngân hàng cố định
+              {t('quiz.off.title')}
             </p>
-            <p className="mt-1 text-[11.5px] leading-relaxed text-dim">
-              Câu hỏi dựng sẵn, không cần mạng. Nhanh, nhẹ, và đúng chất "đề thi".
-            </p>
+            <p className="mt-1 text-[11.5px] leading-relaxed text-dim">{t('quiz.off.body')}</p>
           </button>
         </div>
 
-        <p className="mb-2 mt-5 text-[13px] font-bold">Chọn phạm vi</p>
+        <p className="mb-2 mt-5 text-[13px] font-bold">{t('quiz.scope')}</p>
         <div className="flex flex-wrap gap-2">
           <button
             onClick={() => setSelected(all ? [] : quizLessons.map((l) => l.id))}
@@ -279,7 +279,7 @@ function SetupScreen({
               all ? 'bg-curve/20 text-curve' : 'bg-panel-2 text-dim hover:text-ink'
             }`}
           >
-            ✦ Tất cả
+            {t('quiz.all')}
           </button>
           {quizLessons.map((l) => {
             const on = selected.includes(l.id)
@@ -294,13 +294,13 @@ function SetupScreen({
                 }`}
                 style={on ? { background: `${l.accent}26`, color: l.accent } : undefined}
               >
-                {l.glyph} {l.title}
+                {l.glyph} {lessonTitle(l.id, l.title)}
               </button>
             )
           })}
         </div>
 
-        <p className="mb-2 mt-5 text-[13px] font-bold">Số câu hỏi</p>
+        <p className="mb-2 mt-5 text-[13px] font-bold">{t('quiz.count')}</p>
         <div className="flex gap-2">
           {COUNTS.map((c) => (
             <button
@@ -310,7 +310,7 @@ function SetupScreen({
                 count === c ? 'bg-curve/20 text-curve' : 'bg-panel-2 text-dim hover:text-ink'
               }`}
             >
-              {c} câu
+              {c} {t('quiz.countUnit')}
             </button>
           ))}
         </div>
@@ -320,24 +320,24 @@ function SetupScreen({
           disabled={selected.length === 0}
           className="mt-6 w-full rounded-xl bg-curve py-3 text-[14px] font-bold text-[#08101c] transition-transform hover:scale-[1.01] disabled:opacity-40"
         >
-          {mode === 'ai' ? '⚡ Bắt đầu — AI soạn câu hỏi riêng cho bạn' : '📚 Bắt đầu — ngân hàng offline'}
+          {mode === 'ai' ? t('quiz.startAi') : t('quiz.startOff')}
         </button>
-        <p className="mt-2.5 text-center text-[11px] leading-relaxed text-faint">
-          Mỗi câu đều bấm giờ riêng · chế độ AI tự đổi sang offline khi không có kết nối
-        </p>
+        <p className="mt-2.5 text-center text-[11px] leading-relaxed text-faint">{t('quiz.hint')}</p>
       </div>
 
       {attempts.length > 0 && (
         <div className="mt-5 rounded-2xl border border-edge bg-panel p-5">
-          <p className="mb-3 text-[13px] font-bold">Lần làm gần nhất</p>
+          <p className="mb-3 text-[13px] font-bold">{t('quiz.recent')}</p>
           <div className="space-y-2">
             {attempts.slice(0, 5).map((a, i) => (
               <div key={i} className="flex items-center gap-3 text-[12.5px]">
-                <span className="font-mono text-faint">{new Date(a.date).toLocaleDateString('vi')}</span>
+                <span className="font-mono text-faint">{new Date(a.date).toLocaleDateString(lang)}</span>
                 <span className="min-w-0 flex-1 truncate text-dim">
                   {a.lessonIds.length > 1
-                    ? 'trộn tất cả'
-                    : (lessonById(a.lessonIds[0])?.title ?? a.lessonIds[0])}
+                    ? t('quiz.mixedAll')
+                    : (lessonById(a.lessonIds[0])
+                      ? lessonTitle(a.lessonIds[0], lessonById(a.lessonIds[0])!.title)
+                      : a.lessonIds[0])}
                 </span>
                 <span className="font-mono font-bold" style={{ color: a.score / a.count >= 0.7 ? '#97e3a2' : a.score / a.count >= 0.4 ? '#ffd35c' : '#ff8b8b' }}>
                   {a.score}/{a.count}
@@ -355,11 +355,12 @@ function SetupScreen({
 /* ----------------------------- loading ----------------------------- */
 
 function LoadingScreen() {
+  const { t } = useLang()
   return (
     <div className="mt-10 grid place-items-center gap-4 rounded-2xl border border-edge bg-panel py-16">
       <div className="size-10 animate-spin rounded-full border-[3px] border-edge border-t-curve" />
-      <p className="text-[13.5px] font-semibold text-dim">AI đang soạn câu hỏi…</p>
-      <p className="text-[11.5px] text-faint">vài giây thôi — mỗi lần là một bộ câu mới</p>
+      <p className="text-[13.5px] font-semibold text-dim">{t('quiz.loading')}</p>
+      <p className="text-[11.5px] text-faint">{t('quiz.loadingSub')}</p>
     </div>
   )
 }
@@ -386,6 +387,7 @@ function QuizScreen({
   onNext: () => void
 }) {
   const q = questions[qIndex]
+  const { t, lessonTitle } = useLang()
   if (!q) return null
   const answered = chosen !== null
 
@@ -414,7 +416,7 @@ function QuizScreen({
       <div key={q.id} className="rise mt-4 rounded-2xl border border-edge bg-panel p-5 md:p-6">
         <div className="mb-1 flex items-center gap-2">
           <span className="rounded-full bg-violet/15 px-2.5 py-0.5 text-[10.5px] font-bold uppercase tracking-wide text-violet">
-            {lessonById(q.lessonId)?.title ?? q.lessonId}
+            {lessonById(q.lessonId) ? lessonTitle(q.lessonId, lessonById(q.lessonId)!.title) : q.lessonId}
           </span>
           <span className="text-[11px] text-faint">{q.skillTag}</span>
         </div>
@@ -450,7 +452,7 @@ function QuizScreen({
 
         {answered && (
           <div className="rise mt-4 rounded-xl border border-edge bg-bg-soft p-4">
-            <p className="text-[12px] font-bold uppercase tracking-wide text-dim">Giải thích</p>
+            <p className="text-[12px] font-bold uppercase tracking-wide text-dim">{t('quiz.explain')}</p>
             <p className="mt-1.5 text-[13px] leading-relaxed text-dim">
               <Formula text={q.explanation} />
             </p>
@@ -458,13 +460,13 @@ function QuizScreen({
               onClick={onNext}
               className="mt-3.5 rounded-full bg-curve px-5 py-2 text-[13px] font-bold text-[#08101c] transition-transform hover:scale-[1.02]"
             >
-              {qIndex + 1 >= questions.length ? 'Xem kết quả →' : 'Câu tiếp theo →'}{' '}
-              <span className="opacity-60">(Enter)</span>
+              {qIndex + 1 >= questions.length ? t('quiz.finish') : t('quiz.next')}{' '}
+              <span className="opacity-60">{t('quiz.enterHint')}</span>
             </button>
           </div>
         )}
         {!answered && (
-          <p className="mt-3 text-[11px] text-faint">nhấn 1–4 để chọn nhanh · thời gian mỗi câu đang được ghi lại</p>
+          <p className="mt-3 text-[11px] text-faint">{t('quiz.keyHint')}</p>
         )}
         <span className="hidden">{answers.length}</span>
       </div>
@@ -515,6 +517,7 @@ function ResultsScreen({
   const fastest = answers.length ? Math.min(...answers.map((a) => a.ms)) : 0
   const slowest = answers.length ? Math.max(...answers.map((a) => a.ms)) : 0
   const ring = 2 * Math.PI * 52
+  const { t, lessonTitle } = useLang()
 
   return (
     <>
@@ -539,13 +542,13 @@ function ResultsScreen({
             <span className="block text-3xl font-extrabold">
               {score}/{answers.length}
             </span>
-            <span className="text-[11.5px] text-faint">câu đúng</span>
+            <span className="text-[11.5px] text-faint">{t('quiz.correct')}</span>
           </p>
-          <p className="font-mono text-[13px] text-gold">⏱ tổng {fmtMs(elapsed)}</p>
+          <p className="font-mono text-[13px] text-gold">{t('quiz.totalTime', { time: fmtMs(elapsed) })}</p>
         </div>
 
         <div className="rounded-2xl border border-edge bg-panel p-5">
-          <p className="mb-3 text-[13px] font-bold">Theo kỹ năng</p>
+          <p className="mb-3 text-[13px] font-bold">{t('quiz.skills')}</p>
           <div className="space-y-3">
             {skills.map((s) => {
               const p = s.correct / s.total
@@ -554,7 +557,7 @@ function ResultsScreen({
                   <div className="mb-1 flex justify-between text-[12px]">
                     <span className="font-semibold text-dim">{s.tag}</span>
                     <span className="font-mono text-faint">
-                      {s.correct}/{s.total} · {(s.ms / s.total / 1000).toFixed(1)}s/câu
+                      {s.correct}/{s.total} · {(s.ms / s.total / 1000).toFixed(1)}{t('quiz.perQ')}
                     </span>
                   </div>
                   <div className="h-2 overflow-hidden rounded-full bg-edge">
@@ -571,9 +574,9 @@ function ResultsScreen({
             })}
           </div>
           <div className="mt-4 grid grid-cols-3 gap-2 border-t border-edge pt-3.5 text-center">
-            <Stat label="trung bình" value={`${(avg / 1000).toFixed(1)}s`} />
-            <Stat label="nhanh nhất" value={`${(fastest / 1000).toFixed(1)}s`} />
-            <Stat label="chậm nhất" value={`${(slowest / 1000).toFixed(1)}s`} />
+            <Stat label={t('quiz.avg')} value={`${(avg / 1000).toFixed(1)}s`} />
+            <Stat label={t('quiz.fastest')} value={`${(fastest / 1000).toFixed(1)}s`} />
+            <Stat label={t('quiz.slowest')} value={`${(slowest / 1000).toFixed(1)}s`} />
           </div>
         </div>
       </div>
@@ -584,17 +587,17 @@ function ResultsScreen({
           disabled={analyzing}
           className="rounded-full bg-violet px-6 py-3 text-[14px] font-bold text-[#140b1f] transition-transform hover:scale-[1.02] disabled:opacity-50"
         >
-          {analyzing ? '🤖 đang phân tích…' : '🤖 Phân tích bằng AI'}
+          {analyzing ? t('quiz.analyzing') : t('quiz.analyze')}
         </button>
         <button
           onClick={onRestart}
           className="rounded-full border border-edge bg-panel px-6 py-3 text-[14px] font-bold text-dim transition-colors hover:text-ink"
         >
-          Làm lần nữa
+          {t('quiz.restart')}
         </button>
         {offline && (
           <span className="self-center rounded-full bg-panel-2 px-3 py-1.5 text-[11px] text-faint">
-            chế độ offline — phân tích dùng máy nội bộ
+            {t('quiz.offlineNote')}
           </span>
         )}
       </div>
@@ -603,7 +606,7 @@ function ResultsScreen({
 
       {wrong.length > 0 && (
         <div className="mt-6">
-          <p className="mb-3 text-[13px] font-bold">Xem lại câu sai</p>
+          <p className="mb-3 text-[13px] font-bold">{t('quiz.reviewWrong')}</p>
           <div className="space-y-3">
             {wrong.map(({ a, q }) => (
               <details key={q.id} className="rounded-2xl border border-edge bg-panel">
@@ -613,7 +616,7 @@ function ResultsScreen({
                 </summary>
                 <div className="border-t border-edge px-4 py-3 text-[12.5px] leading-relaxed text-dim">
                   <p>
-                    Bạn chọn: <Formula text={q.options[a.chosen]} /> · Đáp án đúng:{' '}
+                    {t('quiz.youChose')} <Formula text={q.options[a.chosen]} /> · {t('quiz.correctAnswer')}{' '}
                     <span className="font-semibold text-mint">
                       <Formula text={q.options[q.correctIndex]} />
                     </span>
@@ -625,7 +628,11 @@ function ResultsScreen({
                     to={`/lesson/${q.lessonId}/theory`}
                     className="mt-2 inline-block font-semibold text-curve hover:underline"
                   >
-                    → Xem lý thuyết {lessonById(q.lessonId)?.title}
+                    {t('quiz.reviewTheory', {
+                      title: lessonById(q.lessonId)
+                        ? lessonTitle(q.lessonId, lessonById(q.lessonId)!.title)
+                        : q.lessonId,
+                    })}
                   </Link>
                 </div>
               </details>
@@ -647,10 +654,11 @@ function Stat({ label, value }: { label: string; value: string }) {
 }
 
 function AnalysisCard({ analysis }: { analysis: QuizAnalysis }) {
+  const { t } = useLang()
   return (
     <div className="rise mt-4 rounded-2xl border border-violet/40 bg-violet/[0.07] p-5">
       <p className="flex items-center gap-2 text-[14px] font-bold text-violet">
-        🤖 Phân tích của AI
+        {t('quiz.aiAnalysis')}
         {analysis.offline && (
           <span className="rounded-full bg-panel-2 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-faint">
             offline
@@ -664,7 +672,7 @@ function AnalysisCard({ analysis }: { analysis: QuizAnalysis }) {
         <div className="mt-3.5 grid gap-3 md:grid-cols-2">
           {analysis.strengths.length > 0 && (
             <div className="rounded-xl border border-mint/25 bg-mint/[0.07] p-3.5">
-              <p className="mb-1.5 text-[11.5px] font-bold uppercase tracking-wide text-mint">Điểm mạnh</p>
+              <p className="mb-1.5 text-[11.5px] font-bold uppercase tracking-wide text-mint">{t('quiz.strengths')}</p>
               <ul className="list-inside list-disc space-y-1 text-[12.5px] leading-relaxed text-dim">
                 {analysis.strengths.map((s, i) => (
                   <li key={i}>{s}</li>
@@ -674,7 +682,7 @@ function AnalysisCard({ analysis }: { analysis: QuizAnalysis }) {
           )}
           {analysis.weaknesses.length > 0 && (
             <div className="rounded-xl border border-coral/25 bg-coral/[0.07] p-3.5">
-              <p className="mb-1.5 text-[11.5px] font-bold uppercase tracking-wide text-coral">Cần cải thiện</p>
+              <p className="mb-1.5 text-[11.5px] font-bold uppercase tracking-wide text-coral">{t('quiz.weaknesses')}</p>
               <ul className="list-inside list-disc space-y-1 text-[12.5px] leading-relaxed text-dim">
                 {analysis.weaknesses.map((s, i) => (
                   <li key={i}>{s}</li>
@@ -686,7 +694,7 @@ function AnalysisCard({ analysis }: { analysis: QuizAnalysis }) {
       )}
       {analysis.advice.length > 0 && (
         <div className="mt-3 rounded-xl border border-gold/25 bg-gold/[0.06] p-3.5">
-          <p className="mb-1.5 text-[11.5px] font-bold uppercase tracking-wide text-gold">Lộ trình ôn tập</p>
+          <p className="mb-1.5 text-[11.5px] font-bold uppercase tracking-wide text-gold">{t('quiz.advice')}</p>
           <ul className="list-inside list-disc space-y-1 text-[12.5px] leading-relaxed text-dim">
             {analysis.advice.map((s, i) => (
               <li key={i}>{s}</li>
@@ -700,29 +708,44 @@ function AnalysisCard({ analysis }: { analysis: QuizAnalysis }) {
 
 /* ------------------- offline rule-based analysis ------------------- */
 
-function localAnalysis(answers: AnswerRecord[], questions: QuizQuestion[]): QuizAnalysis {
+function localAnalysis(
+  answers: AnswerRecord[],
+  questions: QuizQuestion[],
+  t: (key: string, vars?: Record<string, string | number>) => string,
+): QuizAnalysis {
   const skills = skillStats(answers)
   const score = answers.filter((a) => a.correct).length
   const avg = answers.reduce((s, a) => s + a.ms, 0) / Math.max(1, answers.length)
-  const strengths = skills.filter((s) => s.correct === s.total).map((s) => `Kỹ năng "${s.tag}" chắc tay`)
+  const strengths = skills
+    .filter((s) => s.correct === s.total)
+    .map((s) => t('quiz.local.solid', { tag: s.tag }))
   const weak = skills.filter((s) => s.correct < s.total)
-  const weaknesses = weak.map((s) => `"${s.tag}": đúng ${s.correct}/${s.total}`)
+  const weaknesses = weak.map((s) => t('quiz.local.tag', { tag: s.tag, correct: s.correct, total: s.total }))
   const slowest = answers.reduce((m, a) => (a.ms > m.ms ? a : m), answers[0])
   if (slowest && slowest.ms > avg * 1.5) {
-    weaknesses.push(`Chậm ở câu thuộc "${slowest.skillTag}" (${(slowest.ms / 1000).toFixed(1)}s so với ${(avg / 1000).toFixed(1)}s trung bình)`)
+    weaknesses.push(
+      t('quiz.local.slow', { tag: slowest.skillTag, slow: (slowest.ms / 1000).toFixed(1), avg: (avg / 1000).toFixed(1) }),
+    )
   }
-  const lessonFor = (tag: string) =>
-    questions.find((q) => q.skillTag === tag)?.lessonId
+  const lessonFor = (tag: string) => questions.find((q) => q.skillTag === tag)?.lessonId
   const advice = weak.slice(0, 3).map((s) => {
     const lid = lessonFor(s.tag)
     const l = lid ? lessonById(lid) : undefined
-    return l ? `Xem lại bài ${l.title} (phần Lý thuyết + Trực quan) để khắc phục "${s.tag}"` : `Ôn lại chủ đề "${s.tag}"`
+    return l
+      ? t('quiz.local.review', { title: l.title, tag: s.tag })
+      : t('quiz.local.reviewTag', { tag: s.tag })
   })
-  if (advice.length === 0) advice.push('Tuyệt đối! Thử tăng số câu hoặc phạm vi "Tất cả" để thử thách hơn')
+  if (advice.length === 0) advice.push(t('quiz.local.perfect'))
   return {
-    overall: `Bạn đúng ${score}/${answers.length} câu trong ${fmtMs(
-      answers.reduce((s, a) => s + a.ms, 0),
-    )}. ${weak.length === 0 ? 'Không có kỹ năng nào sai — xuất sắc!' : `Các kỹ năng cần chú ý: ${weak.map((w) => w.tag).join(', ')}.`}`,
+    overall: t('quiz.local.overall', {
+      score,
+      count: answers.length,
+      time: fmtMs(answers.reduce((s, a) => s + a.ms, 0)),
+      tail:
+        weak.length === 0
+          ? t('quiz.local.noWeak')
+          : t('quiz.local.weakList', { tags: weak.map((w) => w.tag).join(', ') }),
+    }),
     strengths,
     weaknesses,
     advice,

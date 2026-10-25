@@ -1,10 +1,11 @@
 import type { TheorySection } from '../content/types'
 import { Formula } from './Formula'
 import { Link } from 'react-router-dom'
+import { useLang } from '../i18n/LangContext'
 
 /**
  * "Lý thuyết" tab — scrollable KaTeX document with definition boxes,
- * notation tables, worked examples and common-mistake warnings.
+ * notation tables, worked examples and common-mistakes warnings.
  */
 export function TheoryPanel({
   title,
@@ -15,14 +16,15 @@ export function TheoryPanel({
   accent: string
   sections: TheorySection[]
 }) {
+  const { t } = useLang()
   return (
     <div className="h-full overflow-y-auto">
       <div className="mx-auto max-w-3xl px-5 pb-20 pt-8 md:px-8">
         <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-faint">
-          Tài liệu tham khảo
+          {t('theory.ref')}
         </p>
         <h1 className="mt-1 text-2xl font-extrabold">
-          Lý thuyết — <span style={{ color: accent }}>{title}</span>
+          {t('theory.docPrefix')} <span style={{ color: accent }}>{title}</span>
         </h1>
 
         <div className="mt-6 space-y-5">
@@ -32,12 +34,13 @@ export function TheoryPanel({
         </div>
 
         <div className="mt-10 rounded-2xl border border-edge bg-panel p-4 text-[12.5px] leading-relaxed text-dim">
-          Đọc xong rồi? Quay lại phần <span className="font-semibold text-ink">Trực quan</span> để
-          xem khái niệm chuyển động, hoặc sang{' '}
+          {t('theory.footerA')}{' '}
+          <span className="font-semibold text-ink">{t('shell.visual')}</span>{' '}
+          {t('theory.footerB')}{' '}
           <Link to="/quiz" className="font-semibold text-curve hover:underline">
-            Kiểm tra kiến thức
+            {t('rail.quiz')}
           </Link>{' '}
-          để tự đánh giá.
+          {t('theory.footerC')}
         </div>
       </div>
     </div>
@@ -46,6 +49,7 @@ export function TheoryPanel({
 
 function Section({ section, accent }: { section: TheorySection; accent: string }) {
   const { kind, heading, body, table } = section
+  const { t } = useLang()
 
   const box =
     kind === 'def'
@@ -62,15 +66,15 @@ function Section({ section, accent }: { section: TheorySection; accent: string }
 
   const chip =
     kind === 'def'
-      ? 'Định nghĩa'
+      ? t('theory.def')
       : kind === 'warn'
-        ? 'Sai lầm thường gặp'
+        ? t('theory.warn')
         : kind === 'example'
-          ? 'Ví dụ mẫu'
+          ? t('theory.example')
           : kind === 'note'
-            ? 'Ghi chú'
+            ? t('theory.note')
             : kind === 'history'
-              ? 'Lịch sử'
+              ? t('theory.history')
               : null
 
   return (
@@ -100,8 +104,8 @@ function Section({ section, accent }: { section: TheorySection; accent: string }
           <table className="w-full border-collapse text-left">
             <thead>
               <tr className="bg-panel-2 text-[11px] uppercase tracking-wider text-faint">
-                <th className="px-3.5 py-2 font-semibold">Ký hiệu</th>
-                <th className="px-3.5 py-2 font-semibold">Ý nghĩa</th>
+                <th className="px-3.5 py-2 font-semibold">{t('theory.sym')}</th>
+                <th className="px-3.5 py-2 font-semibold">{t('theory.meaning')}</th>
               </tr>
             </thead>
             <tbody>

@@ -3,11 +3,14 @@ import { useSyncExternalStore } from 'react'
 import { lessons } from '../content'
 import { getProgress, subscribe } from '../lib/progress'
 import { ThemeToggle } from '../components/ThemeToggle'
+import { LanguagePicker } from '../components/LanguagePicker'
 import { useStage } from '../engine/useStage'
 import { PlaneView } from '../engine/PlaneView'
 import { C } from '../engine/palette'
 import { easeInOutSine, lerp } from '../engine/easing'
 import type { Stage } from '../engine/Stage'
+import { useLang } from '../i18n/LangContext'
+import { RichText } from '../i18n/RichText'
 
 /** Ambient hero demo: sweeping tangent + filling area on a cubic. */
 function HeroDemo() {
@@ -35,10 +38,12 @@ function HeroDemo() {
 export function Home() {
   const progress = useSyncExternalStore(subscribe, getProgress)
   const next = lessons.find((l) => !progress[l.id]) ?? lessons[0]
+  const { t, lessonTitle, lessonSubtitle } = useLang()
 
   return (
     <div className="h-full overflow-y-auto">
-      <div className="fixed right-4 top-4 z-20 md:right-6 md:top-6">
+      <div className="fixed right-4 top-4 z-20 flex items-center gap-2 md:right-6 md:top-6">
+        <LanguagePicker />
         <ThemeToggle />
       </div>
       <div className="mx-auto max-w-6xl px-5 pb-16 pt-10 md:px-8 md:pt-16">
@@ -46,32 +51,28 @@ export function Home() {
         <section className="grid items-center gap-8 md:grid-cols-2">
           <div>
             <p className="mb-3 inline-flex items-center gap-2 rounded-full border border-edge bg-panel px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-dim">
-              <span className="size-1.5 rounded-full bg-teal" /> Giải tích thị giác
+              <span className="size-1.5 rounded-full bg-teal" /> {t('home.badge')}
             </p>
             <h1 className="text-4xl font-extrabold leading-[1.18] tracking-tight md:text-5xl">
-              Nhìn thấy
+              {t('home.h1a')}
               <br />
               <span className="bg-gradient-to-r from-curve via-teal to-mint bg-clip-text text-transparent">
-                đạo hàm & tích phân
+                {t('home.h1b')}
               </span>
               <br />
-              bằng hoạt hình.
+              {t('home.h1c')}
             </h1>
             <p className="mt-4 max-w-md text-[15px] leading-relaxed text-dim">
-              WolframAlpha tính toán, GeoGebra vẽ hình — MathLens <em>trình diễn</em>:
-              mỗi khái niệm là một hoạt hình mượt mà mà bạn có thể kéo, tua và nghịch
-              phá, viết dành cho học sinh trung học Việt Nam.
+              <RichText k="home.p" />
             </p>
             <div className="mt-7 flex flex-wrap items-center gap-3">
               <Link
                 to={`/lesson/${next.id}`}
                 className="rounded-full bg-curve px-6 py-3 text-[14px] font-bold text-[#08101c] shadow-[0_0_28px_rgba(88,196,221,0.35)] transition-transform hover:scale-[1.03]"
               >
-                {progress[next.id] ? 'Xem lại từ đầu' : 'Bắt đầu học'} →
+                {progress[next.id] ? t('home.review') : t('home.start')} →
               </Link>
-              <span className="text-[12px] text-faint">
-                không cần đăng ký · tiến độ tự lưu
-              </span>
+              <span className="text-[12px] text-faint">{t('home.noSignup')}</span>
             </div>
           </div>
           <div className="h-60 overflow-hidden rounded-2xl border border-edge bg-bg-soft md:h-80">
@@ -82,9 +83,12 @@ export function Home() {
         {/* chapters */}
         <section className="mt-14">
           <div className="mb-5 flex items-end justify-between">
-            <h2 className="text-lg font-bold">Chương trình</h2>
+            <h2 className="text-lg font-bold">{t('home.program')}</h2>
             <p className="text-[12px] text-faint">
-              {lessons.filter((l) => progress[l.id]).length}/{lessons.length} hoàn thành
+              {t('home.completed', {
+                done: lessons.filter((l) => progress[l.id]).length,
+                total: lessons.length,
+              })}
             </p>
           </div>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -107,24 +111,26 @@ export function Home() {
                   </span>
                   {progress[l.id] ? (
                     <span className="rounded-full bg-mint/15 px-2.5 py-1 text-[11px] font-semibold text-mint">
-                      ✓ xong
+                      {t('home.doneBadge')}
                     </span>
                   ) : l.kind === 'theory' ? (
                     <span className="rounded-full bg-panel-2 px-2.5 py-1 text-[11px] font-semibold text-faint">
-                      📖 lý thuyết
+                      {t('home.theoryBadge')}
                     </span>
                   ) : (
                     <span className="rounded-full bg-panel-2 px-2.5 py-1 text-[11px] font-semibold text-faint">
-                      {l.steps.length} bước
+                      {t('home.stepsBadge', { n: l.steps.length })}
                     </span>
                   )}
                 </div>
                 <h3 className="mt-4 text-[16px] font-bold">
-                  {l.number}. {l.title}
+                  {l.number}. {lessonTitle(l.id, l.title)}
                 </h3>
-                <p className="mt-1 text-[13px] leading-snug text-dim">{l.subtitle}</p>
+                <p className="mt-1 text-[13px] leading-snug text-dim">
+                  {lessonSubtitle(l.id, l.subtitle)}
+                </p>
                 <p className="mt-4 text-[12px] font-semibold" style={{ color: l.accent }}>
-                  Mở bài học →
+                  {t('home.open')}
                 </p>
               </Link>
             ))}
@@ -135,27 +141,20 @@ export function Home() {
         <section className="mt-8 overflow-hidden rounded-2xl border border-violet/35 bg-gradient-to-r from-violet/[0.12] to-transparent p-6">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div className="max-w-xl">
-              <h2 className="text-lg font-bold">
-                ⚡ Kiểm tra kiến thức — có AI chấm bài
-              </h2>
-              <p className="mt-1.5 text-[13.5px] leading-relaxed text-dim">
-                AI soạn câu hỏi trắc nghiệm riêng theo bài bạn chọn, bấm giờ từng câu,
-                phân tích kỹ năng yếu mạnh và gợi ý lộ trình ôn tập sau mỗi lần làm.
-              </p>
+              <h2 className="text-lg font-bold">{t('home.quizTitle')}</h2>
+              <p className="mt-1.5 text-[13.5px] leading-relaxed text-dim">{t('home.quizBody')}</p>
             </div>
             <Link
               to="/quiz"
               className="rounded-full bg-violet px-6 py-3 text-[14px] font-bold text-[#140b1f] shadow-[0_0_24px_rgba(178,141,221,0.3)] transition-transform hover:scale-[1.03]"
             >
-              Vào phòng kiểm tra →
+              {t('home.quizCta')}
             </Link>
           </div>
         </section>
 
         <footer className="mt-16 border-t border-edge pt-6 text-[12px] leading-relaxed text-faint">
-          MathLens — dự án mã nguồn mở lấy cảm hứng từ spirit của 3Blue1Brown,
-          Mathigon và GeoGebra. Làm để học sinh Việt Nam <em>nhìn thấy</em> hình hài
-          của toán học.
+          <RichText k="home.footer" />
         </footer>
       </div>
     </div>
