@@ -368,6 +368,7 @@ export class PlaneView {
       labelColor?: string
       labelDx?: number
       labelDy?: number
+      alpha?: number
     } = {},
   ) {
     const ctx = this.ctx
@@ -375,16 +376,17 @@ export class PlaneView {
     const py = this.sy(y)
     const color = opts.color ?? C.gold
     const r = opts.r ?? 5
+    const alpha = opts.alpha ?? 1
+    ctx.save()
+    ctx.globalAlpha = alpha
     if (opts.halo) {
-      ctx.save()
-      ctx.globalAlpha = 0.25
+      ctx.globalAlpha = 0.25 * alpha
       ctx.fillStyle = color
       ctx.beginPath()
       ctx.arc(px, py, r * 2.4, 0, Math.PI * 2)
       ctx.fill()
-      ctx.restore()
+      ctx.globalAlpha = alpha
     }
-    ctx.save()
     ctx.fillStyle = color
     ctx.strokeStyle = C.bg
     ctx.lineWidth = 2
@@ -400,6 +402,7 @@ export class PlaneView {
         mono: true,
         weight: 600,
         align: 'left',
+        alpha,
       })
     }
   }
@@ -437,6 +440,7 @@ export class PlaneView {
       baseline?: CanvasTextBaseline
       bg?: string
       bgPad?: number
+      alpha?: number
     } = {},
   ) {
     const ctx = this.ctx
@@ -444,6 +448,7 @@ export class PlaneView {
     const font = opts.mono ? MONO : SANS
     const weight = opts.weight ?? 500
     ctx.save()
+    ctx.globalAlpha = opts.alpha ?? 1
     ctx.font = `${weight} ${size}px ${font}`
     ctx.textAlign = opts.align ?? 'left'
     ctx.textBaseline = opts.baseline ?? 'alphabetic'

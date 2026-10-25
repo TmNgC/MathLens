@@ -21,7 +21,7 @@ hay trả lời kết quả như WolframAlpha.
 | 6 | **Khối tròn xoay** ◉ | 3D: quay φ 0→2π, phương pháp đĩa, lát cắt, V = π∫f² |
 | 7 | **Thiết diện** ◫ | 3D: cắt trụ/nón, nguyên lý Cavalieri, bán cầu ⅔πR³ |
 | 8 | **Phòng thí nghiệm** λ | Nhập hàm số bất kỳ (MathLive), tiếp tuyến, f′, diện tích |
-| 9 | **Từ toán học đến vật lý** Φ | Cầu nối Vật lí 10–11 (GDPT 2018): đạo hàm = tốc độ biến đổi (v, a, I, e, P), tích phân = cộng dồn (độ dời, điện tích, công), dao động điều hòa, Faraday |
+| 9 | **Từ toán học đến vật lý** Φ | Động học & Động lực học (Vật lí 10–11, GDPT 2018) qua hoạt hình: vận tốc tức thời, gia tốc, diện tích v–t, thí nghiệm lò xo (Hooke), công = diện tích F–x, dao động điều hòa — mỗi bước kèm câu chuyện lịch sử |
 
 Mỗi bài (trừ Lab) có hai tab: **🎬 Trực quan** (hoạt hình từng bước) và
 **📖 Lý thuyết** (định nghĩa, bảng ký hiệu, ví dụ mẫu, sai lầm thường gặp —

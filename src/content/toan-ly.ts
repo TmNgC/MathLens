@@ -1,24 +1,94 @@
 import type { Lesson } from './types'
+import { PhysicsScene } from '../lessons/PhysicsLesson'
 
 /**
- * Bài "Từ toán học đến vật lý" — theory-only (khung cơ bản).
- * Cầu nối giải tích ↔ Vật lí 10–11 (chương trình GDPT 2018):
- * đạo hàm = tốc độ biến thiên, tích phân = phép cộng dồn.
+ * Bài "Từ toán học đến vật lý" — trực quan + lý thuyết.
+ * Động học (bước 0–2) và Động lực học (bước 3–5), tổng kết ở bước 6.
+ * Mỗi bước là một đồ thị động; câu chuyện lịch sử trong "Bạn có biết?".
  */
 export const mathPhysicsLesson: Lesson = {
   id: 'toan-ly',
   number: 9,
   title: 'Từ toán học đến vật lý',
-  subtitle: 'Đạo hàm & tích phân trong Vật lí 10–11',
-  kind: 'theory',
+  subtitle: 'Động học & Động lực học qua đạo hàm và tích phân',
+  kind: 'calc',
   accent: '#b78bff',
   glyph: 'Φ',
   steps: [
     {
-      title: 'Tài liệu liên môn',
-      body: 'Mỗi đại lượng vật lý chỉ là một phía của đạo hàm hoặc tích phân.',
+      title: 'Vận tốc tức thời',
+      duration: 9,
+      body:
+        'Quãng đường là hàm số của thời gian: $x(t)$. Vận tốc tức thời là đạo hàm $v=\\dfrac{dx}{dt}$ — xem cát tuyến $\\dfrac{\\Delta x}{\\Delta t}$ co dần về $0$: vận tốc trung bình trở thành vận tốc tức thời, đúng như cát tuyến tiến hóa thành tiếp tuyến ở bài Đạo hàm. Bên phải: cùng một đồng hồ $t$, quả cầu rơi theo đúng $x(t)=\\frac12gt^2$.',
+      funFact: {
+        title: 'Mũi tên của Zeno',
+        body:
+          'Hơn 2000 năm trước, Zeno nêu nghịch lý: tại mỗi khoảnh khắc, mũi tên đứng ở một vị trí xác định — vậy nó "chuyển động" ở đâu? Câu trả lời của giải tích: chuyển động không nằm trong một khoảnh khắc riêng lẻ, mà trong xu hướng — giới hạn của các vận tốc trung bình khi khoảng thời gian thu hẹp về 0. Chính nghịch lý này là một trong những động cơ đầu tiên của khái niệm đạo hàm.',
+      },
+    },
+    {
+      title: 'Gia tốc',
+      duration: 8,
+      body:
+        'Đạo hàm của vận tốc cho gia tốc: $a=\\dfrac{dv}{dt}=\\dfrac{d^2x}{dt^2}$. Với rơi tự do, $v=gt$ là đường thẳng — độ dốc không đổi của đồ thị $v$–$t$ chính là $g=9{,}8$ m/s². Bên phải, lấy tích phân ngược lại: $x=\\int v\\,dt=\\frac12gt^2$ là parabol. Ba đại lượng $x$, $v$, $a$ chỉ là một hàm số và hai đạo hàm của nó.',
+      funFact: {
+        title: 'Mặt dốc và đồng hồ nước của Galileo',
+        body:
+          'Thế kỷ 17 chưa có đồng hồ bấm giây chính xác. Để đo rơi tự do, Galileo "pha loãng" trọng lực bằng cách cho quả cầu lăn trên mặt dốc, và đo thời gian bằng khối nước chảy ra từ một bình — cân nước để biết thời gian. Từ các số liệu đó ông phát hiện $x$ tỉ lệ với $t^2$, tức $x \\propto t^2$ — chính là hệ số $\\frac12g$ trong $\\frac12gt^2$, và điều đó có nghĩa gia tốc không đổi.',
+      },
+    },
+    {
+      title: 'Độ dời từ đồ thị v–t',
+      duration: 10,
+      body:
+        'Tích phân ngược chiều đồng hồ: $\\Delta x=\\displaystyle\\int_{t_1}^{t_2}v\\,dt$ — diện tích có dấu giữa đồ thị $v$–$t$ và trục thời gian. Xe tăng tốc, chạy đều, hãm rồi lùi: phần trên trục cộng vào độ dời, phần dưới trừ đi. Quãng đường thì luôn cộng $|v|$ — vì thế hai số ở bảng chỉ bằng nhau khi $v$ không đổi dấu.',
+      funFact: {
+        title: 'Cú nhảy từ rìa không gian',
+        body:
+          'Năm 2012, Felix Baumgartner nhảy từ khinh khí cầu ở độ cao gần 39 km. Đồ thị vận tốc của anh ta là một đường cong phức tạp: tăng vọt khi không khí loãng, chậm dần khi атмос đặc hơn, vượt cả tốc độ âm thanh (1342 km/h). Không ai cần nguyên hàm của đường cong đó — máy tính chỉ cộng dồn diện tích từng vạch nhỏ dưới đồ thị $v$–$t$, đúng như tổng Riemann, và tổng diện tích chính là 39 km độ cao đã rơi.',
+      },
+    },
+    {
+      title: 'Thí nghiệm lò xo',
+      duration: 10,
+      body:
+        'Động lực học: treo thêm quả nặng, lò xo giãn thêm. Ghi lại từng cặp $(x, F)$: các điểm nằm chính xác trên một đường thẳng $F=k\\cdot x$ — định luật Hooke, với hệ số đàn hồi $k$ (N/m) là độ dốc. Đây là cách "sinh ra" một hàm số từ thí nghiệm: vật lý cung cấp dữ kiện, toán học cung cấp mô hình.',
+      funFact: {
+        title: 'Định luật bị giấu trong một câu đố',
+        body:
+          'Năm 1676, Robert Hooke công bố định luật lò xo dưới dạng anagram "ceiiinosssttuv" — chuỗi chữ loạn xạ không ai hiểu. Hai năm sau ông mới giải mã: "ut tensio, sic vis" (tiếng Latin: "độ giãn nào, lực ấy"). Lý do: ông sợ đối thủ lấy mất phát minh nên giấu nó lại — một kiểu "bản quyền" thời kỳ đó cho một trong những định luật đơn giản nhất của vật lý.',
+      },
+    },
+    {
+      title: 'Công của lực',
+      duration: 9,
+      body:
+        'Với lực không đổi, $A=F\\cdot s$. Nhưng lực lò xo tăng dần theo $x$ — công phải là tích phân $A=\\displaystyle\\int_0^x k s\\,ds=\\dfrac12kx^2$: diện tích tam giác dưới đường $F=kx$. Con số $\\frac12kx^2$ quen thuộc chính là thế năng đàn hồi — không cần học thuộc, nó tự xuất hiện từ diện tích.',
+      funFact: {
+        title: 'Sức ngựa của James Watt',
+        body:
+          'Khi bán máy hơi nước, Watt phải so sánh với... ngựa. Ông đo các con ngựa kéo than trong mỏ than: mỗi con nâng 33.000 foot-pound trong một phút — và lấy con số đó (phóng đại chút ít) làm đơn vị "horsepower". Câu chuyện này cho thấy ý nghĩa thực dụng của công suất $P=\\frac{dW}{dt}$: không phải "mạnh cỡ nào" mà là "làm được bao nhiêu việc mỗi giây".',
+      },
+    },
+    {
+      title: 'Dao động điều hòa',
+      duration: 10,
+      body:
+        'Kéo khối lệch khỏi vị trí cân bằng rồi buông: $x=A\\cos\\omega t$. Đạo hàm cho vận tốc $v=-A\\omega\\sin\\omega t$ (đường vàng) — lệch pha một phần tư chu kì: $v$ lớn nhất khi $x=0$ và bằng 0 khi $x$ ở biên. Đạo hàm cấp hai cho $a=-\\omega^2x$: gia tốc luôn ngược dấu li độ — đặc trưng của dao động điều hòa.',
+      funFact: {
+        title: 'Cây cầu Galloping Gertie',
+        body:
+          'Cầu Tacoma Narrows (Mỹ, 1940) dao động dữ dội mỗi khi có gió và chỉ bốn tháng sau khi khai trạc đã sụp đổ — quay lại toàn bộ thảm kịch trên phim. Nguyên nhân là hiện tượng rung động cưỡng bức cộng hưởng: gió bơm năng lượng đúng tần số dao động riêng của cầu, biên độ tăng dần theo thời gian — đúng như khối lò xo của chúng ta nếu có lực 외 đẩy ngược pha liên tục. Bài học đó thay đổi cách thiết kế cầu mãi mãi.',
+      },
+    },
+    {
+      title: 'Tổng kết',
+      duration: 8,
+      body:
+        'Ba hình quen thuộc nhất của bài học: $\\int v\\,dt$ = độ dời, $\\int F\\,dx$ = công, $v=\\dfrac{dx}{dt}$ = vận tốc. Mọi đại lượng vật lý chỉ là một phía của đạo hàm hoặc tích phân — chi tiết từng công thức xem ở tab Lý thuyết.',
     },
   ],
+  Scene: PhysicsScene,
   theory: [
     {
       heading: 'Quan điểm của bài học',
