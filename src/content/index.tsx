@@ -4,6 +4,7 @@ import { limitsLesson } from './gioi-han'
 import { advancedLimitsLesson } from './gioi-han-nang-cao'
 import { derivativeLesson } from './dao-ham'
 import { derivativeRulesLesson } from './quy-tac-dao-ham'
+import { curveSketchingLesson } from './kham-sat-ham-so'
 import { integralLesson } from './tich-phan'
 import { revolutionLesson } from './khoi-tron-xoay'
 import { crossSectionLesson } from './thiet-dien'
@@ -15,7 +16,7 @@ const LabScene = lazy(() => import('../lessons/GraphLab'))
 
 const labLesson: Lesson = {
   id: 'lab',
-  number: 9,
+  number: 10,
   title: 'Phòng thí nghiệm',
   subtitle: 'Tự vẽ đồ thị, tự khám phá',
   kind: 'lab',
@@ -41,11 +42,12 @@ export const lessons: Lesson[] = [
   advancedLimitsLesson, // 3
   derivativeLesson, // 4
   derivativeRulesLesson, // 5
-  integralLesson, // 6
-  revolutionLesson, // 7
-  crossSectionLesson, // 8
-  labLesson, // 9
-  mathPhysicsLesson, // 10
+  curveSketchingLesson, // 6
+  integralLesson, // 7
+  revolutionLesson, // 8
+  crossSectionLesson, // 9
+  labLesson, // 10
+  mathPhysicsLesson, // 11
 ]
 
 export function lessonById(id: string): Lesson | undefined {

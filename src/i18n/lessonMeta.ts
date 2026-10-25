@@ -38,6 +38,12 @@ export const lessonMeta: Record<string, Partial<Record<Lang, Meta>>> = {
     zh: { title: '求导法则', subtitle: '和 · 积 · 商 · 链式' },
     ja: { title: '微分法則', subtitle: '和 · 積 · 商 · 合成関数' },
   },
+  'kham-sat': {
+    en: { title: 'Curve Sketching', subtitle: 'The complete derivative workflow' },
+    fr: { title: 'Étude de fonctions', subtitle: 'Le parcours complet de la dérivée' },
+    zh: { title: '函数研究', subtitle: '导数的完整工作流' },
+    ja: { title: '関数の調査', subtitle: '導関数の完全ワークフロー' },
+  },
   'tich-phan': {
     en: { title: 'Integrals', subtitle: 'From thin slices to the Fundamental Theorem' },
     fr: { title: 'Intégrales', subtitle: 'Des tranches fines au théorème fondamental' },

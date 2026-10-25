@@ -113,7 +113,16 @@ export class Stage {
       if (this.ctx && this.drawFn) {
         this.ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0)
         this.ctx.clearRect(0, 0, this.width, this.height)
-        this.drawFn(this)
+        try {
+          this.drawFn(this)
+        } catch (e) {
+          // a throwing scene must not kill the rAF loop silently
+          const msg = '⚠ draw error: ' + String((e as Error).message).slice(0, 120)
+          if (this.canvas && this.canvas.title !== msg) {
+            this.canvas.title = msg
+            console.error('[Stage] draw error:', e)
+          }
+        }
       }
       this.raf = requestAnimationFrame(loop)
     }

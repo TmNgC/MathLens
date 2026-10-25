@@ -16,6 +16,8 @@ const LESSON_TOPICS: Record<string, string> = {
     'Đạo hàm: định nghĩa bằng giới hạn của tỉ số hiệu, bảng đạo hàm cơ bản, ý nghĩa đơn điệu, điều kiện cực trị, phương trình tiếp tuyến',
   'quy-tac-dao-ham':
     'Quy tắc tính đạo hàm: quy tắc tổng hiệu (u±v)\', quy tắc tích (uv)\'=u\'v+uv\', quy tắc thương (u/v)\', hệ quả (1/u)\', quy tắc chuỗi (f(g(x)))\'=f\'(g)·g\' với ví dụ hàm hợp như sin(3x), √(x²+1), (x³-x+1)^5',
+  'kham-sat':
+    'Khảo sát hàm số: chiều biến thiên qua dấu f\', điều kiện cực trị (f\'=0 và đổi dấu, kiểm tra bằng f″), lồi lõm và điểm uốn (f″ đổi dấu), tiệm cận đứng/ngang/xiên của hàm phân thức, bảng biến thiên, vẽ đồ thị y=ax³+bx²+cx+d và y=(ax+b)/(cx+d)',
   'tich-phan':
     'Tích phân: nguyên hàm cơ bản, định lý cơ bản của giải tích ∫=F(b)−F(a), diện tích có dấu khi f đổi dấu, tổng Riemann, ứng dụng vận tốc–quãng đường',
   'khoi-tron-xoay':

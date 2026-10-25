@@ -32,6 +32,7 @@ export function QuizSpace() {
   const { t, lang } = useLang()
   const [phase, setPhase] = useState<Phase>('setup')
   const [mode, setMode] = useState<QuizMode>('ai')
+  const [exam, setExam] = useState(false)
   const [selected, setSelected] = useState<string[]>(quizLessons.map((l) => l.id))
   const [count, setCount] = useState(10)
   const [questions, setQuestions] = useState<QuizQuestion[]>([])
@@ -64,32 +65,54 @@ export function QuizSpace() {
     return () => window.removeEventListener('keydown', onKey)
   })
 
+  /** fetch questions: AI when available, offline bank otherwise */
+  async function buildQuestions(useMode: QuizMode, lessonIds: string[], count: number) {
+    if (useMode === 'offline') {
+      const pool = FALLBACK_BANK.filter((q) => lessonIds.includes(q.lessonId))
+      return { questions: shuffle(pool).slice(0, Math.min(count, pool.length)), offline: true }
+    }
+    try {
+      const res = await fetch('/api/quiz', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ lessonIds, count, lang }),
+      })
+      if (!res.ok) throw new Error(`status ${res.status}`)
+      const data = await res.json()
+      if (!Array.isArray(data.questions) || data.questions.length === 0) throw new Error('empty')
+      return { questions: data.questions as QuizQuestion[], offline: false }
+    } catch {
+      const pool = FALLBACK_BANK.filter((q) => lessonIds.includes(q.lessonId))
+      return { questions: shuffle(pool).slice(0, Math.min(count, pool.length)), offline: true }
+    }
+  }
+
   async function startQuiz() {
     setPhase('loading')
     setAnalysis(null)
-    if (mode === 'offline') {
-      const pool = FALLBACK_BANK.filter((q) => selected.includes(q.lessonId))
-      setQuestions(shuffle(pool).slice(0, Math.min(count, pool.length)))
-      setOffline(true)
-    } else {
-      try {
-        const res = await fetch('/api/quiz', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ lessonIds: selected, count, lang }),
-        })
-        if (!res.ok) throw new Error(`status ${res.status}`)
-        const data = await res.json()
-        if (!Array.isArray(data.questions) || data.questions.length === 0) throw new Error('empty')
-        setQuestions(data.questions)
-        setOffline(false)
-      } catch {
-        // AI unavailable (no key / network) → offline bank with a notice
-        const pool = FALLBACK_BANK.filter((q) => selected.includes(q.lessonId))
-        setQuestions(shuffle(pool).slice(0, Math.min(count, pool.length)))
-        setOffline(true)
-      }
-    }
+    setExam(false)
+    const out = await buildQuestions(mode, selected, count)
+    setQuestions(out.questions)
+    setOffline(out.offline)
+    beginQuiz()
+  }
+
+  /** THPT mock exam: every lesson, 40 questions, graded on the 10-point scale */
+  async function startExam() {
+    setPhase('loading')
+    setAnalysis(null)
+    setExam(true)
+    const all = quizLessons.map((l) => l.id)
+    setSelected(all)
+    setCount(40)
+    setMode('ai')
+    const out = await buildQuestions('ai', all, 40)
+    setQuestions(out.questions)
+    setOffline(out.offline)
+    beginQuiz()
+  }
+
+  function beginQuiz() {
     setPhase('quiz')
     setQIndex(0)
     setAnswers([])
@@ -185,6 +208,7 @@ export function QuizSpace() {
                 mode={mode}
                 setMode={setMode}
                 onStart={startQuiz}
+                onStartExam={startExam}
               />
             )}
             {phase === 'loading' && <LoadingScreen />}
@@ -206,6 +230,7 @@ export function QuizSpace() {
                 answers={answers}
                 elapsed={totalMs}
                 offline={offline}
+                exam={exam}
                 analysis={analysis}
                 analyzing={analyzing}
                 onAnalyze={runAnalysis}
@@ -229,6 +254,7 @@ function SetupScreen({
   mode,
   setMode,
   onStart,
+  onStartExam,
 }: {
   selected: string[]
   setSelected: (v: string[]) => void
@@ -237,6 +263,7 @@ function SetupScreen({
   mode: QuizMode
   setMode: (v: QuizMode) => void
   onStart: () => void
+  onStartExam: () => void
 }) {
   const attempts = getAttempts()
   const all = selected.length === quizLessons.length
@@ -272,6 +299,14 @@ function SetupScreen({
         </div>
 
         <p className="mb-2 mt-5 text-[13px] font-bold">{t('quiz.scope')}</p>
+        {/* THPT mock exam — one-click preset */}
+        <button
+          onClick={onStartExam}
+          className="mb-4 w-full rounded-xl border border-gold/45 bg-gold/[0.08] px-4 py-3.5 text-left transition-colors hover:bg-gold/[0.14]"
+        >
+          <p className="text-[13.5px] font-bold text-gold">{t('exam.cta')}</p>
+          <p className="mt-0.5 text-[11.5px] text-dim">{t('exam.hint')}</p>
+        </button>
         <div className="flex flex-wrap gap-2">
           <button
             onClick={() => setSelected(all ? [] : quizLessons.map((l) => l.id))}
@@ -493,6 +528,7 @@ function ResultsScreen({
   answers,
   elapsed,
   offline,
+  exam,
   analysis,
   analyzing,
   onAnalyze,
@@ -502,6 +538,7 @@ function ResultsScreen({
   answers: AnswerRecord[]
   elapsed: number
   offline: boolean
+  exam: boolean
   analysis: QuizAnalysis | null
   analyzing: boolean
   onAnalyze: () => void
@@ -543,7 +580,17 @@ function ResultsScreen({
               {score}/{answers.length}
             </span>
             <span className="text-[11.5px] text-faint">{t('quiz.correct')}</span>
+            {exam && answers.length > 0 && (
+              <span className="mt-1.5 block font-mono text-[15px] font-bold text-gold">
+                {t('exam.score', { p: ((score / answers.length) * 10).toFixed(1) })}
+              </span>
+            )}
           </p>
+          {exam && (
+            <span className="mb-1 rounded-full bg-gold/15 px-3 py-1 text-[10.5px] font-bold uppercase tracking-wide text-gold">
+              {t('exam.badge')}
+            </span>
+          )}
           <p className="font-mono text-[13px] text-gold">{t('quiz.totalTime', { time: fmtMs(elapsed) })}</p>
         </div>
 

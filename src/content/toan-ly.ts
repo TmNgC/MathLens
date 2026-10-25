@@ -8,7 +8,7 @@ import { PhysicsScene } from '../lessons/PhysicsLesson'
  */
 export const mathPhysicsLesson: Lesson = {
   id: 'toan-ly',
-  number: 10,
+  number: 11,
   title: 'Từ toán học đến vật lý',
   subtitle: 'Động học & Động lực học qua đạo hàm và tích phân',
   kind: 'calc',

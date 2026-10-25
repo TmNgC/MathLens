@@ -118,6 +118,45 @@ export const FALLBACK_BANK: QuizQuestion[] = [
     explanation:
       'Quy tắc chuỗi: $(f(g(x)))\'=f\'(g(x))\\cdot g\'(x)$. Ở đây $f=\\sin$, $g=3x$ nên kết quả là $\\cos(3x)\\cdot 3$. Quên nhân $g\'$ là lỗi phổ biến nhất!',
   },
+  // ---------- Khảo sát hàm số ----------
+  {
+    id: 'ks-1',
+    lessonId: 'kham-sat',
+    skillTag: 'cực trị',
+    question:
+      'Hàm số $y=\\dfrac{x^3}{3}-x^2-3x+1$ đạt cực đại tại điểm nào?',
+    options: ['$x = -1$', '$x = 3$', '$x = 1$', '$x = -3$'],
+    correctIndex: 0,
+    explanation:
+      '$y\'=x^2-2x-3=(x+1)(x-3)$, nghiệm $x=-1$ và $x=3$. $y^{\\prime\\prime}(-1)=-4<0$ nên $x=-1$ là điểm cực đại (còn $y^{\\prime\\prime}(3)=4>0$ — cực tiểu).',
+  },
+  {
+    id: 'ks-2',
+    lessonId: 'kham-sat',
+    skillTag: 'tiệm cận',
+    question:
+      'Đồ thị hàm số $y=\\dfrac{2x+1}{x-1}$ có tiệm cận đứng là đường nào?',
+    options: ['$x = 1$', '$x = -\\dfrac{1}{2}$', '$y = 2$', '$x = 0$'],
+    correctIndex: 0,
+    explanation:
+      'Tiệm cận đứng xảy ra tại nghiệm của mẫu: $x-1=0\\Leftrightarrow x=1$ (tử $\\ne0$ tại đó). $y=2$ là tiệm cận NGANG, $x=-\\frac12$ là giao điểm với trục $Ox$ — ba khái niệm dễ nhầm.',
+  },
+  {
+    id: 'ks-3',
+    lessonId: 'kham-sat',
+    skillTag: 'điểm uốn',
+    question:
+      'Để điểm $I(x_0;\\,f(x_0))$ là điểm uốn của đồ thị $y=f(x)$, điều kiện cần là gì?',
+    options: [
+      '$f^{\\prime\\prime}(x_0) = 0$ là đủ',
+      '$f^{\\prime\\prime}$ đổi dấu qua $x_0$',
+      '$f\'(x_0) = 0$',
+      '$f$ đạt cực trị tại $x_0$',
+    ],
+    correctIndex: 1,
+    explanation:
+      'Điểm uốn đòi hỏi đạo hàm cấp hai ĐỔI DẤU qua $x_0$ — $f^{\\prime\\prime}(x_0)=0$ một mình chưa đủ: $y=x^4$ có $y^{\\prime\\prime}(0)=0$ nhưng không có điểm uốn.',
+  },
   // ---------- Tích phân ----------
   {
     id: 'tp-1',

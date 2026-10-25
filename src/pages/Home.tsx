@@ -11,6 +11,7 @@ import { easeInOutSine, lerp } from '../engine/easing'
 import type { Stage } from '../engine/Stage'
 import { useLang } from '../i18n/LangContext'
 import { RichText } from '../i18n/RichText'
+import { getAttempts } from '../quiz/store'
 
 /** Ambient hero demo: sweeping tangent + filling area on a cubic. */
 function HeroDemo() {
@@ -39,6 +40,7 @@ export function Home() {
   const progress = useSyncExternalStore(subscribe, getProgress)
   const next = lessons.find((l) => !progress[l.id]) ?? lessons[0]
   const { t, lessonTitle, lessonSubtitle } = useLang()
+  const weakSkills = getAttempts()[0]?.weakSkills?.slice(0, 4) ?? []
 
   return (
     <div className="h-full overflow-y-auto">
@@ -136,6 +138,34 @@ export function Home() {
             ))}
           </div>
         </section>
+
+        {/* weak-skills banner — from the latest quiz attempt */}
+        {weakSkills.length > 0 && (
+          <section className="mt-8 overflow-hidden rounded-2xl border border-coral/35 bg-gradient-to-r from-coral/[0.10] to-transparent p-5">
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <div className="max-w-xl">
+                <h2 className="text-[15px] font-bold">🎯 {t('home.weakTitle')}</h2>
+                <p className="mt-1 text-[12.5px] text-dim">{t('home.weakBody')}</p>
+                <div className="mt-2 flex flex-wrap gap-1.5">
+                  {weakSkills.map((s) => (
+                    <span
+                      key={s}
+                      className="rounded-full bg-coral/15 px-2.5 py-1 text-[11.5px] font-semibold text-coral"
+                    >
+                      {s}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              <Link
+                to="/quiz"
+                className="rounded-full bg-coral px-5 py-2.5 text-[13px] font-bold text-[#1f0b0b] transition-transform hover:scale-[1.03]"
+              >
+                {t('home.weakCta')}
+              </Link>
+            </div>
+          </section>
+        )}
 
         {/* quiz banner */}
         <section className="mt-8 overflow-hidden rounded-2xl border border-violet/35 bg-gradient-to-r from-violet/[0.12] to-transparent p-6">

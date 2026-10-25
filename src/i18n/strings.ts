@@ -129,6 +129,7 @@ const en: Dict = {
   'quiz.local.weakList': 'Skills to watch: {tags}.',
 
   'lang.name': 'Language',
+  'exam.cta': '📝 THPT mock exam — 40 questions · graded /10',  'exam.hint': 'all lessons mixed · just like the real thing',  'exam.badge': 'THPT mock exam',  'exam.score': 'Score: {p}/10',  'home.weakTitle': 'Review your weak skills',  'home.weakBody': 'Your last attempt suggests practising:',  'home.weakCta': 'Practise now →',
   'lab.tangent': 'tangent line',
   'lab.deriv': 'graph f′',
   'lab.area': 'area',
@@ -256,6 +257,7 @@ const vi: Dict = {
   'quiz.local.weakList': 'Các kỹ năng cần chú ý: {tags}.',
 
   'lang.name': 'Ngôn ngữ',
+  'exam.cta': '📝 Đề thử THPT — 40 câu · chấm thang 10',  'exam.hint': 'trộn toàn bộ chương trình · đúng chất đề thi',  'exam.badge': 'Đề thử THPT',  'exam.score': 'Điểm: {p}/10',  'home.weakTitle': 'Ôn lại kỹ năng yếu',  'home.weakBody': 'Lần làm gần nhất cho thấy bạn nên luyện:',  'home.weakCta': 'Luyện ngay →',
   'lab.tangent': 'tiếp tuyến',
   'lab.deriv': 'đồ thị f′',
   'lab.area': 'diện tích ∫',
@@ -383,6 +385,7 @@ const fr: Dict = {
   'quiz.local.weakList': 'Compétences à surveiller : {tags}.',
 
   'lang.name': 'Langue',
+  'exam.cta': '📝 Bac blanc — 40 questions · noté /10',  'exam.hint': 'tout le programme mélangé · comme le vrai',  'exam.badge': 'Bac blanc',  'exam.score': 'Note : {p}/10',  'home.weakTitle': 'Révisez vos points faibles',  'home.weakBody': 'Votre dernière tentative suggère de travailler :',  'home.weakCta': 'S’y mettre →',
   'lab.tangent': 'tangente',
   'lab.deriv': 'graphe f′',
   'lab.area': 'aire',
@@ -506,6 +509,7 @@ const zh: Dict = {
   'quiz.local.weakList': '需要注意的技能：{tags}。',
 
   'lang.name': '语言',
+  'exam.cta': '📝 高考模拟卷 — 40 题 · 十分制评分',  'exam.hint': '混合全部课程 · 还原真实考试',  'exam.badge': '模拟考试',  'exam.score': '得分：{p}/10',  'home.weakTitle': '复习薄弱技能',  'home.weakBody': '上一次练习建议你加强：',  'home.weakCta': '立即练习 →',
   'lab.tangent': '切线',
   'lab.deriv': '导函数图',
   'lab.area': '面积 ∫',
@@ -630,6 +634,7 @@ const ja: Dict = {
   'quiz.local.weakList': '要注意スキル：{tags}。',
 
   'lang.name': '言語',
+  'exam.cta': '📝 模擬試験 — 40 問 · 10点満点',  'exam.hint': '全カリキュラムミックス · 本番さながら',  'exam.badge': '模擬試験',  'exam.score': '得点：{p}/10',  'home.weakTitle': '弱点スキルを復習',  'home.weakBody': '直近の記録から、以下の強化をおすすめ：',  'home.weakCta': '練習する →',
   'lab.tangent': '接線',
   'lab.deriv': '導関数のグラフ',
   'lab.area': '面積 ∫',

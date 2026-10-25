@@ -238,7 +238,15 @@ export const integralTheory: TheorySection[] = [
       { sym: '$\\dfrac{1}{\\sqrt{1-x^2}}$', meaning: '$\\arcsin x+C$' },
       { sym: '$\\tan x$', meaning: '$-\\ln|\\cos x|+C$' },
       { sym: '$\\cot x$', meaning: '$\\ln|\\sin x|+C$' },
+      { sym: '$\\sin^2 x$', meaning: '$\\dfrac{x}{2}-\\dfrac{\\sin 2x}{4}+C$' },
+      { sym: '$\\cos^2 x$', meaning: '$\\dfrac{x}{2}+\\dfrac{\\sin 2x}{4}+C$' },
     ],
+  },
+  {
+    heading: 'Hạ bậc lượng giác — hạ về công thức quen thuộc',
+    kind: 'example',
+    body:
+      'Lũy thừa chẵn của sin, cos không có nguyên hàm trực tiếp — hạ bậc bằng công thức nhân đôi: $\\sin^2x=\\dfrac{1-\\cos2x}{2}$, $\\cos^2x=\\dfrac{1+\\cos2x}{2}$. Ví dụ: $\\displaystyle\\int_0^{\\pi/2}\\sin^2x\\,dx=\\frac12\\int_0^{\\pi/2}(1-\\cos2x)\\,dx=\\frac12\\left[x-\\frac{\\sin2x}{2}\\right]_0^{\\pi/2}=\\frac{\\pi}{4}$. Lũy thừa lẻ thì tách một nhân tử rồi đổi biến: $\\displaystyle\\int\\sin^3x\\,dx=\\int(1-\\cos^2x)\\sin x\\,dx$ — đặt $u=\\cos x$, $du=-\\sin x\\,dx$, kết quả $-\\cos x+\\dfrac{\\cos^3x}{3}+C$.',
   },
   {
     heading: 'Kỹ thuật 1: phương pháp đổi biến số',

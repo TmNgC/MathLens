@@ -15,7 +15,7 @@ const Scene = (props: { step: number }) => (
 
 export const crossSectionLesson: Lesson = {
   id: 'thiet-dien',
-  number: 8,
+  number: 9,
   title: 'Thiết diện',
   subtitle: 'Cắt lát khối không gian & nguyên lý Cavalieri',
   kind: 'geo3d',
