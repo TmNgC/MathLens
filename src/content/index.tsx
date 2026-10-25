@@ -8,13 +8,14 @@ import { integralLesson } from './tich-phan'
 import { revolutionLesson } from './khoi-tron-xoay'
 import { crossSectionLesson } from './thiet-dien'
 import { mathPhysicsLesson } from './toan-ly'
+import { preCalculusLesson } from './tien-giai-tich'
 
 /** Graph Lab pulls in MathLive + mathjs — load it only when opened. */
 const LabScene = lazy(() => import('../lessons/GraphLab'))
 
 const labLesson: Lesson = {
   id: 'lab',
-  number: 8,
+  number: 9,
   title: 'Phòng thí nghiệm',
   subtitle: 'Tự vẽ đồ thị, tự khám phá',
   kind: 'lab',
@@ -35,15 +36,16 @@ const labLesson: Lesson = {
 
 /** The lesson program, in intended learning order. */
 export const lessons: Lesson[] = [
-  limitsLesson, // 1
-  advancedLimitsLesson, // 2
-  derivativeLesson, // 3
-  derivativeRulesLesson, // 4
-  integralLesson, // 5
-  revolutionLesson, // 6
-  crossSectionLesson, // 7
-  labLesson, // 8
-  mathPhysicsLesson, // 9
+  preCalculusLesson, // 1
+  limitsLesson, // 2
+  advancedLimitsLesson, // 3
+  derivativeLesson, // 4
+  derivativeRulesLesson, // 5
+  integralLesson, // 6
+  revolutionLesson, // 7
+  crossSectionLesson, // 8
+  labLesson, // 9
+  mathPhysicsLesson, // 10
 ]
 
 export function lessonById(id: string): Lesson | undefined {

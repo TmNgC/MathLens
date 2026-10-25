@@ -3,6 +3,12 @@ import type { TheorySection } from './types'
 /** Lý thuyết — Giới hạn */
 export const limitsTheory: TheorySection[] = [
   {
+    heading: 'Từ nghịch lý Zeno đến định nghĩa ε–δ',
+    kind: 'history',
+    body:
+      'Hơn hai nghìn năm trước, các nghịch lý của Zeno (mũi tên "đứng yên" trong từng khoảnh khắc, Achilles không bao giờ đuổi kịp con rùa) cho thấy tư duy thông thường chưa đủ để nói về "tiến đến giới hạn". Eudoxus và Archimedes trả lời một phần bằng phương pháp vét cạn — kẹp hình cong giữa hai họ hình đa giác. Đến thế kỷ 17, Newton và Leibniz dùng đại lượng vô cùng nhỏ một cách tự tin nhưng thiếu nền tảng; Giám mục Berkeley chế giễu chúng là "bóng ma của các đại lượng đã biến mất" (1734). Cauchy (1821) định nghĩa giới hạn bằng ngôn ngữ chuyển động; Weierstrass (khoảng 1872) loại bỏ hoàn toàn trực giác bằng cặp ε–δ nghiêm ngặt — bộ khung mà mọi giáo trình ngày nay vẫn dùng.',
+  },
+  {
     heading: 'Giới hạn của dãy số',
     kind: 'def',
     body:
@@ -47,6 +53,12 @@ export const limitsTheory: TheorySection[] = [
 
 /** Lý thuyết — Đạo hàm */
 export const derivativeTheory: TheorySection[] = [
+  {
+    heading: 'Từ tiếp tuyến của Fermat đến đạo hàm',
+    kind: 'history',
+    body:
+      'Bài toán vẽ tiếp tuyến và tìm cực đại được Fermat giải khéo léo từ 1629 bằng "đẳng thức giả" — cho $h$ nhỏ rồi cho nó triệt tiêu. Newton (1665–1666) gọi đạo hàm là tỷ lệ lưu số của các đại lượng đang chảy; Leibniz (1675–1684) phát triển ký hiệu $\\frac{dy}{dx}$ vẫn dùng đến hôm nay và chứng minh các quy tắc cơ bản. Sau hai thế kỷ tranh cãi về vô cùng nhỏ, Cauchy (1821) định nghĩa đạo hàm là giới hạn của tỉ số hiệu — đúng như biểu thức ở dưới: tiếp tuyến là giới hạn của cát tuyến.',
+  },
   {
     heading: 'Đạo hàm tại một điểm',
     kind: 'def',
@@ -159,6 +171,12 @@ export const derivativeTheory: TheorySection[] = [
 /** Lý thuyết — Tích phân */
 export const integralTheory: TheorySection[] = [
   {
+    heading: 'Từ diện tích parabol của Archimedes đến Riemann',
+    kind: 'history',
+    body:
+      'Archimedes (thế kỷ 3 TCN) tính được diện tích hình phẳng giới hạn bởi parabol bằng cách chia nó thành các lát tam giác — kết quả bằng $\\frac{2}{3}$ diện tích tam giác ngoại tiếp, mà không dùng một biểu thức đại số nào. Cavalieri (1635) nối tiếp bằng phương pháp indivisibles (những lát không thể chia nhỏ). Bước quyết định thuộc về Newton và Leibniz: tích phân và đạo hàm là hai phép ngược nhau — định lý cơ bản của giải tích — biến việc tính diện tích từ nghệ thuật thành quy trình. Riemann (1854) đưa định nghĩa tổng và giới hạn mà ta học hôm nay; Lebesgue (1902) mở rộng thành lý thuyết đo lường hiện đại.',
+  },
+  {
     heading: 'Tích phân xác định và tổng Riemann',
     kind: 'def',
     body:
@@ -269,6 +287,12 @@ export const integralTheory: TheorySection[] = [
 /** Lý thuyết — Khối tròn xoay */
 export const revolutionTheory: TheorySection[] = [
   {
+    heading: 'Từ quả cầu của Archimedes đến thùng rượu của Kepler',
+    kind: 'history',
+    body:
+      'Archimedes tự hào nhất về kết quả khối cầu chiếm đúng $\\frac{2}{3}$ thể tích hình trụ ngoại tiếp — hình đó được khắc trên mộ ông theo di nguyện. Kepler (1615), khi mua rượu và phải trả tiền theo dung tích thùng, viết luận văn Nghiên cứu khối học mới, tính thể tích thùng rượu bằng cách coi nó là vô số lát mỏng chồng lên nhau. Cavalieri (1635) chính thức hóa cách nghĩ này thành nguyên lý cộng dồn diện tích thiết diện. Ngày nay mọi bài khối tròn xoay gói trong một dòng tích phân $V=\\pi\\int f^2(x)\\,dx$ — chính là công thức đĩa mà phần trực quan minh họa.',
+  },
+  {
     heading: 'Thể tích khối tròn xoay',
     kind: 'def',
     body:
@@ -302,6 +326,12 @@ export const revolutionTheory: TheorySection[] = [
 
 /** Lý thuyết — Thiết diện */
 export const crossSectionTheory: TheorySection[] = [
+  {
+    heading: 'Cavalieri và những lát không thể chia nhỏ',
+    kind: 'history',
+    body:
+      'Ý tưởng so sánh hai khối qua các thiết diện xuất hiện trong tác phẩm "Phương pháp" của Archimedes — bản thảo thất truyền đến năm 1906 mới được tìm lại tại Constantinople. Bonaventura Cavalieri (1635) phát biểu thành nguyên lý mang tên ông: hai khối có diện tích thiết diện tương ứng bằng nhau thì có thể tích bằng nhau — bất kể hình dạng bên ngoài. Nguyên lý này là tiền thân trực tiếp của công thức $V=\\int S(x)\\,dx$ và là cội nguồn của mọi công thức thể tích, từ nón và cầu cho đến các khối hiện đại.',
+  },
   {
     heading: 'Thiết diện & công thức thể tích tổng quát',
     kind: 'def',

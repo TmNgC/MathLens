@@ -7,7 +7,7 @@ import type { Lesson } from './types'
  */
 export const advancedLimitsLesson: Lesson = {
   id: 'gioi-han-nang-cao',
-  number: 2,
+  number: 3,
   title: 'Giới hạn nâng cao',
   subtitle: 'Kẹp · Weierstrass · L\'Hôpital · Stolz–Cesàro',
   kind: 'theory',
@@ -20,6 +20,12 @@ export const advancedLimitsLesson: Lesson = {
     },
   ],
   theory: [
+    {
+      heading: 'Từ giáo trình đầu tiên đến các định lý tinh chỉnh',
+      kind: 'history',
+      body:
+        'Quy tắc L\'Hôpital đến từ cuốn giáo trình giải tích đầu tiên của nhân loại — "Analyse des infiniment petits" (1696) của marquis de l\'Hôpital — nhưng phần chứng minh thật ra do Johann Bernoulli soạn và bán cho ông theo một hợp đồng trả phí. Brook Taylor (1715) đưa ra chuỗi mang tên mình để xấp xỉ hàm bằng đa thức, ban đầu không để ý đến điều kiện hội tụ — phải chờ thế kỷ 19 mới được làm chặt. Tiêu chuẩn Weierstrass về dãy đơn điệu bị chặn và định lý Stolz (1885) – Cesàro (1888) thuộc về giai đoạn xây nền móng: khi các nhà toán học thay trực giác bằng chứng minh nghiêm ngặt, chuyên đề này là kết quả của tiến trình đó.',
+    },
     {
       heading: 'Nguyên lý kẹp',
       kind: 'def',

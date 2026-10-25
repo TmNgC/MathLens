@@ -6,6 +6,8 @@ import { chatJSON, json, llmConfig } from './_lib/llm.ts'
  */
 
 const LESSON_TOPICS: Record<string, string> = {
+  'tien-giai-tich':
+    'Tiền giải tích: tập hợp & khoảng (N⊂Z⊂Q⊂R, (a;b), [a;b]), hàm số & miền xác định, các họ hàm cơ bản (bậc nhất, bậc hai, phân thức, sin/cos, e^x, ln x), hàm hợp (g∘f)(x)=g(f(x)), hàm ngược (ln là ngược của e^x, arcsin), biến đổi đồ thị, tư duy giải tích (tốc độ thay đổi — tích lũy — giới hạn — xấp xỉ tuyến tính)',
   'gioi-han':
     'Giới hạn: tính giới hạn dãy hữu tỉ, lim q^n với |q|<1, lim(1+1/n)^n=e, giới hạn hàm số & hai giới hạn một bên, chuỗi hội tụ/phân kỳ (Zeno, chuỗi điều hòa), ý nghĩa epsilon-delta',
   'gioi-han-nang-cao':

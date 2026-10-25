@@ -8,7 +8,7 @@ import { PhysicsScene } from '../lessons/PhysicsLesson'
  */
 export const mathPhysicsLesson: Lesson = {
   id: 'toan-ly',
-  number: 9,
+  number: 10,
   title: 'Từ toán học đến vật lý',
   subtitle: 'Động học & Động lực học qua đạo hàm và tích phân',
   kind: 'calc',
@@ -91,6 +91,12 @@ export const mathPhysicsLesson: Lesson = {
   Scene: PhysicsScene,
   theory: [
     {
+      heading: 'Giải tích sinh ra từ vật lý',
+      kind: 'history',
+      body:
+        'Aristotle mô tả chuyển động bằng tính chất — "tự nhiên" hay "bị ép" — mà không định lượng được. Galileo (1604–1638) lật ngược cách làm: thí nghiệm, đo đạc, tìm quy luật — phát hiện rơi tự do thỏa $x \\propto t^2$. Newton (Principia, 1687) chứng minh chuyển động thiên vũ tuân theo các định luật viết bằng ngôn ngữ đạo hàm; Leibniz phát triển song song chính bộ ký hiệu ấy. Euler và Lagrange đưa cơ học thành một nhánh của giải tích; Maxwell (1865) viết phương trình trường điện từ bằng đạo hàm riêng. Từ đó mọi định luật vật lý đều là phương trình vi phân — đạo hàm và tích phân không chỉ hữu ích cho vật lý: chúng là ngôn ngữ mẹ của nó.',
+    },
+    {
       heading: 'Quan điểm của bài học',
       kind: 'def',
       body:
@@ -157,9 +163,9 @@ export const mathPhysicsLesson: Lesson = {
     {
       heading: 'Bản đồ liên hệ toán – vật lý',
       kind: 'note',
-      body: 'Bảng đối chiếu tổng kết — mỗi khái niệm giải tính ứng vào ít nhất một đại lượng vật lý quen thuộc:',
+      body: 'Bảng đối chiếu tổng kết — mỗi khái niệm giải tích ứng vào ít nhất một đại lượng vật lý quen thuộc:',
       table: [
-        { sym: 'Đạo hàm $f\'(t)$', meaning: 'tốc độ biến đổi: $v=x\'$, $a=v\'$, $I=q\'$, $e=-N\\Phi\'$, $P=W\'' },
+        { sym: 'Đạo hàm $f\'(t)$', meaning: 'tốc độ biến đổi: $v=x\'$, $a=v\'$, $I=q\'$, $e=-N\\Phi\'$, $P=W\'$' },
         { sym: 'Đạo hàm cấp hai $x^{\\prime\\prime}$', meaning: 'gia tốc; đặc trưng $a=-\\omega^2x$ của dao động điều hòa' },
         { sym: 'Tích phân $\\int v\\,dt$', meaning: 'cộng dồn: độ dời, quãng đường' },
         { sym: 'Tích phân $\\int I\\,dt$', meaning: 'điện tích qua tiết diện' },

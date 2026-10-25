@@ -5,6 +5,48 @@ import type { QuizQuestion } from './types'
  * API key is configured. Same shape the serverless generator returns.
  */
 export const FALLBACK_BANK: QuizQuestion[] = [
+  // ---------- Tiền giải tích ----------
+  {
+    id: 'tg-1',
+    lessonId: 'tien-giai-tich',
+    skillTag: 'miền xác định',
+    question: 'Miền xác định của hàm số $f(x)=\\dfrac{1}{x-2}$ là?',
+    options: [
+      '$\\mathbb{R}$',
+      '$\\mathbb{R} \\setminus \\{2\\}$',
+      '$[2; +\\infty)$',
+      '$(-\\infty; 2)$',
+    ],
+    correctIndex: 1,
+    explanation:
+      'Phân thức chỉ yêu cầu mẫu khác 0: $x - 2 \\ne 0 \\Leftrightarrow x \\ne 2$. Miền xác định là mọi số thực trừ 2.',
+  },
+  {
+    id: 'tg-2',
+    lessonId: 'tien-giai-tich',
+    skillTag: 'hàm hợp',
+    question:
+      'Cho $f(x)=x+1$ và $g(x)=x^2$. Khi đó hàm hợp $(g \\circ f)(x)$ bằng?',
+    options: ['$x^2 + 1$', '$(x+1)^2$', '$x^2 + x + 1$', '$2x + 1$'],
+    correctIndex: 1,
+    explanation:
+      'Hàm hợp lấy đầu ra của $f$ làm đầu vào của $g$: $(g \\circ f)(x) = g(f(x)) = g(x+1) = (x+1)^2$. Thứ tự quan trọng: $(f \\circ g)(x) = x^2 + 1$ là hàm khác.',
+  },
+  {
+    id: 'tg-3',
+    lessonId: 'tien-giai-tich',
+    skillTag: 'hàm ngược',
+    question: 'Hàm số ngược của $y = 2x + 3$ là?',
+    options: [
+      '$y = 2x - 3$',
+      '$y = \\dfrac{x - 3}{2}$',
+      '$y = \\dfrac{x + 3}{2}$',
+      '$y = \\dfrac{1}{2x + 3}$',
+    ],
+    correctIndex: 1,
+    explanation:
+      'Đổi vai trò $x \\leftrightarrow y$: $x = 2y + 3 \\Rightarrow y = \\frac{x-3}{2}$. Kiểm tra: $f^{-1}(f(x)) = \\frac{(2x+3)-3}{2} = x$ — trả đúng đầu vào ban đầu.',
+  },
   // ---------- Giới hạn ----------
   {
     id: 'gh-1',

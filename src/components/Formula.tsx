@@ -8,19 +8,28 @@ const escapeHtml = (s: string) =>
     .replaceAll('>', '&gt;')
 
 /**
- * Renders prose containing inline math: "độ dốc $\\frac{dy}{dx}$ của đường cong".
- * $...$ segments are rendered with KaTeX; the rest is plain text.
+ * Renders prose containing math: "độ dốc $\\frac{dy}{dx}$ của đường cong".
+ * $...$ renders inline; $$...$$ renders as a display block.
  */
 export function Formula({ text, className }: { text: string; className?: string }) {
   const html = useMemo(() => {
-    return text
-      .split(/\$(.+?)\$/g)
-      .map((part, i) =>
-        i % 2 === 1
-          ? katex.renderToString(part, { throwOnError: false })
-          : escapeHtml(part),
+    const out: string[] = []
+    const re = /\$\$(.+?)\$\$|\$(.+?)\$/g
+    let last = 0
+    let m: RegExpExecArray | null
+    while ((m = re.exec(text)) !== null) {
+      if (m.index > last) out.push(escapeHtml(text.slice(last, m.index)))
+      const display = m[1] !== undefined
+      out.push(
+        katex.renderToString(display ? m[1] : m[2]!, {
+          throwOnError: false,
+          displayMode: display,
+        }),
       )
-      .join('')
+      last = m.index + m[0].length
+    }
+    if (last < text.length) out.push(escapeHtml(text.slice(last)))
+    return out.join('')
   }, [text])
   return <span className={className} dangerouslySetInnerHTML={{ __html: html }} />
 }

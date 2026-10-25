@@ -56,7 +56,9 @@ function Section({ section, accent }: { section: TheorySection; accent: string }
           ? 'border-l-[3px] border-mint bg-mint/[0.06]'
           : kind === 'note'
             ? 'border-l-[3px] border-gold bg-gold/[0.06]'
-            : 'border border-edge bg-panel'
+            : kind === 'history'
+              ? 'border-l-[3px] border-violet bg-violet/[0.07]'
+              : 'border border-edge bg-panel'
 
   const chip =
     kind === 'def'
@@ -67,7 +69,9 @@ function Section({ section, accent }: { section: TheorySection; accent: string }
           ? 'Ví dụ mẫu'
           : kind === 'note'
             ? 'Ghi chú'
-            : null
+            : kind === 'history'
+              ? 'Lịch sử'
+              : null
 
   return (
     <section className={`rounded-2xl p-4.5 px-5 py-4 md:px-6 ${box}`}>
@@ -84,7 +88,9 @@ function Section({ section, accent }: { section: TheorySection; accent: string }
             {chip}
           </span>
         )}
-        <h2 className="text-[15.5px] font-bold">{heading}</h2>
+        <h2 className="text-[15.5px] font-bold">
+          <Formula text={heading} />
+        </h2>
       </div>
       <p className="text-[13.5px] leading-relaxed text-dim">
         <Formula text={body} />

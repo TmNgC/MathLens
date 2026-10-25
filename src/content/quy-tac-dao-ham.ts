@@ -6,7 +6,7 @@ import type { Lesson } from './types'
  */
 export const derivativeRulesLesson: Lesson = {
   id: 'quy-tac-dao-ham',
-  number: 4,
+  number: 5,
   title: 'Quy tắc tính đạo hàm',
   subtitle: 'Tổng · tích · thương · chuỗi',
   kind: 'theory',
@@ -19,6 +19,12 @@ export const derivativeRulesLesson: Lesson = {
     },
   ],
   theory: [
+    {
+      heading: 'Leibniz và bộ quy tắc đầu tiên',
+      kind: 'history',
+      body:
+        'Năm 1684, trong bài báo "Nova Methodus pro Maximis et Minimis" — công trình giải tích đầu tiên được công bố — Leibniz không chỉ nêu khái niệm đạo hàm mà còn ghi sẵn các quy tắc tổng, hiệu, tích, thương và lũy thừa, kèm ký hiệu $\\frac{dy}{dx}$ tiện dụng đến mức hơn ba thế kỷ sau chúng ta vẫn viết nguyên vẹn. Quy tắc chuỗi xuất hiện trong thư từ của ông và được ứng dụng ngay vào quang học. Các chứng minh nghiêm ngặt bằng giới hạn chỉ hoàn thiện vào thế kỷ 19 — nội dung bạn đọc hôm nay là kết tinh của cả một tiến trình dài.',
+    },
     {
       heading: 'Quy tắc tổng & hiệu',
       kind: 'def',

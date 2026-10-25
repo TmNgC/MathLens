@@ -4,7 +4,7 @@ import { limitsTheory } from './theory'
 
 export const limitsLesson: Lesson = {
   id: 'gioi-han',
-  number: 1,
+  number: 2,
   title: 'Giới hạn',
   subtitle: 'Gần tùy ý — nền móng của giải tích',
   kind: 'calc',

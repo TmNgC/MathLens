@@ -13,15 +13,18 @@ hay trả lời kết quả như WolframAlpha.
 
 | # | Bài | Nội dung |
 |---|-----|----------|
-| 1 | **Giới hạn** Σ | Zeno ×2¹⁷, dồn dần về 1 trên trục số, giới hạn hàm số, ε-δ, chuỗi Leibniz π, số e & lãi kép, điều hòa vs cấp số nhân — kèm mục "💡 Bạn có biết?" |
-| 2 | **Giới hạn nâng cao** ∞ | Lý thuyết chuyên đề: nguyên lý kẹp, công thức thiết yếu, L'Hôpital & các bẫy, khai triển Taylor, Weierstrass & dãy truy hồi, Stolz–Cesàro |
-| 3 | **Đạo hàm** ƒ′ | Cát tuyến → tiếp tuyến (kéo được), vẽ hàm phái sinh f′, cực trị |
-| 4 | **Quy tắc tính đạo hàm** ⚙ | Lý thuyết: tổng/tích/thương/chuỗi kèm chứng minh, bảng hàm hợp, bài mẫu hai tầng |
-| 5 | **Tích phân** ∫ | Riemann (4 phương pháp), diện tích có dấu, hàm tích lũy, định lý cơ bản, vận tốc → quãng đường, nguyên hàm |
-| 6 | **Khối tròn xoay** ◉ | 3D: quay φ 0→2π, phương pháp đĩa, lát cắt, V = π∫f² |
-| 7 | **Thiết diện** ◫ | 3D: cắt trụ/nón, nguyên lý Cavalieri, bán cầu ⅔πR³ |
-| 8 | **Phòng thí nghiệm** λ | Nhập hàm số bất kỳ (MathLive), tiếp tuyến, f′, diện tích |
-| 9 | **Từ toán học đến vật lý** Φ | Động học & Động lực học (Vật lí 10–11, GDPT 2018) qua hoạt hình: vận tốc tức thời, gia tốc, diện tích v–t, thí nghiệm lò xo (Hooke), công = diện tích F–x, dao động điều hòa — mỗi bước kèm câu chuyện lịch sử |
+| 1 | **Tiền giải tích** ∈ | Ngôn ngữ (tập hợp, lượng từ, khoảng), hàm số & miền xác định, các họ hàm cơ bản, hàm hợp & hàm ngược, biến đổi đồ thị, tư duy giải tích + tự kiểm tra |
+| 2 | **Giới hạn** Σ | Zeno ×2¹⁷, dồn dần về 1 trên trục số, giới hạn hàm số, ε-δ, chuỗi Leibniz π, số e & lãi kép, điều hòa vs cấp số nhân — kèm mục "💡 Bạn có biết?" |
+| 3 | **Giới hạn nâng cao** ∞ | Lý thuyết chuyên đề: nguyên lý kẹp, công thức thiết yếu, L'Hôpital & các bẫy, khai triển Taylor, Weierstrass & dãy truy hồi, Stolz–Cesàro |
+| 4 | **Đạo hàm** ƒ′ | Cát tuyến → tiếp tuyến (kéo được), vẽ hàm phái sinh f′, cực trị |
+| 5 | **Quy tắc tính đạo hàm** ⚙ | Lý thuyết: tổng/tích/thương/chuỗi kèm chứng minh, bảng hàm hợp, bài mẫu hai tầng |
+| 6 | **Tích phân** ∫ | Riemann (4 phương pháp), diện tích có dấu, hàm tích lũy, định lý cơ bản, vận tốc → quãng đường, nguyên hàm |
+| 7 | **Khối tròn xoay** ◉ | 3D: quay φ 0→2π, phương pháp đĩa, lát cắt, V = π∫f² |
+| 8 | **Thiết diện** ◫ | 3D: cắt trụ/nón, nguyên lý Cavalieri, bán cầu ⅔πR³ |
+| 9 | **Phòng thí nghiệm** λ | Nhập hàm số bất kỳ (MathLive), tiếp tuyến, f′, diện tích |
+| 10 | **Từ toán học đến vật lý** Φ | Động học & Động lực học (Vật lí 10–11, GDPT 2018) qua hoạt hình: vận tốc tức thời, gia tốc, diện tích v–t, thí nghiệm lò xo (Hooke), công = diện tích F–x, dao động điều hòa — mỗi bước kèm câu chuyện lịch sử |
+
+Mỗi bài lý thuyết mở đầu bằng mục **Lịch sử** — hành trình của khái niệm từ ý tưởng sơ khai đến hình thức hiện đại.
 
 Mỗi bài (trừ Lab) có hai tab: **🎬 Trực quan** (hoạt hình từng bước) và
 **📖 Lý thuyết** (định nghĩa, bảng ký hiệu, ví dụ mẫu, sai lầm thường gặp —

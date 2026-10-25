@@ -31,8 +31,8 @@ export interface LessonStep {
 /** one block of the per-lesson theory document */
 export interface TheorySection {
   heading: string
-  /** def = definition box · example = worked example · warn = common mistakes · note/text = plain */
-  kind?: 'def' | 'example' | 'warn' | 'note' | 'text'
+  /** def = definition box · example = worked example · warn = common mistakes · note/text = plain · history = opening narrative */
+  kind?: 'def' | 'example' | 'warn' | 'note' | 'text' | 'history'
   /** prose with $latex$ */
   body: string
   /** optional notation table rendered under the body */
