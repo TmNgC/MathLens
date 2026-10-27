@@ -9,7 +9,7 @@ export const curveSketchingLesson: Lesson = {
   id: 'kham-sat',
   number: 6,
   title: 'Khảo sát hàm số',
-  subtitle: 'Đạo hàm vẽ nên bức tranh hoàn cảnh' 
+  subtitle: 'Đạo hàm vẽ nên bức tranh hoàn cảnh.', 
   kind: 'calc',
   accent: '#ff9ecd',
   glyph: '∿',
