@@ -73,7 +73,7 @@ export const mathPhysicsLesson: Lesson = {
       funFact: {
         title: 'Cây cầu Galloping Gertie',
         body:
-          'Cầu Tacoma Narrows (Mỹ, 1940) dao động dữ dội mỗi khi có gió và chỉ bốn tháng sau khi khai trạc đã sụp đổ — quay lại toàn bộ thảm kịch trên phim. Nguyên nhân là hiện tượng rung động cưỡng bức cộng hưởng: gió bơm năng lượng đúng tần số dao động riêng của cầu, biên độ tăng dần theo thời gian — đúng như khối lò xo của chúng ta nếu có lực 외 đẩy ngược pha liên tục. Bài học đó thay đổi cách thiết kế cầu mãi mãi.',
+          "Cầu Tacoma Narrows (Mỹ, 1940) dao động dữ dội mỗi khi có gió và chỉ bốn tháng sau khi khánh thành đã sụp đổ — quay lại toàn bộ thảm kịch trên phim. Nguyên nhân là hiện tượng rung động cưỡng bức cộng hưởng: gió bơm năng lượng đúng tần số dao động riêng của cầu, biên độ tăng dần theo thời gian — đúng như khối lò xo của chúng ta nếu có ngoại lực đẩy liên tục. Bài học đó thay đổi cách thiết kế cầu mãi mãi.",
       },
     },
     {
