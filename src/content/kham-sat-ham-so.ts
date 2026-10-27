@@ -9,7 +9,6 @@ export const curveSketchingLesson: Lesson = {
   id: 'kham-sat',
   number: 6,
   title: 'Khảo sát hàm số',
-  subtitle: 'Đạo hàm vẽ nên bức tranh toàn cảnh',
   kind: 'calc',
   accent: '#ff9ecd',
   glyph: '∿',
@@ -18,11 +17,11 @@ export const curveSketchingLesson: Lesson = {
       title: 'Tư duy khảo sát',
       duration: 8,
       body:
-        'Khảo sát là trả lời ba câu hỏi về một hàm số: nó đang đi lên hay đi xuống (hỏi $f\'$), nó cong về phía nào (hỏi $f^{\\prime\\prime}$), và chạy về đâu khi $x$ tiến tới vô cùng (hỏi giới hạn). Trả lời xong ba câu, đồ thị tự hiện ra — không cần lập bảng giá trị từng điểm.',
+        'Khảo sát là trả lời ba câu hỏi về một hàm số: nó đang đi lên hay đi xuống (hỏi $f\'$), nó cong về phía nào (hỏi $f^{\\prime\\prime}$), và chạy về đâu khi $x$ tiến tới vô cùng (hỏi giới hạn). Ba câu hỏi trên đã giúp học sinh phần nào hình dung được đồ thị.',
       funFact: {
         title: 'Khảo sát thời tiền đạo hàm',
         body:
-          'Trước khi đạo hàm ra đời, để biết một đường cong trông ra sao, người ta lập bảng giá trị: thay hàng chục giá trị của $x$, tính tay hàng chục giá trị của $f(x)$, rồi nối các điểm lại. Khảo sát một hàm mất hàng giờ và sai số phụ thuộc vào độ kiên nhẫn. Đạo hàm biến toàn bộ công việc đó thành quy trình năm phút — chính là quy trình của bài học này.',
+          'Trước khi khái niệm đạo hàm ra đời, để biết khảo sát một đường cong, người ta lập bảng giá trị: thay hàng chục giá trị của $x$, tính tay hàng chục giá trị của $f(x)$, rồi nối các điểm lại. Khảo sát một hàm mất hàng giờ và sai số phụ thuộc vào độ kiên nhẫn. Đạo hàm biến toàn bộ công việc đó thành quy trình chỉ mất vài phút.',
       },
     },
     {
@@ -37,21 +36,16 @@ export const curveSketchingLesson: Lesson = {
       },
     },
     {
-      title: 'Cực trị',
-      duration: 9,
+      title: 'Đọc vị cực trị từ $f\'$',
       body:
-        'Ứng viên cực trị nằm tại nghiệm của $f\'(x)=0$. Kiểm tra nhanh bằng $f^{\\prime\\prime}$: nếu $f^{\\prime\\prime}(x_0)<0$ thì $x_0$ là cực đại, nếu $f^{\\prime\\prime}(x_0)>0$ thì cực tiểu. Xem tiếp tuyến quét qua đồ thị: nó nghiêng dần, nằm ngang đúng tại đỉnh, rồi nghiêng ngược lại — "phẳng" tại đúng khoảnh khắc đổi chiều.',
-      funFact: {
-        title: 'Bài toán cái hộp',
-        body:
-          'Bài toán ứng dụng kinh điển của cực trị: cắt bốn góc vuông cạnh $x$ từ tấm bìa vuông rồi gấp thành hộp không nắp. Thể tích $V(x)$ là hàm lập phương, có $V\'(x)=0$ tại đúng một điểm cho hộp to nhất. Mọi cuốn sách giải tích trên thế giới đều có bài này — vì nó cho thấy cực trị không phải trò chơi ký hiệu, mà là cách tối ưu thật đời.',
-      },
+        'Đồ thị $f$ đi lên đúng ở nơi $f\' > 0$ và đi xuống ở nơi $f\' < 0$. Vậy tại các đỉnh và đáy (với các đồ thị trơn, không có mũi nhọn), tiếp tuyến bắt buộc phải nằm ngang — tức $f\'(x) = 0$. Khởi điểm từ phương pháp của Fermat, đây chính là chìa khóa tìm cực đại, cực tiểu trong giải tích.',
+      duration: 12,
     },
     {
       title: 'Lồi lõm & điểm uốn',
       duration: 9,
       body:
-        'Đạo hàm cấp hai cho biết độ cong: $f^{\\prime\\prime}>0$ đồ thị lồi (mỉm cười), $f^{\\prime\\prime}<0$ đồ thị lõm (nhăn mặt). Điểm uốn là nơi $f^{\\prime\\prime}$ đổi dấu — tiếp tuyến cắt qua đồ thị thay vì nằm một bên. Với hàm mẫu, $f^{\\prime\\prime}(x)=2x-2$ đổi dấu tại $x=1$: điểm uốn $(1;\\,-8/3)$.',
+        'Đạo hàm cấp hai cho biết độ cong: $f^{\\prime\\prime}>0$ đồ thị lồi, $f^{\\prime\\prime}<0$ đồ thị lõm. Điểm uốn là nơi $f^{\\prime\\prime}$ đổi dấu — tiếp tuyến cắt qua đồ thị thay vì nằm một bên. Với hàm mẫu, $f^{\\prime\\prime}(x)=2x-2$ đổi dấu tại $x=1$: điểm uốn $(1;\\,-8/3)$.',
       funFact: {
         title: 'Làm phẳng đường cong',
         body:
@@ -62,18 +56,18 @@ export const curveSketchingLesson: Lesson = {
       title: 'Tiệm cận',
       duration: 9,
       body:
-        'Với hàm phân thức, thêm một câu hỏi thứ tư: giá trị cấm và hành vi ở vô cùng. $y=\\dfrac{2x+1}{x-1}$ không xác định tại $x=1$: khi $x\\to1^+$ tử dương mẫu dương nhỏ dần nên $y\\to+\\infty$ — tiệm cận đứng $x=1$. Khi $x\\to\\pm\\infty$, tỉ số bậc nhất trên bậc nhất tiến về $2$ — tiệm cận ngang $y=2$. Đồ thị tiến gần nhưng không bao giờ chạm hai đường nét đứt.',
+        'Với hàm phân thức, thêm một câu hỏi: giá trị cấm và hành vi ở vô cực. $y=\\dfrac{2x+1}{x-1}$ bùng nổ khi $x\\to1$: tiệm cận đứng $x=1$. Khi $x\\to\\pm\\infty$, hàm tiến về $2$: tiệm cận ngang $y=2$. Lưu ý: đồ thị KHÔNG bao giờ cắt tiệm cận đứng, nhưng hoàn toàn CÓ THỂ cắt tiệm cận ngang/xiên ở phần hữu hạn — tiệm cận ngang chỉ mô tả xu hướng khi tiến ra vô cực.',
       funFact: {
-        title: 'Asymptote — "không bao giờ rơi xuống"',
+        title: 'Asymptote — "không bao giờ rơi xuống trùng"',
         body:
-          'Từ "tiệm cận" (asymptote) do Apollonius đặt từ thời Hy Lạp cổ, gốc asymptōtos nghĩa là "không rơi xuống trùng". Ông nghiên cứu các đường conic và để ý các đường cong tiến gần nhau mãi mà không gặp nhau. Hơn hai nghìn năm sau, khái niệm này được diễn đạt lại bằng giới hạn — đúng như phần trực quan đang trình diễn.',
+          'Từ "tiệm cận" (asymptote) do Apollonius đặt từ thời Hy Lạp cổ. Hơn hai nghìn năm sau, khái niệm này được định nghĩa chặt chẽ bằng giới hạn. Nhiều người lầm tưởng đồ thị "không bao giờ chạm" tiệm cận, nhưng thực tế với hàm như $y = \\frac{\\sin x}{x}$, nó cắt tiệm cận ngang $y=0$ vô số lần trước khi tắt dần!',
       },
     },
     {
       title: 'Bảng biến thiên',
       duration: 9,
       body:
-        'Toàn bộ thông tin khảo sát gói trong bảng biến thiên: dòng $x$ ghi các điểm đến hạn, dòng $f\'$ ghi dấu, dòng $f$ vẽ mũi tên lên xuống kèm giá trị cực trị. Bảng biến thiên là "tóm tắt" của đồ thị — vẽ đồ thị chỉ là dịch bảng sang hình.',
+        'Toàn bộ thông tin khảo sát gói trong bảng biến thiên: dòng $x$ ghi các điểm đến hạn, dòng $f\'$ ghi dấu, dòng $f$ vẽ mũi tên lên xuống kèm giá trị cực trị. Bảng biến thiên là "tóm tắt khái quát" của đồ thị.',
       funFact: {
         title: 'Bảng biến thiên kiểu Pháp',
         body:
@@ -134,7 +128,7 @@ export const curveSketchingLesson: Lesson = {
       heading: 'Khảo sát trọn vẹn y = x³/3 − x² − 3x + 1',
       kind: 'example',
       body:
-        'Tập xác định $\\mathbb{R}$. $y\'=x^2-2x-3=(x+1)(x-3)$, nghiệm $x=-1$ và $x=3$. $y^{\\prime\\prime}=2x-2$, nghiệm $x=1$. Bảng biến thiên: đồng biến trên $(-\\infty;-1)$ và $(3;+\\infty)$, nghịch biến trên $(-1;3)$; cực đại $y(-1)=\\frac83$, cực tiểu $y(3)=-8$. Điểm uốn $(1;-\\frac83)$ vì $y^{\\prime\\prime}$ đổi dấu. Hàm đa thức nên không có tiệm cận. Giao trục $Oy$: $(0;1)$; giao trục $Ox$: giải $y=0$. Vẽ đồ thị đối chiếu bảng — hoàn toàn khớp với hoạt hình của phần trực quan.',
+        'Tập xác định $\\mathbb{R}$. $y\'=x^2-2x-3=(x+1)(x-3)$, nghiệm $x=-1$ và $x=3$. $y^{\\prime\\prime}=2x-2$, nghiệm $x=1$. Bảng biến thiên: đồng biến trên $(-\\infty;-1)$ và $(3;+\\infty)$, nghịch biến trên $(-1;3)$; cực đại $y(-1)=\\frac83$, cực tiểu $y(3)=-8$. Điểm uốn $(1;-\\frac83)$ vì $y^{\\prime\\prime}$ đổi dấu. Hàm đa thức nên không có tiệm cận. Giao trục $Oy$: $(0;1)$; giao trục $Ox$: giải $y=0$.',
     },
     {
       heading: 'Phân thức y = (2x+1)/(x−1)',
