@@ -42,11 +42,6 @@ export const mathPhysicsLesson: Lesson = {
       duration: 10,
       body:
         'Tích phân ngược chiều đồng hồ: $\\Delta x=\\displaystyle\\int_{t_1}^{t_2}v\\,dt$ — diện tích có dấu giữa đồ thị $v$–$t$ và trục thời gian. Xe tăng tốc, chạy đều, hãm rồi lùi: phần trên trục cộng vào độ dời, phần dưới trừ đi. Quãng đường thì luôn cộng $|v|$ — vì thế hai số ở bảng chỉ bằng nhau khi $v$ không đổi dấu.',
-      funFact: {
-        title: 'Cú nhảy từ rìa không gian',
-        body:
-          'Năm 2012, Felix Baumgartner nhảy từ khinh khí cầu ở độ cao gần 39 km. Đồ thị vận tốc của anh ta là một đường cong phức tạp: tăng vọt khi không khí loãng, chậm dần khi атмос đặc hơn, vượt cả tốc độ âm thanh (1342 km/h). Không ai cần nguyên hàm của đường cong đó — máy tính chỉ cộng dồn diện tích từng vạch nhỏ dưới đồ thị $v$–$t$, đúng như tổng Riemann, và tổng diện tích chính là 39 km độ cao đã rơi.',
-      },
     },
     {
       title: 'Thí nghiệm lò xo',
@@ -56,7 +51,7 @@ export const mathPhysicsLesson: Lesson = {
       funFact: {
         title: 'Định luật bị giấu trong một câu đố',
         body:
-          'Năm 1676, Robert Hooke công bố định luật lò xo dưới dạng anagram "ceiiinosssttuv" — chuỗi chữ loạn xạ không ai hiểu. Hai năm sau ông mới giải mã: "ut tensio, sic vis" (tiếng Latin: "độ giãn nào, lực ấy"). Lý do: ông sợ đối thủ lấy mất phát minh nên giấu nó lại — một kiểu "bản quyền" thời kỳ đó cho một trong những định luật đơn giản nhất của vật lý.',
+          'Năm 1676, Robert Hooke công bố định luật lò xo dưới dạng anagram "ceiiinosssttuv" — chuỗi chữ loạn xạ không ai hiểu. Hai năm sau ông mới giải mã: "ut tensio, sic vis" (tiếng Latin: "độ giãn nào, lực ấy"). Lý do: ông sợ đối thủ lấy mất phát minh nên mã hoá nó, sau này trở thành một trong những định luật đơn giản nhất của vật lý.',
       },
     },
     {
@@ -85,7 +80,7 @@ export const mathPhysicsLesson: Lesson = {
       title: 'Tổng kết',
       duration: 8,
       body:
-        'Ba hình quen thuộc nhất của bài học: $\\int v\\,dt$ = độ dời, $\\int F\\,dx$ = công, $v=\\dfrac{dx}{dt}$ = vận tốc. Mọi đại lượng vật lý chỉ là một phía của đạo hàm hoặc tích phân — chi tiết từng công thức xem ở tab Lý thuyết.',
+        'Ba hình quen thuộc nhất của bài học: $\\int v\\,dt$ = độ dời, $\\int F\\,dx$ = công, $v=\\dfrac{dx}{dt}$ = vận tốc.',
     },
   ],
   Scene: PhysicsScene,
@@ -94,7 +89,7 @@ export const mathPhysicsLesson: Lesson = {
       heading: 'Giải tích sinh ra từ vật lý',
       kind: 'history',
       body:
-        'Aristotle mô tả chuyển động bằng tính chất — "tự nhiên" hay "bị ép" — mà không định lượng được. Galileo (1604–1638) lật ngược cách làm: thí nghiệm, đo đạc, tìm quy luật — phát hiện rơi tự do thỏa $x \\propto t^2$. Newton (Principia, 1687) chứng minh chuyển động thiên vũ tuân theo các định luật viết bằng ngôn ngữ đạo hàm; Leibniz phát triển song song chính bộ ký hiệu ấy. Euler và Lagrange đưa cơ học thành một nhánh của giải tích; Maxwell (1865) viết phương trình trường điện từ bằng đạo hàm riêng. Từ đó mọi định luật vật lý đều là phương trình vi phân — đạo hàm và tích phân không chỉ hữu ích cho vật lý: chúng là ngôn ngữ mẹ của nó.',
+        'Aristotle mô tả chuyển động bằng tính chất — "tự nhiên" hay "bị ép" — mà không định lượng được. Galileo (1604–1638) lật ngược cách làm: thí nghiệm, đo đạc, tìm quy luật — phát hiện rơi tự do thỏa $x \\propto t^2$. Newton (Principia, 1687) chứng minh chuyển động thiên vũ tuân theo các định luật viết bằng ngôn ngữ đạo hàm; Leibniz phát triển song song chính bộ ký hiệu ấy. Euler và Lagrange đưa cơ học thành một nhánh của giải tích; Maxwell (1865) viết phương trình trường điện từ bằng đạo hàm riêng.',
     },
     {
       heading: 'Quan điểm của bài học',
@@ -116,7 +111,7 @@ export const mathPhysicsLesson: Lesson = {
       heading: 'Quãng đường — tích phân theo thời gian',
       kind: 'def',
       body:
-        'Biết vận tốc thì lấy tích phân để có độ dời: $\\Delta x=\\displaystyle\\int_{t_1}^{t_2}v(t)\\,dt$. Trên đồ thị vận tốc – thời gian, tích phân chính là diện tích có dấu giữa đồ thị và trục thời gian: phần trên trục cộng vào, phần dưới trục trừ đi. Muốn quãng đường (không âm) thì tách theo thời điểm $v=0$ và lấy giá trị tuyệt đối từng đoạn — hoàn toàn giống diện tích có dấu của bài Tích phân. Đây là kĩ năng đọc đồ thị $v$–$t$ được kiểm tra nhiều nhất trong chương trình Vật lí 10.',
+        'Biết vận tốc thì lấy tích phân để có độ dời: $\\Delta x=\\displaystyle\\int_{t_1}^{t_2}v(t)\\,dt$. Trên đồ thị vận tốc – thời gian, tích phân chính là diện tích có dấu giữa đồ thị và trục thời gian: phần trên trục cộng vào, phần dưới trục trừ đi. Muốn quãng đường (không âm) thì tách theo thời điểm $v=0$ và lấy giá trị tuyệt đối từng đoạn — hoàn toàn giống diện tích có dấu của bài Tích phân. Đây là kĩ năng đọc đồ thị $v$–$t$ cơ bản trong yêu cầu cần đạt của chương trình môn học Vật Lý.',
     },
     {
       heading: 'Một bài tích phân dựng lại toàn bộ chuyển động biến đổi đều',
@@ -128,19 +123,19 @@ export const mathPhysicsLesson: Lesson = {
       heading: 'Dao động điều hòa — đạo hàm của hàm lượng giác',
       kind: 'def',
       body:
-        'Phương trình dao động: $x=A\\cos(\\omega t+\\varphi)$. Đạo hàm lần một cho vận tốc $v=-A\\omega\\sin(\\omega t+\\varphi)$, lần hai cho gia tốc $a=-\\omega^2A\\cos(\\omega t+\\varphi)=-\\omega^2x$. Kết quả thứ hai chính là đặc trưng định nghĩa của dao động điều hòa: gia tốc tỉ lệ với li độ theo hệ số âm — mọi hàm có tính chất $x^{\\prime\\prime}=-\\omega^2x$ đều dao động điều hòa. Đạo hàm hàm hợp $(\\cos u)\'=-u\'\\sin u$ với $u=\\omega t+\\varphi$ là công cụ duy nhất cần nhớ.',
+        'Phương trình dao động: $x=A\\cos(\\omega t+\\varphi)$. Đạo hàm lần một cho vận tốc $v=-A\\omega\\sin(\\omega t+\\varphi)$, lần hai cho gia tốc $a=-\\omega^2A\\cos(\\omega t+\\varphi)=-\\omega^2x$. Kết quả thứ hai chính là đặc trưng định nghĩa của dao động điều hòa: gia tốc tỉ lệ với li độ theo hệ số âm — mọi hàm có tính chất $x^{\\prime\\prime}=-\\omega^2x$ đều dao động điều hòa. Hãy lưu ý về quy tắc đạo hàm hàm hợp $(\\cos u)\'=-u\'\\sin u$ với $u=\\omega t+\\varphi$.',
     },
     {
       heading: 'Công của lực biến thiên — diện tích dưới đồ thị lực',
       kind: 'def',
       body:
-        'Với lực không đổi: $A=Fs\\cos\\alpha$. Với lực biến thiên theo vị trí: $A=\\displaystyle\\int_{s_1}^{s_2}F(s)\\,ds$ — công là diện tích dưới đồ thị $F$–$s$. Ví dụ kinh điển: kéo lò xo từ tự nhiên đến độ biến dạng $x$, lực đàn hồi $F=ks$ tăng tuyến tính, diện tích tam giác dưới đường $F=kx$ bằng $\\dfrac{1}{2}kx^2$ — chính là công thức thế năng đàn hồi. Một tích phân thay cho việc học thuộc công thức.',
+        'Với lực không đổi: $A=Fs\\cos\\alpha$. Với lực biến thiên theo vị trí: $A=\\displaystyle\\int_{s_1}^{s_2}F(s)\\,ds$ — công là diện tích dưới đồ thị $F$–$s$. Ví dụ kinh điển: kéo lò xo từ tự nhiên đến độ biến dạng $x$, lực đàn hồi $F=ks$ tăng tuyến tính, diện tích tam giác dưới đường $F=kx$ bằng $\\dfrac{1}{2}kx^2$ — chính là công thức thế năng đàn hồi.',
     },
     {
       heading: 'Dòng điện và điện tích — cùng một cặp đạo hàm/tích phân',
       kind: 'def',
       body:
-        'Cường độ dòng điện tức thời là tốc độ biến thiên của điện tích: $I=\\dfrac{dq}{dt}$; ngược lại $q=\\displaystyle\\int I\\,dt$. Với dòng không đổi, $q=It$ là trường hợp riêng. Trên đồ thị $I$–$t$, điện tích di qua tiết diện dây dẫn là diện tích dưới đường cong — cách chuẩn để xử lí đường nạp/xả của tụ điện (một đường cong mũ) mà không cần công thức giải tích của nó.',
+        'Cường độ dòng điện tức thời là tốc độ biến thiên của điện tích: $I=\\dfrac{dq}{dt}$; ngược lại $q=\\displaystyle\\int I\\,dt$. Với dòng không đổi, $q=It$ là trường hợp riêng. Trên đồ thị $I$–$t$, điện tích di qua tiết diện dây dẫn là diện tích dưới đường cong.',
     },
     {
       heading: 'Cảm ứng điện từ — định luật Faraday',
@@ -158,12 +153,12 @@ export const mathPhysicsLesson: Lesson = {
       heading: 'Điều kiện áp dụng và sai lầm thường gặp',
       kind: 'warn',
       body:
-        '1) Đạo hàm và tích phân yêu cầu đại lượng là hàm số "đủ mịn" theo thời gian — mô hình vật lý phải cho phép coi $x(t)$, $q(t)$ liên tục. 2) Giữ hệ đơn vị SI nhất quán trước khi lấy đạo hàm: nếu $x$ tính bằng xentimét thì $v$ nhận về xentimét trên giây, không phải mét trên giây. 3) Phân biệt giá trị trung bình $\\dfrac{\\Delta\\Phi}{\\Delta t}$ và giá trị tức thời $\\dfrac{d\\Phi}{dt}$: câu hỏi đề bài yêu cầu cái nào thì trả lời cái đó. 4) Đồ thị $v$–$t$ chạm trục: độ dời dừng tăng nhưng quãng đường vẫn tăng — đổi dấu vận tốc phải tách đoạn trước khi lấy diện tích.',
+        '1) Giữ hệ đơn vị SI nhất quán trước khi lấy đạo hàm: nếu $x$ tính bằng centimeter thì $v$ nhận về centimeter trên giây, không phải mét trên giây. 2) Phân biệt giá trị trung bình $\\dfrac{\\Delta\\Phi}{\\Delta t}$ và giá trị tức thời $\\dfrac{d\\Phi}{dt}$: câu hỏi đề bài yêu cầu cái nào thì trả lời cái đó. 4) Đồ thị $v$–$t$ chạm trục: độ dời dừng tăng nhưng quãng đường vẫn tăng — đổi dấu vận tốc phải tách đoạn trước khi lấy diện tích.',
     },
     {
       heading: 'Bản đồ liên hệ toán – vật lý',
       kind: 'note',
-      body: 'Bảng đối chiếu tổng kết — mỗi khái niệm giải tích ứng vào ít nhất một đại lượng vật lý quen thuộc:',
+      body: 'Bảng đối chiếu tổng kết:',
       table: [
         { sym: 'Đạo hàm $f\'(t)$', meaning: 'tốc độ biến đổi: $v=x\'$, $a=v\'$, $I=q\'$, $e=-N\\Phi\'$, $P=W\'$' },
         { sym: 'Đạo hàm cấp hai $x^{\\prime\\prime}$', meaning: 'gia tốc; đặc trưng $a=-\\omega^2x$ của dao động điều hòa' },
@@ -179,7 +174,7 @@ export const mathPhysicsLesson: Lesson = {
       heading: 'Lời kết',
       kind: 'note',
       body:
-        'Vật lý không phải là một danh sách công thức cần ghi nhớ — mỗi công thức trong bài này đều là một đạo hàm hoặc một tích phân đã quen thuộc. Khi gặp một đại lượng mới, hãy hỏi nó là "tốc độ biến đổi của gì" hay "cộng dồn của gì": câu trả lời chính là công thức.',
+        'Vật lý và toán học nói chung hay giải tích nói riêng có liên hệ chặt chẽ với nhau, vì vậy hiểu rõ bản chất toán học của đạo hàm hay tích phân sẽ giúp việc tiếp cận Vật lý trở nên thú vị và dễ hiểu hơn nhiều! ',
     },
   ],
 }
