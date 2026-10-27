@@ -12,7 +12,7 @@ export const limitsTheory: TheorySection[] = [
     heading: 'Giới hạn của dãy số',
     kind: 'def',
     body:
-      'Dãy số $(u_n)$ có giới hạn $L$ khi $n \\to \\infty$ nếu mọi số hạng, từ một vị trí đủ xa trở đi, nằm trong khoảng bất kỳ (dù hẹp bao nhiêu) quanh $L$. Khi đó dãy hội tụ và ta viết $\\lim_{n\\to\\infty}u_n=L$. Nếu không có giới hạn hữu hạn nào, dãy phân kỳ.',
+      'Dãy số $(u_n)$ có giới hạn $L$ khi $n \\to \\infty$ nếu: với mọi số $\\varepsilon > 0$ nhỏ tùy ý cho trước, luôn tồn tại một vị trí $N_0$ sao cho kể từ $n > N_0$ trở đi, khoảng cách $|u_n - L| < \\varepsilon$. Khi đó dãy hội tụ và ta viết $\\lim_{n\\to\\infty}u_n=L$. Nếu không có giới hạn hữu hạn nào, dãy phân kỳ.',
     table: [
       { sym: '$\\lim_{n\\to\\infty}u_n=L$', meaning: 'dãy $(u_n)$ hội tụ về $L$' },
       { sym: '$u_n \\to +\\infty$', meaning: 'dãy phân kỳ, tăng không giới hạn' },
@@ -226,7 +226,7 @@ export const integralTheory: TheorySection[] = [
   {
     heading: 'Công thức thiết yếu',
     kind: 'note',
-    body: 'Bảng nguyên hàm thường dùng nhất — mỗi hàng đọc từ phải sang trái chính là một công thức đạo hàm, hai bảng là một.',
+    body: 'Bảng nguyên hàm thường dùng nhất — mỗi hàng đọc từ phải sang trái chính là một công thức đạo hàm.',
     table: [
       { sym: '$x^n$ ($n\\ne-1$)', meaning: '$\\dfrac{x^{n+1}}{n+1}+C$' },
       { sym: '$\\dfrac{1}{x}$', meaning: '$\\ln|x|+C$' },
@@ -258,7 +258,7 @@ export const integralTheory: TheorySection[] = [
     heading: 'Kỹ thuật 2: tích phân từng phần',
     kind: 'def',
     body:
-      '$\\displaystyle\\int u\\,dv=uv-\\int v\\,du$. Dùng khi tích phân là tích của hai loại hàm khác nhau (đa thức nhân mũ, đa số nhân lượng giác, logarit, hàm ngược). Quy tắc chọn $u$ — ưu tiên theo thứ tự: hàm số ngược, logarit, đa thức, lượng giác, mũ. Ví dụ 1: $\\displaystyle\\int_0^1xe^x\\,dx$: chọn $u=x$, $dv=e^xdx$ thì $du=dx$, $v=e^x$, kết quả $xe^x\\Big|_0^1-\\int_0^1e^xdx=e-(e-1)=1$. Ví dụ 2: $\\displaystyle\\int\\ln x\\,dx$: chọn $u=\\ln x$, $dv=dx$, kết quả $x\\ln x-x+C$. Nếu chọn ngược thứ tự ưu tiên (ví dụ $u=e^x$), tích phân mới phức tạp hơn tích phân cũ — hãy đảo lại.',
+      '$\\displaystyle\\int u\\,dv=uv-\\int v\\,du$. Dùng khi tích phân là tích của hai loại hàm khác nhau (đa thức nhân mũ, đa số nhân lượng giác, logarit, hàm ngược). Quy tắc chọn $u$ — ưu tiên theo thứ tự: hàm số ngược, logarit, đa thức, lượng giác, mũ. Ví dụ 1: $\\displaystyle\\int_0^1xe^x\\,dx$: chọn $u=x$, $dv=e^xdx$ thì $du=dx$, $v=e^x$, kết quả $xe^x\\Big|_0^1-\\int_0^1e^xdx=e-(e-1)=1$. Ví dụ 2: $\\displaystyle\\int\\ln x\\,dx$: chọn $u=\\ln x$, $dv=dx$, kết quả $x\\ln x-x+C$. ',
   },
   {
     heading: 'Tích phân hàm số chẵn, hàm số lẻ',
