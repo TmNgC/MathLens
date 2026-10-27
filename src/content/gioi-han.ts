@@ -6,7 +6,7 @@ export const limitsLesson: Lesson = {
   id: 'gioi-han',
   number: 2,
   title: 'Giới hạn',
-  subtitle: 'Gần tùy ý — nền móng của giải tích',
+  subtitle: ' ',
   kind: 'calc',
   accent: '#b28ddd',
   glyph: 'Σ',
@@ -14,7 +14,7 @@ export const limitsLesson: Lesson = {
     {
       title: 'Nghịch lý Zeno — một nửa, rồi một nửa nữa',
       body:
-        'Muốn đi từ 0 tới 1: trước hết đi nửa đường, rồi nửa phần còn lại, rồi lại nửa phần của phần đó... Zeno nói bạn sẽ chẳng bao giờ tới đích. Cộng dồn các phần: $S_n=\\frac{1}{2}+\\frac{1}{4}+\\frac{1}{8}+\\dots+\\frac{1}{2^n}$ — mỗi lần cộng, phần "còn thiếu" lại teo đi đúng một nửa.',
+        'Muốn đi từ 0 tới 1: trước hết đi nửa đường, rồi nửa phần còn lại, rồi lại nửa phần của phần đó... Zeno đã nhận ra nghịch lý rằng về mặt toán học, bạn không thể tới đích.',
       duration: 10,
       funFact: {
         title: 'Achilles và con rùa',
@@ -25,7 +25,7 @@ export const limitsLesson: Lesson = {
     {
       title: 'Trục số: dồn dần về 1',
       body:
-        'Quay lại tổng của Zeno: $S_n=\\frac{1}{2}+\\frac{1}{4}+\\dots+\\frac{1}{2^n}$. Trên trục số, các tổng riêng $S_n$ bò dần về vạch $1$ (điểm vàng). Sau mỗi lần cộng, khoảng cách còn thiếu lại nhỏ đi đúng một nửa: sau 10 bước chỉ còn $\\frac{1}{1024}$, sau 20 bước còn chưa đến một phần triệu! "Gần tùy ý" nghĩa đen là: muốn gần đến mức nào cũng làm được — chỉ cần cộng thêm đủ nhiều bước.',
+        'Quay lại tổng của Zeno: $S_n=\\frac{1}{2}+\\frac{1}{4}+\\dots+\\frac{1}{2^n}$. Trên trục số, các tổng riêng $S_n$ bò dần về vạch $1$ (điểm vàng). Sau mỗi lần cộng, khoảng cách còn thiếu lại nhỏ đi đúng một nửa: sau 10 bước chỉ còn $\\frac{1}{1024}$, sau 20 bước còn chưa đến một phần triệu! ',
       duration: 12,
     },
     {
@@ -64,19 +64,15 @@ export const limitsLesson: Lesson = {
       funFact: {
         title: 'Bernoulli hỏi, Euler trả lời',
         body:
-          'Năm 1683, Jacob Bernoulli nghiên cứu lãi kép và phát hiện con số này — nhưng không biết nó "là ai". Năm 1737, Euler đặt tên nó là $e$, chứng minh $e$ là số vô tỉ, và sau đó cả số siêu việt. Hôm nay $e$ hiện diện khắp nơi: tăng trưởng dân số, phân rã phóng xạ, đường cong chuông Gaussian — và cả trong bài toán "chọn thư ký" nổi tiếng của lý thuyết xác suất.',
+          'Năm 1683, Jacob Bernoulli nghiên cứu lãi kép và phát hiện con số này. Năm 1737, Euler đặt tên nó là $e$, chứng minh $e$ là số vô tỉ, và sau đó cả số siêu việt. Ngày nay $e$ hiện diện khắp nơi: tăng trưởng dân số, phân rã phóng xạ, đường cong chuông Gaussian — và cả trong bài toán "chọn thư ký" nổi tiếng của lý thuyết xác suất.',
       },
     },
     {
-      title: 'Hai con đường: hội tụ và phân kỳ',
+      title: 'Chuỗi điều hòa',
       body:
-        '$1+\\frac{1}{2}+\\frac{1}{4}+\\frac{1}{8}+\\dots \\to 2$ — teo đúng một nửa, hội tụ như Zeno. Nhưng $1+\\frac{1}{2}+\\frac{1}{3}+\\frac{1}{4}+\\dots$ thì khác: các bước nhỏ dần nhưng tổng vẫn leo không ngừng — chuỗi điều hòa phân kỳ! Đây là cặp bẫy kinh điển của mọi đề thi.',
+        'Nicole Oresme chứng minh chuỗi điều hòa phân kỳ từ thế kỷ 14 bằng cách gom nhóm ($\\frac13+\\frac14 > \\frac12$; $\\frac15+\\dots+\\frac18 > \\frac12$; ...). Nhưng nó leo chậm đến khó tin: cần hơn 12.000 số hạng mới vượt 10, và khoảng $10^{43}$ số hạng để vượt 100! Tuy tốc độ tăng chậm nhưng về thực tế dãy này phân kì. '',
       duration: 12,
-      funFact: {
-        title: 'Chuỗi điều hòa — chậm mà không dừng',
-        body:
-          'Nicole Oresme chứng minh chuỗi điều hòa phân kỳ từ thế kỷ 14 bằng cách gom nhóm ($\\frac13+\\frac14 > \\frac12$; $\\frac15+\\dots+\\frac18 > \\frac12$; ...). Nhưng nó leo chậm đến khó tin: cần hơn 12.000 số hạng mới vượt 10, và khoảng $10^{43}$ số hạng để vượt 100! Chuỗi này cũng chính là "họa âm" của dây đàn: tần số các họa âm là 1, 2, 3, 4... lần tần số cơ bản.',
-      },
+
     },
     {
       title: 'Giới hạn là nền của mọi thứ',
