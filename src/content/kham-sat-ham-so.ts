@@ -9,6 +9,7 @@ export const curveSketchingLesson: Lesson = {
   id: 'kham-sat',
   number: 6,
   title: 'Khảo sát hàm số',
+  subtitle: 'Đạo hàm vẽ nên bức tranh hoàn cảnh' 
   kind: 'calc',
   accent: '#ff9ecd',
   glyph: '∿',
@@ -36,20 +37,14 @@ export const curveSketchingLesson: Lesson = {
       },
     },
     {
-      title: 'Đọc vị cực trị từ $f\'$',
-      body:
-        'Đồ thị $f$ đi lên đúng ở nơi $f\' > 0$ và đi xuống ở nơi $f\' < 0$. Vậy tại các đỉnh và đáy (với các đồ thị trơn, không có mũi nhọn), tiếp tuyến bắt buộc phải nằm ngang — tức $f\'(x) = 0$. Khởi điểm từ phương pháp của Fermat, đây chính là chìa khóa tìm cực đại, cực tiểu trong giải tích.',
-      duration: 12,
-    },
-    {
-      title: 'Lồi lõm & điểm uốn',
+      title: 'Cực trị',
       duration: 9,
       body:
-        'Đạo hàm cấp hai cho biết độ cong: $f^{\\prime\\prime}>0$ đồ thị lồi, $f^{\\prime\\prime}<0$ đồ thị lõm. Điểm uốn là nơi $f^{\\prime\\prime}$ đổi dấu — tiếp tuyến cắt qua đồ thị thay vì nằm một bên. Với hàm mẫu, $f^{\\prime\\prime}(x)=2x-2$ đổi dấu tại $x=1$: điểm uốn $(1;\\,-8/3)$.',
+        'Ứng viên cực trị nằm tại nghiệm của $f\'(x)=0$. Kiểm tra nhanh bằng $f^{\\prime\\prime}$: nếu $f^{\\prime\\prime}(x_0)<0$ thì $x_0$ là cực đại, nếu $f^{\\prime\\prime}(x_0)>0$ thì cực tiểu. Xem tiếp tuyến quét qua đồ thị: nó nghiêng dần, nằm ngang đúng tại đỉnh, rồi nghiêng ngược lại — "phẳng" tại đúng khoảnh khắc đổi chiều.',
       funFact: {
-        title: 'Làm phẳng đường cong',
+        title: 'Bài toán cái hộp',
         body:
-          'Trong dịch 2020, cả thế giới nói về "làm phẳng đường cong" — đường cong logistic mô tả số ca nhiễm. Điểm uốn của nó chính là khoảnh khắc quan trọng nhất: trước điểm uốn dịch tăng tốc (lõm), sau điểm uốn dịch giảm tốc (lồi). Tìm được điểm uốn là biết đỉnh dịch còn bao xa — cùng một toán của bài học này, ứng dụng trực tiếp vào đời sống.',
+          'Bài toán ứng dụng kinh điển của cực trị: cắt bốn góc vuông cạnh $x$ từ tấm bìa vuông rồi gấp thành hộp không nắp. Thể tích $V(x)$ là hàm lập phương, có $V\'(x)=0$ tại đúng một điểm cho hộp to nhất. Mọi cuốn sách giải tích trên thế giới đều có bài này để cho thấy ứng dụng mạnh mẽ của cực trị trong đời sống.',
       },
     },
     {
