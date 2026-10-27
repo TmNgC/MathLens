@@ -38,7 +38,7 @@ export const derivativeLesson: Lesson = {
     {
       title: 'Đọc vị cực trị từ $f\'$',
       body:
-        'Đồ thị $f$ đi lên đúng ở nơi $f\' > 0$ và đi xuống ở nơi $f\' < 0$. Vậy tại đỉnh và đáy, tiếp tuyến nằm ngang — tức $f\'(x) = 0$. Đây chính là chìa khóa tìm cực đại, cực tiểu trong mọi bài kiểm tra.',
+        'Đồ thị $f$ đi lên đúng ở nơi $f\' > 0$ và đi xuống ở nơi $f\' < 0$. Vậy tại đỉnh và đáy, tiếp tuyến nằm ngang — tức $f\'(x) = 0$. Đây chính là chìa khóa tìm cực đại, cực tiểu..',
       duration: 12,
     },
   ],
