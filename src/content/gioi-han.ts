@@ -19,7 +19,7 @@ export const limitsLesson: Lesson = {
       funFact: {
         title: 'Achilles và con rùa',
         body:
-          'Zeno (thế kỷ 5 TCN) kể: Achilles chạy nhanh gấp rấp rùa nhưng cho rùa xuất phát trước. Khi Achilles tới chỗ rùa vừa ở, rùa đã bò thêm một đoạn; cứ thế "mãi mãi" không với kịp. Nghịch lý này chỉ được giải quyết trọn vẹn sau hơn 2000 năm — khi con người có khái niệm giới hạn. Câu trả lời: vô số bước, nhưng tổng thời gian hội tụ về một số hữu hạn!',
+          "Zeno xứ Elea không đưa ra nghịch lý Achilles và con rùa vì ông chối bỏ hiện tượng chuyển động, mà để chỉ ra sự bế tắc của logic bấy giờ trước khái niệm 'vô hạn'. Phải mất hơn 2000 năm, nền tảng Giải tích nghiêm ngặt của Cauchy và Weierstrass mới giải quyết triệt để bài toán triết học này bằng ngôn ngữ Giới hạn.",
       },
     },
     {
@@ -70,9 +70,8 @@ export const limitsLesson: Lesson = {
     {
       title: 'Chuỗi điều hòa',
       body:
-        'Nicole Oresme chứng minh chuỗi điều hòa phân kỳ từ thế kỷ 14 bằng cách gom nhóm ($\\frac13+\\frac14 > \\frac12$; $\\frac15+\\dots+\\frac18 > \\frac12$; ...). Nhưng nó leo chậm đến khó tin: cần hơn 12.000 số hạng mới vượt 10, và khoảng $10^{43}$ số hạng để vượt 100! Tuy tốc độ tăng chậm nhưng về thực tế dãy này phân kì. '',
+        'Nicole Oresme chứng minh chuỗi điều hòa phân kỳ từ thế kỷ 14 bằng cách gom nhóm ($\\frac13+\\frac14 > \\frac12$; $\\frac15+\\dots+\\frac18 > \\frac12$; ...). Nhưng nó leo chậm đến khó tin: cần hơn 12.000 số hạng mới vượt 10, và khoảng $10^{43}$ số hạng để vượt 100! Tuy tốc độ tăng chậm nhưng về thực tế dãy này phân kì.',
       duration: 12,
-
     },
     {
       title: 'Giới hạn là nền của mọi thứ',
