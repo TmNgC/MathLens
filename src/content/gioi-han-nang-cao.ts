@@ -49,43 +49,31 @@ export const advancedLimitsLesson: Lesson = {
       heading: 'Quy tắc L\'Hôpital',
       kind: 'def',
       body:
-        'Nếu $\\dfrac{f(x)}{g(x)}$ có dạng $\\dfrac00$ hoặc $\\dfrac{\\infty}{\\infty}$ khi $x\\to c$, và $\\lim\\dfrac{f\'(x)}{g\'(x)}$ tồn tại thì $\\lim\\dfrac{f(x)}{g(x)}=\\lim\\dfrac{f\'(x)}{g\'(x)}$. Ví dụ: $\\lim\\limits_{x\\to0}\\dfrac{\\ln(1+x)}{x}=\\lim\\dfrac{1/(1+x)}{1}=1$. Một hệ quả quan trọng: $\\lim\\limits_{x\\to+\\infty}\\dfrac{P(x)}{a^x}=0$ với mọi đa thức $P$ và $a>1$ — hàm mũ luôn tăng nhanh hơn mọi đa thức (một trong những sự thật quan trọng nhất của giải tích).',
+        'Nếu $\\dfrac{f(x)}{g(x)}$ có dạng $\\dfrac00$ hoặc $\\dfrac{\\infty}{\\infty}$ khi $x\\to c$, và $\\lim\\dfrac{f\'(x)}{g\'(x)}$ tồn tại thì $\\lim\\dfrac{f(x)}{g(x)}=\\lim\\dfrac{f\'(x)}{g\'(x)}$. Ví dụ: $\\lim\\limits_{x\\to0}\\dfrac{\\ln(1+x)}{x}=\\lim\\dfrac{1/(1+x)}{1}=1$. Một hệ quả quan trọng: $\\lim\\limits_{x\\to+\\infty}\\dfrac{P(x)}{a^x}=0$ với mọi đa thức $P$ và $a>1$ — hàm mũ luôn tăng nhanh hơn mọi đa thức.',
     },
     {
       heading: 'Khi nào quy tắc L\'Hôpital không áp dụng được',
       kind: 'warn',
       body:
-        '1) Chỉ được dùng khi biểu thức có dạng $\\frac00$ hoặc $\\frac{\\infty}{\\infty}$ — dùng khi chưa kiểm tra dạng là một lỗi nghiêm trọng. 2) Ví dụ kinh điển: $\\lim\\limits_{x\\to+\\infty}\\dfrac{x+\\sin x}{x}$ — dùng L\'Hôpital ra $\\dfrac{1+\\cos x}{1}$ không tồn tại, nhưng giới hạn gốc bằng $1+\\dfrac{\\sin x}{x}\\to1$! Việc $\\lim\\dfrac{f\'}{g\'}$ không tồn tại KHÔNG kéo theo giới hạn gốc không tồn tại. 3) Trường hợp lặp vô hạn như $\\lim\\dfrac{e^x}{e^x}$ — khi đó không cần đạo hàm cũng thấy kết quả bằng 1.',
+        '1) Chỉ được dùng khi biểu thức có dạng $\\frac00$ hoặc $\\frac{\\infty}{\\infty}$ — dùng khi chưa kiểm tra dạng là một lỗi nghiêm trọng. 2) Ví dụ kinh điển: $\\lim\\limits_{x\\to+\\infty}\\dfrac{x+\\sin x}{x}$ — dùng L\'Hôpital ra $\\dfrac{1+\\cos x}{1}$ không tồn tại, nhưng giới hạn gốc bằng $1+\\dfrac{\\sin x}{x}\\to1$! Việc $\\lim\\dfrac{f\'}{g\'}$ không tồn tại KHÔNG kéo theo giới hạn gốc không tồn tại.',
     },
     {
       heading: 'Khai triển Taylor',
       kind: 'def',
       body:
-        '$f(x)=f(x_0)+\\dfrac{f\'(x_0)}{1!}(x-x_0)+\\dots+\\dfrac{f^{(n)}(x_0)}{n!}(x-x_0)^n+\\dots$. Các khai triển dùng nhiều: $e^x=1+x+\\dfrac{x^2}{2!}+\\dfrac{x^3}{3!}+\\dots$; $\\sin x=x-\\dfrac{x^3}{3!}+\\dfrac{x^5}{5!}-\\dots$; $\\cos x=1-\\dfrac{x^2}{2!}+\\dfrac{x^4}{4!}-\\dots$; $\\dfrac{1}{1-x}=1+x+x^2+\\dots$ khi $|x|<1$. Vì sao khai triển tính được giới hạn? Gần $x_0$, mọi hàm trơn đều viết thành đa thức cộng một số dư nhỏ — bài toán $\\frac00$ trở thành phép so sánh các số hạng cấp số. Đây cũng là nguồn gốc của các bất đẳng thức quen thuộc: $e^x\\ge1+x$, $x-\\frac{x^3}{6}\\le\\sin x\\le x$ ($x\\ge0$), $\\tan x\\ge x$.',
+        '$f(x)=f(x_0)+\\dfrac{f\'(x_0)}{1!}(x-x_0)+\\dots+\\dfrac{f^{(n)}(x_0)}{n!}(x-x_0)^n+\\dots$. Các khai triển dùng nhiều: $e^x=1+x+\\dfrac{x^2}{2!}+\\dfrac{x^3}{3!}+\\dots$; $\\sin x=x-\\dfrac{x^3}{3!}+\\dfrac{x^5}{5!}-\\dots$; $\\cos x=1-\\dfrac{x^2}{2!}+\\dfrac{x^4}{4!}-\\dots$; $\\dfrac{1}{1-x}=1+x+x^2+\\dots$ khi $|x|<1$. Đây cũng là nguồn gốc của các bất đẳng thức quen thuộc: $e^x\\ge1+x$, $x-\\frac{x^3}{6}\\le\\sin x\\le x$ ($x\\ge0$), $\\tan x\\ge x$.',
     },
     {
       heading: 'Tiêu chuẩn Weierstrass & dãy truy hồi',
       kind: 'def',
       body:
-        'Dãy đơn điệu tăng và bị chặn trên thì hội tụ (đây chính là "tiêu chuẩn Weierstrass"). Kèm theo hai sự kiện phụ: (1) dãy hội tụ khi và chỉ khi MỌI dãy con của nó hội tụ về cùng giới hạn — nên đủ xét $u_{2n}$ và $u_{2n+1}$; (2) với dãy truy hồi $u_{n+1}=f(u_n)$, $f$ liên tục: nếu $(u_n)$ hội tụ về $L$ thì $L=f(L)$ — phương trình "điểm bất động" cho ta ứng viên giới hạn trước cả khi chứng minh hội tụ!',
-    },
-    {
-      heading: 'Bài mẫu: dãy truy hồi $u_{n+1}=\\frac{3u_n+4}{2u_n+1}$',
-      kind: 'example',
-      body:
-        'Cho $u_1=\\frac12$, $u_{n+1}=\\dfrac{3u_n+4}{2u_n+1}$. Bước 1 — ứng viên: $L=\\dfrac{3L+4}{2L+1}\\Rightarrow L^2=4\\Rightarrow L=2$ (dãy dương nên loại $-2$). Bước 2 — bị chặn: $f\'(x)=-\\dfrac{5}{(2x+1)^2}<0$ nên $f$ nghịch biến; quy nạp được $0<u_n<4$. Bước 3 — đơn điệu từng nhánh: $f$ nghịch biến ⇒ $u_{2n}$ giảm, $u_{2n+1}$ tăng, hai nhánh kẹp nhau (dãy lẻ $\\le$ dãy chẵn). Bước 4 — Weierstrass: cả hai nhánh hội tụ; giới hạn $a,b$ thỏa hệ $\\left\\{\\begin{aligned}a&=f(b)\\\\b&=f(a)\\end{aligned}\\right.$\\Rightarrow $a=b=2$. Vậy $\\lim u_n=2$. Đây là quy trình bốn bước chuẩn cho mọi bài $u_{n+1}=f(u_n)$.',
+        'Dãy đơn điệu tăng và bị chặn trên thì hội tụ (đây chính là "tiêu chuẩn Weierstrass"). Kèm theo hai sự kiện phụ: (1) dãy hội tụ khi và chỉ khi MỌI dãy con của nó hội tụ về cùng giới hạn — nên đủ xét $u_{2n}$ và $u_{2n+1}$; (2) với dãy truy hồi $u_{n+1}=f(u_n)$, $f$ liên tục: nếu $(u_n)$ hội tụ về $L$ thì $L=f(L)$.',
     },
     {
       heading: 'Định lý Stolz–Cesàro',
       kind: 'def',
       body:
         'Nếu $(b_n)$ tăng ngặt lên $+\\infty$ và $\\lim\\dfrac{a_{n+1}-a_n}{b_{n+1}-b_n}=L$ thì $\\lim\\dfrac{a_n}{b_n}=L$. Ví dụ: $\\lim\\dfrac{1+2+\\dots+n}{n^2}$: lấy $a_n=\\dfrac{n(n+1)}{2}$, $b_n=n^2$, tỉ số hiệu $=\\dfrac{n+1}{2n+1}\\to\\dfrac12$. Định lý này rất hiệu quả với tổng tích lũy và trung bình Cesàro $\\left(\\lim\\dfrac{a_1+\\dots+a_n}{n}=\\lim a_n\\right)$.',
-    },
-    {
-      heading: 'Lời kết',
-      kind: 'note',
-      body:
-        'Toàn bộ chuyên đề xoay quanh một ý tưởng: đưa giới hạn chưa biết về giới hạn đã biết — bằng nguyên lý kẹp, bằng quy tắc L\'Hôpital, bằng khai triển Taylor, bằng Stolz–Cesàro. Trước mỗi buổi luyện tập, đọc lại bảng công thức thiết yếu là đủ. Còn bây giờ — tận hưởng quãng thời gian rảnh của bạn!',
     },
   ],
 }
