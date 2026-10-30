@@ -129,7 +129,7 @@ const en: Dict = {
   'quiz.local.weakList': 'Skills to watch: {tags}.',
 
   'lang.name': 'Language',
-  'exam.cta': '📝 THPT mock exam — 40 questions · graded /10',  'exam.hint': 'all lessons mixed · just like the real thing',  'exam.badge': 'THPT mock exam',  'exam.score': 'Score: {p}/10',  'home.weakTitle': 'Review your weak skills',  'home.weakBody': 'Your last attempt suggests practising:',  'home.weakCta': 'Practise now →',
+  'exam.cta': '📝 Full mock exam — 40 questions · graded /10',  'exam.hint': 'all lessons mixed · just like the real thing',  'exam.badge': 'THPT mock exam',  'exam.score': 'Score: {p}/10',  'home.weakTitle': 'Review your weak skills',  'home.weakBody': 'Your last attempt suggests practising:',  'home.weakCta': 'Practise now →',
   'lab.tangent': 'tangent line',
   'lab.deriv': 'graph f′',
   'lab.area': 'area',
@@ -257,9 +257,9 @@ const vi: Dict = {
   'quiz.local.weakList': 'Các kỹ năng cần chú ý cải thiện: {tags}.',
 
   'lang.name': 'Ngôn ngữ',
-  'exam.cta': '📝 Thi thử THPT — 40 câu · chấm thang điểm 10',
+  'exam.cta': '📝 Kiểm tra toàn bộ — 40 câu · chấm thang điểm 10',
   'exam.hint': 'câu hỏi tổng hợp toàn chương trình · bám sát cấu trúc đề',
-  'exam.badge': 'Đề thi thử THPT',
+  'exam.badge': 'Kiểm tra toàn bộ',
   'exam.score': 'Điểm: {p}/10',
   'home.weakTitle': 'Ôn lại lỗ hổng kiến thức',
   'home.weakBody': 'Phân tích từ lần làm bài trước khuyên bạn nên luyện thêm:',
