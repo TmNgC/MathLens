@@ -8,7 +8,7 @@ import type { Lesson } from './types'
 export const preCalculusLesson: Lesson = {
   id: 'tien-giai-tich',
   number: 1,
-  title: 'Tiền giải tích',
+  title: 'Hành trang giải tích',
   subtitle: 'Hàm số & tư duy trước giải tích',
   kind: 'theory',
   accent: '#ffa94d',
